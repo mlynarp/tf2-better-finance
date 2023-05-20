@@ -1,51 +1,5 @@
 function data()
 	return {
-		de = {
-			["#Tooltip.Settings.Income"]=("Repräsentiert den Steuersatz, der auf Eure Einkünfte angesetzt wird.\n".."Der Steuersatz hängt von folgenden Faktoren ab:\n"..
-			"- Brutto Einkünfte\n" ..
-			"- Marge (Einkünfte - Unterhalt von Fahrzeugen und Infrastruktur [Depots, Stationen, Signale etc]\n"..
-			"- Brutto Marge (%): Verhältnis zwischen Deinen Einkünften und der Marge\n"..
-			"Je höher eure Marge, desto höher auch der Steuersatz. Der von Dir definierte Maximale Steuersatz wird bei einer Marge von 25% erreicht, bei einer Marge von über 90% erreichst Du das maximum (2.5 facher Steuersatz)\n"..
-			"Zwischen -5% und + 5% Marge werden keine Steuern oder Subventionen erhoben / verteilt.\n"..
-			"Macht Du Verlust, erhaltet Du ab 5% Subventionen (Minimaler Steuersatz). Bei negativen 33% Marge erhaltet Du die volle Subvention, bei -66% Marge erhaltet Du die Doppelte Subvention. Auch hier ist beim 2.5 fachen Schluss.\n"..
-			"Bedingung für Subventionen und Steuern ist, dass Du in der jeweiligen Kategorie (Eisenbahn, Strasse, Tram etc) mindestens 1$ im aktuellen Jahr verdient habt."),
-			["#Tooltip.Settings.Vehicles"]=("Steuersatz auf Fahrzeugkäufe und Verkäufe."),
-			["#Tooltip.Settings.Infrastructure"]=("Grunderwerbsteuer auf alle Gebäude, die Du baut. Rückerstattungen werden ebenfalls besteuert."),
-			["Road"]=("Straße"),
-			["Tram"]=("Tram"),
-			["Railway"]=("Eisenbahn"),
-			["Air"]=("Luftfahrt"),
-			["Water"]=("Schifffahrt"),
-			["#TaxesDescription"]=("Hier findest Du eine Detailliertere Aufstellung wo Du Steuern zahlst und wo Du Subventionen erhalten hast."),
-			["#Tooltip.Details.Income"] = ("Deine Einkünfte"),
-			["#Tooltip.Details.Maintenance"] = ("Alle Wartungskosten inklusive Gebäudeunterhalt und Fahrzeugwartungen"),
-			["#Tooltip.Details.Vehicles"] = ("Kosten für Einkäufe neuer Fahrzeuge"),
-			["#Tooltip.Details.Infrastructure"] = ("Kosten für neue Gebäude, Strassen & Schienen"),
-			["#Tooltip.Details.Taxes.Income"] = ("Einkommenssteuer"),
-			["#Tooltip.Details.Taxes.Vehicles"] = ("Steuer auf Fahrzeugkäufe"),
-			["#Tooltip.Details.Taxes.Infrastructure"]=("Steuer auf Gebäude"),
-			["#Tooltip.GameYear"]=("Zeigt das aktuelle Jahr des Spielstands an.\nDieses Jahr wird aus Deiner Spielzeit abgeleitet und entspricht dem Zeitraum, der für Grafiken und Tabellen verwendet wird.\n\nBei einer Datumsgeschwindigkeit von 1x ist das Spieljahr = angezeigtes Jahr im Datumsfeld - Startjahr"),
-			["Income"]=("Einkommen"),
-			["Maintenance"]=("Unterhalt"),
-			["Infrastructure"]=("Infrastruktur"),
-			["Vehicles"]=("Fahrzeuge"),
-			["GT"]=("Spieljahr "),
-			["Taxes"]=("Steuern"),
-			["Year"]=("Jahr"),
-			["Taxes"]=("Steuern"),
-			["Interest"]=("Zinsen"),
-			["rail"]=("Eisenbahn"),
-			["road"]=("Strasse"),
-			["tram"]=("Tram"),
-			["air"]=("Luftfahrt"),
-			["water"]=("Schifffahrt"),
-			["Show Settings"]=("Zeige Einstellungen"),
-			["Hide Settings"]=("verberge Einstellungen"),
-			["#SettingsYearButtonText"]=("Zeige Spieljahr"),
-			["#SettingsYearButtonLabelYes"]=("Ja"),
-			["#SettingsYearButtonLabelNo"]=("Nein"),
-			["Payed Taxes (for previous year)"]=("gezahlte Steuern im vergangenen Jahr"),
-		},	
 		en ={
 			["#Tooltip.Settings.Income"]=("Taxrate applied on your income from tickets.\n".."Tax rates depend on your:\n"..
 			"- GrossSales\n"..

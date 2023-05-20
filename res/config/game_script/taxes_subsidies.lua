@@ -4,7 +4,6 @@ local journal
 local currentTime = 0
 local bookAmount =0
 local taxes= {}
-local drivesGameYear=false
 local level1Elements = {"Investments","Income"}
 local level2Elements = {Investments={"Vehicles","Infrastructure"},Income={"Income","Maintenance"}}
 local taxTable
@@ -42,7 +41,6 @@ local state = {
 	taxIntStartTime=0,
 	taxIntNextTime = 0,
 	currentYear = 0,
-	showGameYear = 1,
 	tax_rates = {
 			road = {
 				label=_("Road"),
@@ -216,30 +214,7 @@ function data_shrink_log()
 		
 	end
 end
-function data_getUsedCarriers()
-	--local taxTable = api.gui.util.getById("Taxes_DetailsTable")
-	if taxTable then
-		local journal
-		local year = getCurrentGameYear()
-		local yearStartEnd = getYearStart_End(year)
-		local start = yearStartEnd[1]-(3*(730.5)*1000)
-		local endTime = yearStartEnd[2]-(1*(730.5)*1000)
-		journal = game.interface.getPlayerJournal(start, endTime, false)
-		for i=1,#config.vehicleCat do
-			local vc=config.vehicleCat[i]
-			if journal.maintenance[vc]._sum ~= 0 then
-				local element = taxTable:getItem((i - 1)*7 + 2 ,0)
-				if element:isVisible() == false then
-					ui_refresh_TaxTable_usedCarriers(taxTable,i,true)
-					local button = api.gui.util.getById("L0Button"..vc)
-					button:click()
-				end
-			else
-				ui_refresh_TaxTable_usedCarriers(taxTable,i,false)
-			end
-		end
-	end
-end
+
 -- ############
 -- ## User Interface 
 -- ############
@@ -670,190 +645,7 @@ function ui_init_detailsTable()
 	print("Created Details Table")
 	return tblDetails
 end
-function ui_init_settingsTable()
-	--1: Variable declaration / initalization
-	local NoOfCols = 3
-	local tblDetails = api.gui.comp.Table.new(NoOfCols,"NONE")
-	local icon_expand_path = "ui/design/components/slim_arrow_right@2x.tga"
-	local icon_collapse_path = "ui/design/components/slim_arrow_down@2x.tga"
-	
-	local expandButton
-	local row ={} -- Local Variable holding all rows for the table
 
--- 3.0 Table Content
--- 3.0.1 Structure
-	-- Level 0: Top Level Category (Vehicle Types){"rail","road","tram","air","water"}
-	-- Level 1: TaxCategories: Income, Vehicle Acquisitions, Infrastructure construction
-	
-	for a=1, #config.vehicleCat do
-		local cat = config.vehicleCat[a]
-		-- Level 0 Row Label
-			for i = 1, NoOfCols do
-				local l0_component = api.gui.comp.Component.new(_(state.tax_rates[cat].label) or _(tax_rates[cat].label))
-				local l0_layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-				local txt = api.gui.comp.TextView.new(_(state.tax_rates[cat].label) or _(tax_rates[cat].label))
-				-- Add Button to Component if Column 1
-				if i==1 then
-					txt:setStyleClassList({"level0","tableElement","Label","Setting"})
-					l0_component:setStyleClassList({"level0","Label","Setting"})
-					
-				elseif i==2 then
-					txt:setText("Max (Tax rate)")
-					txt:setStyleClassList({"level0","tableElement","Setting"})
-					l0_component:setStyleClassList({"level0","Setting"})
-				elseif i==3 then
-					txt:setText("Min (negative = tax rate, positive = subsidies")
-					txt:setStyleClassList({"level0","tableElement","Setting"})
-					l0_component:setStyleClassList({"level0","Setting"})
-				end
-				txt:setId("Setting"..cat.."TextView"..math.abs(i-NoOfCols-1))		
-				
-				l0_component:setId("Setting"..cat..""..math.abs(i-NoOfCols-1))
-				l0_layout:setName("L0Layout")
-				l0_layout:addItem(txt)
-				l0_component:setLayout(l0_layout)
-				
-				-- Add Component to Row Element
-				table.insert(row,l0_component)
-				
-			end
-		tblDetails:addRow(row)
-		row ={}
-		
-		-- 3.1.2: Subcategories
-		for i=1,#config.taxes.TaxCategories do -- Create the same structure for all config.vehicleCat
-			local tx= config.taxes.TaxCategories[i]
-			
-			-- Create columns
-			for c = 1,NoOfCols do
-				local lbl_element = api.gui.comp.Component.new(cat..tx..c)
-				local lbl_layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-				lbl_element:setLayout(lbl_layout)
-				lbl_layout:setName("L1Layout")
-				
-				local txt = api.gui.comp.TextView.new("")
-				if c== 1 then
-					txt:setText(_(tx))
-					if tooltips.settings[tx] then txt:setTooltip(tooltips.settings[tx]) end
-					lbl_layout:addItem(txt)
-					lbl_element:setStyleClassList({"level1","Label","Setting"})
-				elseif c== 2 then
-					local setting_max_layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-					local setting_max_sldr = api.gui.comp.Slider.new(true)			
-					local setting_val_max = api.gui.comp.TextView.new("") 
-					lbl_element:setStyleClassList({"level1","Slider","Setting"})
-					
-					if tx=="Income" then
-						setting_max_sldr:setValue(math.floor(((state.tax_rates[cat][tx].maxVal or tax_rates[cat][tx].maxVal)+1)*100), false)
-						setting_val_max:setText(format_num((state.tax_rates[cat][tx].maxVal or tax_rates[cat][tx].maxVal) * 100,0,"","-","%"))
-					else
-						setting_max_sldr:setValue(math.floor((state.tax_rates[cat][tx]+1 or tax_rates[cat][tx] +1)*100), false)
-						setting_val_max:setText(format_num((state.tax_rates[cat][tx] or tax_rates[cat][tx]) * 100,0,"","-","%"))
-					end
-					setting_max_sldr:setId("tax"..cat..""..tx.."maxslider")
-					setting_max_sldr:setStep(5)
-					setting_max_sldr:setMinimum(05)
-					setting_max_sldr:setMaximum(100)
-					setting_max_sldr:setStyleClassList({"SliderClass"})
-					
-					setting_max_sldr:onValueChanged(function(value)
-						setting_val_max:setText(format_num((value-100),0,"","-","%"))
-						callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("extendedStats.Main","SettingsChange",tx,
-								{ 
-									rate = (value/100)-1,
-									type = cat,
-									minmax ="maxVal"
-								}
-							))
-						end)
-						setting_max_layout:addItem(setting_max_sldr)
-						setting_max_layout:addItem(setting_val_max)
-						lbl_layout:addItem(setting_max_layout)
-				elseif c==3 then
-					if tx=="Income" then
-						local setting_min_layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-						local setting_min_sldr = api.gui.comp.Slider.new(true)
-						local setting_val_min = api.gui.comp.TextView.new(format_num((state.tax_rates[cat][tx].minVal or tax_rates[cat][tx].minVal) * 100,0,"","-","%")) 
-						lbl_element:setStyleClassList({"level1","Slider","Setting"})
-						
-						setting_min_sldr:setValue(math.floor((state.tax_rates[cat][tx].minVal+1 or tax_rates[cat][tx].minVal+1)*100), false)
-						setting_min_sldr:setId("tax"..cat..""..tx.."minslider")
-						setting_min_sldr:setStep(5)
-						setting_min_sldr:setMinimum(80)
-						setting_min_sldr:setMaximum(120)
-						setting_min_sldr:setStyleClassList({"SliderClass"})
-						setting_min_sldr:onValueChanged(function(value)
-							setting_val_min:setText(format_num((value-100),0,"","-","%"))
-							callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("extendedStats.Main","SettingsChange",tx,
-								{ 
-									rate = (value/100)-1,
-									type = cat,
-									minmax ="minVal"
-								}
-								))          
-							end)
-							setting_min_layout:addItem(setting_min_sldr)
-							setting_min_layout:addItem(setting_val_min)
-							lbl_layout:addItem(setting_min_layout)
-					else
-						lbl_layout:addItem(txt)
-					end
-					
-				end
-				table.insert(row,lbl_element)
-			end
-			tblDetails:addRow(row)
-			row ={}
-		end
-	end
-	-- Show / Hide Year Label
-	local labelContainer= api.gui.comp.Component.new("ShowYearLabel")
-	local labelLayout = api.gui.layout.BoxLayout.new("HORIZONTAL") 
-	local labelText = _("#SettingsYearButtonText") 
-	local labelTextView = api.gui.comp.TextView.new(labelText)		
-	labelContainer:setLayout(labelLayout)
-	labelLayout:addItem(labelTextView)
-	
-	local yearButtonContainer = api.gui.comp.Component.new("YearButton")
-	local yearButtonLayout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-	local yearButtonText = ""
-	local yearButtonTextView = api.gui.comp.TextView.new(yearButtonText)	
-	yearButtonTextView:setId("taxes.yearButtonText")
-	local yearButton = api.gui.comp.Button.new(yearButtonTextView,false)
-	yearButton:setId("taxes.YearButton")
-	if state.showGameYear==0 then
-		yearButtonText = _("#SettingsYearButtonLabelNo")
-	
-	else
-		yearButtonText = _("#SettingsYearButtonLabelYes")
-	end
-	yearButtonTextView:setText(yearButtonText)
-	
-	labelTextView:setStyleClassList({"level0","tableElement","Setting"})
-	labelContainer:setStyleClassList({"level0","tableElement","Setting"})
-	yearButton:setStyleClassList({"level0","tableElement","Setting"})
-	yearButtonContainer:setStyleClassList({"level0","Setting"})
-	
-	yearButtonContainer:setLayout(yearButtonLayout)
-	yearButtonLayout:addItem(yearButton)
-	yearButton:onClick(function()
-		if state.showGameYear == 1 then 
-			state.showGameYear = 0
-			yearButtonText = _("#SettingsYearButtonLabelNo")
-			
-		else
-			state.showGameYear = 1
-			yearButtonText = _("#SettingsYearButtonLabelYes")
-		end
-		api.gui.util.getById("taxes.yearButtonText"):setText(yearButtonText)
-		callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Taxes_Subsidies","IngameYear",{show = state.showGameYear}))
-	end)
-	
-	local emptyCont = api.gui.comp.Component.new("YearButtonEmpty")
-	tblDetails:addRow({labelContainer,yearButtonContainer,emptyCont})
-	
-	return tblDetails		
-end
 function ui_init_taxTab ()
 	
 	--1.1: Components
@@ -864,24 +656,11 @@ function ui_init_taxTab ()
 		
 		local useComp = api.gui.comp.Component.new("FinancesTaxes")
 	--1.2: Call Sub Routines to create Setting & Details Tables	
-		local setting_component = ui_init_settingsTable()
 		local details_component = ui_init_detailsTable()
 		details_component:setId("Taxes_DetailsTable")
 		taxTable = details_component
 	--1.2: Layouts
 		local useLayout = api.gui.layout.BoxLayout.new("VERTICAL")
-				
-	--1.4: Text / Value Components
-		local taxDescText = _("#TaxesDescription")
-		local taxesDescription = api.gui.comp.TextView.new(taxDescText)		
-        local useButtonLabel = api.gui.comp.TextView.new(_("Show Settings"))
-		local useSettings = api.gui.comp.Button.new(useButtonLabel,false)
-		useSettings:setId("Taxes_SettingsButton")
-		useSettings:setStyleClassList({"SettingsButton"})
-		
-		local buttonsLayout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-		
-		buttonsLayout:addItem(useSettings)
 		
 	--2 : Define Layouts & set Ids
 	    useComp:setLayout(useLayout)
@@ -889,31 +668,12 @@ function ui_init_taxTab ()
 		
 	--3 : Add Elements to the Layouts:
 	
-		useLayout:addItem(taxesDescription)
-		
-		useLayout:addItem(buttonsLayout)
-		
-		useLayout:addItem(setting_component)
 		useLayout:addItem(details_component)
 			
 		-- Add Tab to Finance Category Window
 		parentElement:addTabText(_("Taxes"),useComp)
 		
-		setting_component:setVisible(false,false)
 		details_component:setVisible(true,false)
-		-- Update FUnctions
-		useSettings:onClick(function()
-			if setting_component:isVisible() then
-				setting_component:setVisible(false,false)
-				details_component:setVisible(true,false)
-				useButtonLabel:setText(_("Show Settings"))
-			else
-				useButtonLabel:setText(_("Hide Settings"))
-				setting_component:setVisible(true,false)
-				details_component:setVisible(false,false)
-			end
-		end)
-		
 	
 end
 function ui_refresh_TaxTable_usedCarriers(taxTable,itemNo,showHide)
@@ -956,7 +716,6 @@ local extendedStats_script = {
 			else
 				state.custom_journal  = data.custom_journal
 			end
-			state.showGameYear = data.showGameYear
 			state.updList 		  = data.updList
 			state.LastLinesRefreshMonth	  = data.LastLinesRefreshMonth or (correctGameTime[3]-1)
 						
@@ -966,7 +725,6 @@ local extendedStats_script = {
 			state.currentYear		= correctGameTime[2]
 			state.updList			= nil
 			state.LastLinesRefreshMonth  = (correctGameTime[3]-1)
-			state.showGameYear = 1
 			
 			state.custom_journal = data_init_customJournal()
 			data_refresh_pastYears()
@@ -981,18 +739,8 @@ local extendedStats_script = {
 			for k,v in pairs(callback) do v() end
 			callback ={}
 		end
-		if drivesGameYear then
-			if state.showGameYear ==1 then
-				api.gui.util.getById("gameInfo.gameYear"):setText(_("GT")..getCurrentGameYear().." M: "..getCurrentGameMonth())
-				api.gui.util.getById("gameInfo.gameYear"):setVisible(true,false)
-			elseif state.showGameYear ==0 then
-				api.gui.util.getById("gameInfo.gameYear"):setVisible(false,false)
-			end
-			
-		end
 		if state.updList == 1 then
 			ui_refresh_taxDetails()
-			--data_getUsedCarriers()
 			state.updList = 0
 			callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","UI_Refresh","TaxTable",{updList = 0}))
 		end
@@ -1005,21 +753,7 @@ local extendedStats_script = {
 		
 	end,
 	guiInit = function ()
-		debugPrint(config)
-		if not api.gui.util.getById("gameInfo.gameYear") then
-			print("taxes: gameyear")
-			drivesGameYear=true
-			-- element for the divider
-			local line = api.gui.comp.Component.new("VerticalLine")
-			-- element for the Year
-			local txtGameYear = api.gui.comp.TextView.new("")
-			txtGameYear:setId("gameInfo.gameYear")
-			txtGameYear:setTooltip(tooltips.Menu.gameInfo)
-			-- add elements to ui
-			local gameInfoLayout = api.gui.util.getById("menu.datePanel"):getLayout()
-			gameInfoLayout:addItem(line) 
-			gameInfoLayout:addItem(txtGameYear)
-		end
+		
 	end,
 	update = function ()
 		
@@ -1098,8 +832,6 @@ local extendedStats_script = {
 			end
 		elseif src=="TaxesSubsidies" and id=="Mod_Initiation" and name=="custom_journal" then
 			state.custom_journal = param.custom_journal
-		elseif src=="TaxesSubsidies" and id=="Taxes_Subsidies" and name =="IngameYear" then
-			state.showGameYear = param.show
 		elseif src =="TaxesSubsidies" and id =="UI_Refresh" and name=="TaxTable" then
 			state.updList = param.updList
 		end
