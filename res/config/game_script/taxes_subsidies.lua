@@ -800,14 +800,7 @@ function data()
 		end,
 	
 		handleEvent = function (src, id, name, param)
-			if src=="extendedStats.Main" and id=="SettingsChange" and param then
-				if name=="Income" then
-					state.tax_rates[param.type][name][param.minmax]=param.rate
-				else
-					state.tax_rates[param.type][name]=param.rate
-				end
-			
-			elseif src=="extendedStats.Main" and id=="StateUpdate" and name=="custom_journal" then
+			if src=="extendedStats.Main" and id=="StateUpdate" and name=="custom_journal" then
 				-- Construction
 				if param.fullInit then
 					state.custom_journal = param.custom_journal_gui
