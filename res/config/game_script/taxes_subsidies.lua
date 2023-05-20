@@ -676,172 +676,157 @@ function ui_init_taxTab ()
 		details_component:setVisible(true,false)
 	
 end
-function ui_refresh_TaxTable_usedCarriers(taxTable,itemNo,showHide)
-	local start= (itemNo - 1)*7 + 2 
-	local lastRowToHide = start + 5
-	local firstElement = taxTable:getItem(start,0)
-	for c=0,8 do
-		for r = start,lastRowToHide  do
-			local element = taxTable:getItem(r,c)
-			element:setVisible(showHide,false)
-		end		
-	end
-
-end
-
 -- ***************************
 -- ** Main
 -- ***************************
 
-local extendedStats_script = {
-	save = function ()
-		return state
-	end,
-
-	load = function (data)
-		
-		local correctGameTime = getClosestYearStart(game.interface.getGameTime().time)
-		if data then
-			state.taxIntStartTime = correctGameTime[1]
-			state.taxIntNextTime  = (correctGameTime[1] + 2 * 365.25) -- Current Time + 1 ingame Year
-			state.currentYear 	  = correctGameTime[2]
+function data()
+	return {
+		save = function ()
+			return state
+		end,
+	
+		load = function (data)
 			
-			state.tax_rates 	  = data.tax_rates or state.tax_rates
-			-- check if Journal exists
-			if not data.custom_journal then
+			local correctGameTime = getClosestYearStart(game.interface.getGameTime().time)
+			if data then
+				state.taxIntStartTime = correctGameTime[1]
+				state.taxIntNextTime  = (correctGameTime[1] + 2 * 365.25) -- Current Time + 1 ingame Year
+				state.currentYear 	  = correctGameTime[2]
+				
+				state.tax_rates 	  = data.tax_rates or state.tax_rates
+				-- check if Journal exists
+				if not data.custom_journal then
+					state.custom_journal = data_init_customJournal()
+					data_refresh_pastYears()
+					callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","custom_journal",{custom_journal = state.custom_journal,fullInit=true}))
+					print("Created Custom Journal")
+				else
+					state.custom_journal  = data.custom_journal
+				end
+				state.updList 		  = data.updList
+				state.LastLinesRefreshMonth	  = data.LastLinesRefreshMonth or (correctGameTime[3]-1)
+							
+			else
+				state.taxIntStartTime 	= correctGameTime[1]
+				state.taxIntNextTime 	= (correctGameTime[1] + 2 * 365.25) -- Current Time + 1 ingame Year
+				state.currentYear		= correctGameTime[2]
+				state.updList			= nil
+				state.LastLinesRefreshMonth  = (correctGameTime[3]-1)
+				
 				state.custom_journal = data_init_customJournal()
 				data_refresh_pastYears()
+				
 				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","custom_journal",{custom_journal = state.custom_journal,fullInit=true}))
 				print("Created Custom Journal")
-			else
-				state.custom_journal  = data.custom_journal
 			end
-			state.updList 		  = data.updList
-			state.LastLinesRefreshMonth	  = data.LastLinesRefreshMonth or (correctGameTime[3]-1)
+		end,
+	
+		guiUpdate = function ()
+			if callback then
+				for k,v in pairs(callback) do v() end
+				callback ={}
+			end
+			if state.updList == 1 then
+				ui_refresh_taxDetails()
+				state.updList = 0
+				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","UI_Refresh","TaxTable",{updList = 0}))
+			end
+			if state.taxTabCreated==nil then 
+				ui_init_taxTab()
+				state.updList =0
+				state.taxTabCreated = true
+				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","GuiObjects",{taxTabCreated = state.taxTabCreated, updList = state.updList}))
+			end
+			
+		end,
+		guiInit = function ()
+			
+		end,
+		update = function ()
+			
+			local currentYearStart = getClosestYearStart(game.interface.getGameTime().time) -- returns 3 parameters: Time in seconds and Year (counted from the beginning of the Savegame), Month in current Year 
+			local nextRefresh = getRefreshStart(game.interface.getGameTime().time)
+			if (nextRefresh == currentYearStart[4][1] or nextRefresh == currentYearStart[4][2] or nextRefresh == currentYearStart[4][3] or nextRefresh == currentYearStart[4][4] or nextRefresh == currentYearStart[4][5] or nextRefresh == currentYearStart[4][6]) and state.LastLinesRefreshMonth ~= nextRefresh then -- Update every second month
+				state.LastLinesRefreshMonth = nextRefresh
+				
+				bookAmount = 0
+				-- get Journal for the past 365 ingame days
+				journal = game.interface.getPlayerJournal(1000*state.taxIntStartTime, 1000*(state.taxIntNextTime-0.001), false)
+				
+				-- set new timeline today to today +365
+				state.taxIntStartTime = currentYearStart[1]
+				state.taxIntNextTime = (state.taxIntStartTime + 2 * 365.25)
+				state.custom_journal.header.labels["Year "..state.currentYear]=state.currentYear
+				local cy = state.currentYear
+				
+				for i=1,#config.vehicleCat do
+					local vc=config.vehicleCat[i]
+					-- add income to custom_journal
+						bookAmount = bookAmount + data_calc_incomeTax(journal.income[vc],journal.maintenance[vc]._sum,state.tax_rates[vc].Income,vc)
 						
-		else
-			state.taxIntStartTime 	= correctGameTime[1]
-			state.taxIntNextTime 	= (correctGameTime[1] + 2 * 365.25) -- Current Time + 1 ingame Year
-			state.currentYear		= correctGameTime[2]
-			state.updList			= nil
-			state.LastLinesRefreshMonth  = (correctGameTime[3]-1)
-			
-			state.custom_journal = data_init_customJournal()
-			data_refresh_pastYears()
-			
-			callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","custom_journal",{custom_journal = state.custom_journal,fullInit=true}))
-			print("Created Custom Journal")
-		end
-	end,
-
-	guiUpdate = function ()
-		if callback then
-			for k,v in pairs(callback) do v() end
-			callback ={}
-		end
-		if state.updList == 1 then
-			ui_refresh_taxDetails()
-			state.updList = 0
-			callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","UI_Refresh","TaxTable",{updList = 0}))
-		end
-		if state.taxTabCreated==nil then 
-			ui_init_taxTab()
-			state.updList =0
-			state.taxTabCreated = true
-			callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","GuiObjects",{taxTabCreated = state.taxTabCreated, updList = state.updList}))
-		end
-		
-	end,
-	guiInit = function ()
-		
-	end,
-	update = function ()
-		
-		local currentYearStart = getClosestYearStart(game.interface.getGameTime().time) -- returns 3 parameters: Time in seconds and Year (counted from the beginning of the Savegame), Month in current Year 
-		local nextRefresh = getRefreshStart(game.interface.getGameTime().time)
-		if (nextRefresh == currentYearStart[4][1] or nextRefresh == currentYearStart[4][2] or nextRefresh == currentYearStart[4][3] or nextRefresh == currentYearStart[4][4] or nextRefresh == currentYearStart[4][5] or nextRefresh == currentYearStart[4][6]) and state.LastLinesRefreshMonth ~= nextRefresh then -- Update every second month
-			state.LastLinesRefreshMonth = nextRefresh
-			
-			bookAmount = 0
-			-- get Journal for the past 365 ingame days
-			journal = game.interface.getPlayerJournal(1000*state.taxIntStartTime, 1000*(state.taxIntNextTime-0.001), false)
-			
-			-- set new timeline today to today +365
-			state.taxIntStartTime = currentYearStart[1]
-			state.taxIntNextTime = (state.taxIntStartTime + 2 * 365.25)
-			state.custom_journal.header.labels["Year "..state.currentYear]=state.currentYear
-			local cy = state.currentYear
-			
-			for i=1,#config.vehicleCat do
-				local vc=config.vehicleCat[i]
-				-- add income to custom_journal
-					bookAmount = bookAmount + data_calc_incomeTax(journal.income[vc],journal.maintenance[vc]._sum,state.tax_rates[vc].Income,vc)
-					
-				-- Vehicle Acquisitions
-					local vehicleAcq = journal.acquisition[vc]
-					local vehicleTax = math.abs(vehicleAcq) * state.tax_rates[vc].Vehicles
-					-- book to custom_journal
-					state.custom_journal[vc]["Vehicles"]["Year "..cy]= vehicleAcq
-					state.custom_journal[vc]["Taxes"]["Vehicles"]["Year "..cy]=vehicleTax
-					-- add to total tax
-					bookAmount = bookAmount + vehicleTax
-				-- Infrastructure
-					local vehicleTypeInfrastructure = journal.construction[vc]._sum
-					local vehicleTypeInfrastructureTax = (math.abs(vehicleTypeInfrastructure) * state.tax_rates[vc].Infrastructure)
-					-- book to custom_journal
-					state.custom_journal[vc]["Infrastructure"]["Year "..cy]=vehicleTypeInfrastructure
-					state.custom_journal[vc]["Taxes"]["Infrastructure"]["Year "..cy]=vehicleTypeInfrastructureTax
-					-- add to total Tax
-					bookAmount = bookAmount + vehicleTypeInfrastructureTax
-					
-			end
-			state.currentYear = currentYearStart[2] -- Update Year
-			state.custom_journal.interest["Year "..cy] = journal.interest
-			-- Book the Amount to the Journal. Current Category "other". 
-			if nextRefresh == currentYearStart[4][1] then
-				print("Year "..cy.. ": " .. bookAmount)
-				game.interface.book(bookAmount, false) 
-				if not state.custom_journal["TotalTax"] then state.custom_journal["TotalTax"] = {} end
-				state.custom_journal["TotalTax"]["Year " .. (cy+1)] = bookAmount
-				data_shrink_log()				
-			end
-			-- debugPrint(state)
-			state.updList =1
-		end
-	
-	end,
-
-	handleEvent = function (src, id, name, param)
-		if src=="extendedStats.Main" and id=="SettingsChange" and param then
-			if name=="Income" then
-				state.tax_rates[param.type][name][param.minmax]=param.rate
-			else
-				state.tax_rates[param.type][name]=param.rate
-			end
-		
-		elseif src=="extendedStats.Main" and id=="StateUpdate" and name=="custom_journal" then
-			-- Construction
-			if param.fullInit then
-				state.custom_journal = param.custom_journal_gui
-			else
-				for i=1, #config.vehicleCat do
-					local cat = config.vehicleCat[i]
-					state.custom_journal[cat].IDs = param.custom_journal[cat].IDs
-					state.custom_journal[cat]["Taxes"].IDs=param.custom_journal[cat]["Taxes"].IDs
+					-- Vehicle Acquisitions
+						local vehicleAcq = journal.acquisition[vc]
+						local vehicleTax = math.abs(vehicleAcq) * state.tax_rates[vc].Vehicles
+						-- book to custom_journal
+						state.custom_journal[vc]["Vehicles"]["Year "..cy]= vehicleAcq
+						state.custom_journal[vc]["Taxes"]["Vehicles"]["Year "..cy]=vehicleTax
+						-- add to total tax
+						bookAmount = bookAmount + vehicleTax
+					-- Infrastructure
+						local vehicleTypeInfrastructure = journal.construction[vc]._sum
+						local vehicleTypeInfrastructureTax = (math.abs(vehicleTypeInfrastructure) * state.tax_rates[vc].Infrastructure)
+						-- book to custom_journal
+						state.custom_journal[vc]["Infrastructure"]["Year "..cy]=vehicleTypeInfrastructure
+						state.custom_journal[vc]["Taxes"]["Infrastructure"]["Year "..cy]=vehicleTypeInfrastructureTax
+						-- add to total Tax
+						bookAmount = bookAmount + vehicleTypeInfrastructureTax
+						
 				end
+				state.currentYear = currentYearStart[2] -- Update Year
+				state.custom_journal.interest["Year "..cy] = journal.interest
+				-- Book the Amount to the Journal. Current Category "other". 
+				if nextRefresh == currentYearStart[4][1] then
+					print("Year "..cy.. ": " .. bookAmount)
+					game.interface.book(bookAmount, false) 
+					if not state.custom_journal["TotalTax"] then state.custom_journal["TotalTax"] = {} end
+					state.custom_journal["TotalTax"]["Year " .. (cy+1)] = bookAmount
+					data_shrink_log()				
+				end
+				-- debugPrint(state)
+				state.updList =1
 			end
-		elseif src=="TaxesSubsidies" and id=="Mod_Initiation" and name=="custom_journal" then
-			state.custom_journal = param.custom_journal
-		elseif src =="TaxesSubsidies" and id =="UI_Refresh" and name=="TaxTable" then
-			state.updList = param.updList
-		end
-	end,
-	
-	guiHandleEvent = function (id, name, param)
 		
-	end,
-}
-
-function data()
-return extendedStats_script
+		end,
+	
+		handleEvent = function (src, id, name, param)
+			if src=="extendedStats.Main" and id=="SettingsChange" and param then
+				if name=="Income" then
+					state.tax_rates[param.type][name][param.minmax]=param.rate
+				else
+					state.tax_rates[param.type][name]=param.rate
+				end
+			
+			elseif src=="extendedStats.Main" and id=="StateUpdate" and name=="custom_journal" then
+				-- Construction
+				if param.fullInit then
+					state.custom_journal = param.custom_journal_gui
+				else
+					for i=1, #config.vehicleCat do
+						local cat = config.vehicleCat[i]
+						state.custom_journal[cat].IDs = param.custom_journal[cat].IDs
+						state.custom_journal[cat]["Taxes"].IDs=param.custom_journal[cat]["Taxes"].IDs
+					end
+				end
+			elseif src=="TaxesSubsidies" and id=="Mod_Initiation" and name=="custom_journal" then
+				state.custom_journal = param.custom_journal
+			elseif src =="TaxesSubsidies" and id =="UI_Refresh" and name=="TaxTable" then
+				state.updList = param.updList
+			end
+		end,
+		
+		guiHandleEvent = function (id, name, param)
+			
+		end,
+	}
 end
