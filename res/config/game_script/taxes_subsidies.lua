@@ -646,35 +646,24 @@ function ui_init_detailsTable()
 	return tblDetails
 end
 
-function ui_init_taxTab ()
-	
-	--1.1: Components
-		local parentElement = api.gui.util.getById("menu.finances.category")
-		local window = parentElement:getParent():getParent()
-		local winSize = api.gui.util.Size.new(1200,650)
-		window:setSize(winSize)
-		
-		local useComp = api.gui.comp.Component.new("FinancesTaxes")
-	--1.2: Call Sub Routines to create Setting & Details Tables	
-		local details_component = ui_init_detailsTable()
-		details_component:setId("Taxes_DetailsTable")
-		taxTable = details_component
-	--1.2: Layouts
-		local useLayout = api.gui.layout.BoxLayout.new("VERTICAL")
-		
-	--2 : Define Layouts & set Ids
-	    useComp:setLayout(useLayout)
-		useComp:setId("FinancesTaxesID")
-		
-	--3 : Add Elements to the Layouts:
-	
-		useLayout:addItem(details_component)
-			
-		-- Add Tab to Finance Category Window
-		parentElement:addTabText(_("Taxes"),useComp)
-		
-		details_component:setVisible(true,false)
-	
+function initFinanceTab ()
+	local financeTabWindow = api.gui.util.getById("menu.finances.category")
+	local myFinancesOverviewWindowLayout = api.gui.layout.BoxLayout.new("VERTICAL")
+
+	local myFinancesOverviewWindow = api.gui.comp.Component.new("myFinancesOverviewWindow")
+	myFinancesOverviewWindow:setLayout(myFinancesOverviewWindowLayout)
+	myFinancesOverviewWindow:setId("myFinancesOverviewWindow")
+
+	local myFinancesOverviewTable = ui_init_detailsTable()
+	myFinancesOverviewTable:setId("myFinancesOverviewTable")
+	taxTable = myFinancesOverviewTable
+
+	local txt = api.gui.comp.TextView.new("")
+	txt:setText(_("FinanceTabOverviewLabel"))
+
+	myFinancesOverviewWindowLayout:addItem(myFinancesOverviewTable)
+	--financeTabWindow:addTabText(_("FinanceTabOverviewLabel"), myFinancesOverviewWindow)
+	financeTabWindow:insertTab(txt, myFinancesOverviewWindow, 0)
 end
 -- ***************************
 -- ** Main
@@ -733,15 +722,14 @@ function data()
 				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","UI_Refresh","TaxTable",{updList = 0}))
 			end
 			if state.taxTabCreated==nil then 
-				ui_init_taxTab()
-				state.updList =0
+				state.updList = 0
 				state.taxTabCreated = true
 				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","GuiObjects",{taxTabCreated = state.taxTabCreated, updList = state.updList}))
 			end
 			
 		end,
 		guiInit = function ()
-			
+			initFinanceTab()
 		end,
 		update = function ()
 			
