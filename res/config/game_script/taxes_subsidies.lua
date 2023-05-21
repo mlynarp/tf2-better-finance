@@ -2,7 +2,6 @@ require "tax_sub_helpfunctions"
 
 local journal
 local currentTime = 0
-local bookAmount =0
 local taxes= {}
 local level1Elements = {"Investments","Income"}
 local level2Elements = {Investments={"Vehicles","Infrastructure"},Income={"Income","Maintenance"}}
@@ -35,185 +34,9 @@ local tooltips = {
 		}
 }
 
-local callbacks = {}
-
 local state = {
-	taxIntStartTime=0,
-	taxIntNextTime = 0,
 	currentYear = 0,
-	tax_rates = {
-			road = {
-				label=_("Road"),
-				Income= {
-					maxVal= -0.25,
-					minVal= 0.05
-					},
-				Vehicles= -0.02,
-				Infrastructure = -0.02,	
-				vShow = true
-			},
-			rail = {
-				label=_("Railway"),
-				Income= {
-					maxVal= -0.45,
-					minVal= 0.20
-					},
-				Vehicles= -0.075,
-				Infrastructure = -0.075,
-				vShow = true
-			},
-			tram = {
-				label=_("Tram"),
-				Income= {
-					maxVal= -0.25,
-					minVal= 0.05
-					},
-				Vehicles= -0.02,
-				Infrastructure = -0.02,	
-				vShow = true
-			},
-			air = {
-				label=_("Air"),
-				Income= {
-					maxVal= -0.65,
-					minVal= -0.15
-					},
-				Vehicles= -0.15,
-				Infrastructure = -0.15,	
-				vShow = true
-			},
-			water = {
-				label=_("Water"),
-				Income= {
-					maxVal= -0.50,
-					minVal= 0.05
-					},
-				Vehicles= -0.1,
-				Infrastructure = -0.1,	
-				vShow = true
-			},
-		},
-	
-	fn = {},
-	updList =nil,
-	taxTabCreated = nil,
-	LastLinesRefreshMonth = 0
 }
--- ***************************
--- ** Taxes & Subsidies
--- ***************************
-
--- ~~~~~~~~~~~~~~~~
--- ~~ Data
--- ~~~~~~~~~~~~~~~~
-
-function data_init_customJournal()
-	local custJournal = {}
-	custJournal["header"]={labels={}}
-	custJournal["interest"]={}
-	for i=1,#config.vehicleCat do
-		
-		custJournal[config.vehicleCat[i]]={label = _(config.vehicleCat[i]),IDs={}}
-		for j=1,#config.taxes.Categories do
-			if config.taxes.Categories[j]=="Income" or config.taxes.Categories[j]=="Maintenance" then
-				custJournal[config.vehicleCat[i]][config.taxes.Categories[j]]={_sum={}}
-			else
-				custJournal[config.vehicleCat[i]][config.taxes.Categories[j]]={}
-			end
-		end
-		for t =1,#config.taxes.TaxCategories do
-			custJournal[config.vehicleCat[i]]["Taxes"][config.taxes.TaxCategories[t]]={}
-		end
-		custJournal[config.vehicleCat[i]]["Taxes"]["IDs"]={}
-	end
-	return custJournal
-end
-function data_calc_incomeTax(grossSales, main, rateTable,vc)
-	local taxAmount,grossProfitMargin,taxRate =0
-	local grossProfit = grossSales - math.abs(main)
-	local cy = state.currentYear
-	if grossSales >=1 then
-		grossProfitMargin = grossProfit/grossSales -- Get Ratio between grossSalesome-Maintenance and grossSalesome
-		
-		if grossProfitMargin >= 0.05 then
-			taxRate = rateTable.maxVal -- Taxes
-		elseif grossProfitMargin > -0.05 and grossProfitMargin < 0.05 then
-			taxRate = 0 -- No Taxes/Subsidues
-		elseif grossProfitMargin <= -0.05 then
-			taxRate = rateTable.minVal -- Subsidues
-		end
-		
-		if grossProfitMargin <0 and grossProfitMargin >-(2/3) then
-			taxRate = taxRate * (math.abs(grossProfitMargin)*2)
-		elseif grossProfitMargin > 0 and grossProfitMargin<=0.25 then
-			taxRate = taxRate * math.abs(grossProfitMargin)
-		elseif grossProfitMargin > 0.25 and grossProfitMargin<=0.50 then
-			taxRate = taxRate * math.abs(grossProfitMargin) *1.5
-		elseif grossProfitMargin > 0.5 and grossProfitMargin<=0.75 then
-			taxRate = taxRate * math.abs(grossProfitMargin) *1.75
-		elseif grossProfitMargin > 0.75 and grossProfitMargin<=0.9 then
-			taxRate = taxRate * math.abs(grossProfitMargin) *2.25
-		elseif grossProfitMargin <= -(2/3) then
-			taxRate = taxRate * (math.abs(grossProfitMargin)*2.5)
-		end
-
-	else
-		taxRate = 0
-	end
-	-- 2: Add Elements to the state.revenue_and_taxes table
-	taxAmount = grossSales * taxRate 
-	state.custom_journal[vc].Income["_sum"]["Year "..cy]=grossSales
-	state.custom_journal[vc].Maintenance["_sum"]["Year "..cy]=main
-	state.custom_journal[vc]["Taxes"].Income["Year "..cy]=taxAmount
-	if not state.custom_journal[vc].Income.GPMargin then state.custom_journal[vc].Income.GPMargin={} end
-	if not state.custom_journal[vc].Income.TaxRate then state.custom_journal[vc].Income.TaxRate={} end
-	state.custom_journal[vc].Income.GPMargin["Year "..cy]=grossProfitMargin
-	state.custom_journal[vc].Income.TaxRate["Year "..cy]=taxRate
-	
-	return taxAmount 
-end
-function data_refresh_pastYears()
-	if not state.custom_journal then return end
-	local currentTime = getClosestYearStart(api.engine.getComponent(0,16).gameTime/1000) -- returns 3 parameters: Time in seconds and Year (counted from the beginning of the Savegame), Month in current Year 
-	local vc 
-	for y=currentTime[2]-6, currentTime[2]-1 do
-		-- Check if in the cust Journal
-		local journal = game.interface.getPlayerJournal(1000*730.5*(y-1), 1000*((y*730.5)-0.001), false)
-		for i =1,#config.vehicleCat do
-			vc=config.vehicleCat[i]
-			state.custom_journal[vc]["Vehicles"]["Year "..y] = journal.acquisition[vc]
-			state.custom_journal[vc]["Infrastructure"]["Year "..y]=journal.construction[vc]._sum
-			state.custom_journal[vc]["Income"]["_sum"]["Year "..y]=journal.income[vc]
-			state.custom_journal[vc]["Maintenance"]["_sum"]["Year "..y]=journal.maintenance[vc]._sum
-		end
-		state.custom_journal.interest["Year "..y]=journal.interest
-		state.custom_journal.header.labels["Year "..y]=y
-	end
-	state.updList = 1
-end
-function data_shrink_log()
-	for y = 1,(state.currentYear-7) do
-		for i=1,#config.vehicleCat do
-			local vc=config.vehicleCat[i]
-			state.custom_journal[vc]["Income"]["_sum"]["Year " .. y]=nil
-			state.custom_journal[vc]["Maintenance"]["_sum"]["Year " .. y]=nil
-			state.custom_journal[vc]["Infrastructure"]["Year " .. y]=nil
-			state.custom_journal[vc]["Vehicles"]["Year " .. y]=nil
-			state.custom_journal[vc]["Taxes"]["Income"]["Year " .. y]=nil
-			state.custom_journal[vc]["Taxes"]["Infrastructure"]["Year " .. y]=nil
-			state.custom_journal[vc]["Taxes"]["Vehicles"]["Year " .. y]=nil		
-			if state.custom_journal[vc].Income.GPMargin then 
-				if state.custom_journal[vc].Income.GPMargin["Year "..y] then
-					state.custom_journal[vc].Income.GPMargin["Year "..y]=nil
-				end
-			end
-		end
-		state.custom_journal["header"]["labels"]["Year " .. y]=nil
-		state.custom_journal["interest"]["Year " .. y]=nil
-		state.custom_journal["TotalTax"]["Year " .. y]=nil
-		
-	end
-end
 
 -- ############
 -- ## User Interface 
@@ -226,7 +49,7 @@ function ui_refresh_taxDetails()
 		cy = cyTotal-((c-1)/2)
 		comp=api.gui.util.getById("TaxHeader"..c)
 		if comp and state.custom_journal.header.labels["Year "..cy] then 
-			comp:setText(_("Year").." "..state.custom_journal.header.labels["Year "..cy]) 
+			comp:setText(_("Year").." "..state.custom_journal.header.labels["Year "..cy]..sum) 
 		end
 	end
 	-- Values
@@ -398,6 +221,7 @@ function ui_tableConstructor_singleLine(taxTable,NoOfCols,texts,level)
 	row ={}
 
 end
+
 function ui_tableConstructor(taxTable,NoOfCols,cat,itemNo)
 	local icon_expand_path = "ui/design/components/slim_arrow_right@2x.tga"
 	local icon_collapse_path = "ui/design/components/slim_arrow_down@2x.tga"
@@ -560,84 +384,63 @@ function ui_tableConstructor(taxTable,NoOfCols,cat,itemNo)
 	end
 	l0_expButton:click()
 end
+
+function addTableHeader(financeTable, numberOfYears)
+	local row = {} 
+	
+	for i = 1, numberOfYears do
+		local lbl_element 	= api.gui.comp.Component.new("Subheader")
+		local lbl_layout 	= api.gui.layout.BoxLayout.new("HORIZONTAL")
+		local txt 			= api.gui.comp.TextView.new("")
+			
+		if i== 1 then
+			txt:setStyleClassList({"Subheader","tableElement","Subheader"})
+			lbl_element:setStyleClassList({"Subheader"})
+		elseif i == 9 then
+			txt:setText("Total")
+			txt:setStyleClassList({"Subheader","tableElement","subheader"})
+			lbl_element:setStyleClassList({"Subheader"})
+		else
+			txt:setText("Year")
+			txt:setStyleClassList({"Subheader","tableElement","subheader"})
+			lbl_element:setStyleClassList({"Subheader","Label"})
+		end
+		lbl_layout:addItem(txt)
+		lbl_element:setLayout(lbl_layout)
+		
+		table.insert(row,lbl_element)
+	end
+	
+	financeTable:addRow(row)
+end
+
 function initFinanceTable()
 	local NoOfCols = 9
 	local tblDetails = api.gui.comp.Table.new(NoOfCols,"NONE")
 	local icon_expand_path = "ui/design/components/slim_arrow_right@2x.tga"
 	local icon_collapse_path = "ui/design/components/slim_arrow_down@2x.tga"
+
+	addTableHeader(tblDetails, 9)
 	
 	local expandButton
 	local row ={} -- Local Variable holding all rows for the table
 	
-	--2.1: Create Header Row
-	
-	for i = 1, NoOfCols do
-		local lbl_element 	= api.gui.comp.Component.new("Header")
-		local lbl_layout 	= api.gui.layout.BoxLayout.new("HORIZONTAL")
-		local txt 			= api.gui.comp.TextView.new("")
-		txt:setId("TaxHeader"..math.abs(i-NoOfCols-1))
-		
-		if i ==1 then
-			txt:setStyleClassList({"Header","tableElement","Total","Label"})
-			lbl_element:setStyleClassList({"Header","Label"})
-		else
-			txt:setStyleClassList({"Header","tableElement"})
-			lbl_element:setStyleClassList({"Header","Label"})
-		end
-		lbl_layout:addItem(txt)
-		lbl_element:setLayout(lbl_layout)
-		
-		table.insert(row,lbl_element)
-	end
-	
-	--add Row to table & reset
-	tblDetails:addRow(row)
-	row ={}
-	
-	for i = 1, NoOfCols do
-		local lbl_element 	= api.gui.comp.Component.new("Subheader")
-		local lbl_layout 	= api.gui.layout.BoxLayout.new("HORIZONTAL")
-		local txt 			= api.gui.comp.TextView.new("")
-			
-		if i ==2 or i==4 or i==6 or i==8 then
-			txt:setText("Result")
-			txt:setStyleClassList({"Subheader","tableElement","subheader"})
-			lbl_element:setStyleClassList({"Subheader","Label"})
-		elseif i~= 1 then
-			txt:setText("Tax")
-			txt:setStyleClassList({"Subheader","tableElement","subheader"})
-			lbl_element:setStyleClassList({"Subheader"})
-		elseif i== 1 then
-			txt:setStyleClassList({"Subheader","tableElement","Subheader"})
-			lbl_element:setStyleClassList({"Subheader"})
-		end
-		lbl_layout:addItem(txt)
-		lbl_element:setLayout(lbl_layout)
-		
-		table.insert(row,lbl_element)
-	end
-	
-	--add Row to table & reset
-	tblDetails:addRow(row)
-	row ={}
 	-- Vehicle Rows
 	for j = 1, #config.vehicleCat do
 		local vc = config.vehicleCat[j]
-		ui_tableConstructor(tblDetails,NoOfCols,vc,j)
+		--ui_tableConstructor(tblDetails,NoOfCols,vc,j)
 	end
 	-- Summary Rows
-	ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"empty",""},"empty")
+	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"empty",""},"empty")
 	
-	ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxInterest","Interest"},"level1")
-	ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxPayedTaxes","Payed Taxes (for previous year)"},"level1")
-	ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxTotal","Total"},"level1")
-	ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxNetResult","Net Result"},"Total")
+	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxInterest","Interest"},"level1")
+	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxPayedTaxes","Payed Taxes (for previous year)"},"level1")
+	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxTotal","Total"},"level1")
+	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxNetResult","Net Result"},"Total")
 	
 	-- Tax Summary Details
 	
-	ui_refresh_taxDetails()
-	-- return state.custom_journal.cat.IDs & state.custom_journal.cat.vc.IDs to engine
-	callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("extendedStats.Main","StateUpdate","custom_journal",{custom_journal = state.custom_journal}))
+	--ui_refresh_taxDetails()
 	print("Created Details Table")
 	return tblDetails
 end
@@ -660,6 +463,13 @@ function initFinanceTab ()
 	myFinancesOverviewWindowLayout:addItem(myFinancesOverviewTable)
 	--financeTabWindow:addTabText(_("FinanceTabOverviewLabel"), myFinancesOverviewWindow)
 	financeTabWindow:insertTab(txt, myFinancesOverviewWindow, 0)
+
+	financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
+		if visible then
+			print("visibility changed")
+			--ui_refresh_taxDetails()
+		end
+	end)
 end
 
 -- ***************************
@@ -667,141 +477,8 @@ end
 -- ***************************
 function data()
 	return {
-		save = function ()
-			return state
-		end,
-
-		load = function (data)
-			local correctGameTime = getClosestYearStart(game.interface.getGameTime().time)
-			if data then
-				state.taxIntStartTime = correctGameTime[1]
-				state.taxIntNextTime  = (correctGameTime[1] + 2 * 365.25) -- Current Time + 1 ingame Year
-				state.currentYear 	  = correctGameTime[2]
-
-				state.tax_rates 	  = data.tax_rates or state.tax_rates
-				-- check if Journal exists
-				if not data.custom_journal then
-					state.custom_journal = data_init_customJournal()
-					data_refresh_pastYears()
-					callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","custom_journal",{custom_journal = state.custom_journal,fullInit=true}))
-					print("Created Custom Journal")
-				else
-					state.custom_journal  = data.custom_journal
-				end
-				state.updList 		  = data.updList
-				state.LastLinesRefreshMonth	  = data.LastLinesRefreshMonth or (correctGameTime[3]-1)					
-			else
-				state.taxIntStartTime 	= correctGameTime[1]
-				state.taxIntNextTime 	= (correctGameTime[1] + 2 * 365.25) -- Current Time + 1 ingame Year
-				state.currentYear		= correctGameTime[2]
-				state.updList			= nil
-				state.LastLinesRefreshMonth  = (correctGameTime[3]-1)
-
-				state.custom_journal = data_init_customJournal()
-				data_refresh_pastYears()
-
-				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","custom_journal",{custom_journal = state.custom_journal,fullInit=true}))
-				print("Created Custom Journal")
-			end
-		end,
-
-		guiUpdate = function ()
-			if callback then
-				for k,v in pairs(callback) do v() end
-				callback ={}
-			end
-			if state.updList == 1 then
-				ui_refresh_taxDetails()
-				state.updList = 0
-				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","UI_Refresh","TaxTable",{updList = 0}))
-			end
-			if state.taxTabCreated==nil then 
-				state.updList = 0
-				state.taxTabCreated = true
-				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","GuiObjects",{taxTabCreated = state.taxTabCreated, updList = state.updList}))
-			end
-
-		end,
 		guiInit = function ()
 			initFinanceTab()
-		end,
-		update = function ()
-
-			local currentYearStart = getClosestYearStart(game.interface.getGameTime().time) -- returns 3 parameters: Time in seconds and Year (counted from the beginning of the Savegame), Month in current Year 
-			local nextRefresh = getRefreshStart(game.interface.getGameTime().time)
-			if (nextRefresh == currentYearStart[4][1] or nextRefresh == currentYearStart[4][2] or nextRefresh == currentYearStart[4][3] or nextRefresh == currentYearStart[4][4] or nextRefresh == currentYearStart[4][5] or nextRefresh == currentYearStart[4][6]) and state.LastLinesRefreshMonth ~= nextRefresh then -- Update every second month
-				state.LastLinesRefreshMonth = nextRefresh
-
-				bookAmount = 0
-				-- get Journal for the past 365 ingame days
-				journal = game.interface.getPlayerJournal(1000*state.taxIntStartTime, 1000*(state.taxIntNextTime-0.001), false)
-
-				-- set new timeline today to today +365
-				state.taxIntStartTime = currentYearStart[1]
-				state.taxIntNextTime = (state.taxIntStartTime + 2 * 365.25)
-				state.custom_journal.header.labels["Year "..state.currentYear]=state.currentYear
-				local cy = state.currentYear
-
-				for i=1,#config.vehicleCat do
-					local vc=config.vehicleCat[i]
-					-- add income to custom_journal
-						bookAmount = bookAmount + data_calc_incomeTax(journal.income[vc],journal.maintenance[vc]._sum,state.tax_rates[vc].Income,vc)
-
-					-- Vehicle Acquisitions
-						local vehicleAcq = journal.acquisition[vc]
-						local vehicleTax = math.abs(vehicleAcq) * state.tax_rates[vc].Vehicles
-						-- book to custom_journal
-						state.custom_journal[vc]["Vehicles"]["Year "..cy]= vehicleAcq
-						state.custom_journal[vc]["Taxes"]["Vehicles"]["Year "..cy]=vehicleTax
-						-- add to total tax
-						bookAmount = bookAmount + vehicleTax
-					-- Infrastructure
-						local vehicleTypeInfrastructure = journal.construction[vc]._sum
-						local vehicleTypeInfrastructureTax = (math.abs(vehicleTypeInfrastructure) * state.tax_rates[vc].Infrastructure)
-						-- book to custom_journal
-						state.custom_journal[vc]["Infrastructure"]["Year "..cy]=vehicleTypeInfrastructure
-						state.custom_journal[vc]["Taxes"]["Infrastructure"]["Year "..cy]=vehicleTypeInfrastructureTax
-						-- add to total Tax
-						bookAmount = bookAmount + vehicleTypeInfrastructureTax
-
-				end
-				state.currentYear = currentYearStart[2] -- Update Year
-				state.custom_journal.interest["Year "..cy] = journal.interest
-				-- Book the Amount to the Journal. Current Category "other". 
-				if nextRefresh == currentYearStart[4][1] then
-					print("Year "..cy.. ": " .. bookAmount)
-					game.interface.book(bookAmount, false) 
-					if not state.custom_journal["TotalTax"] then state.custom_journal["TotalTax"] = {} end
-					state.custom_journal["TotalTax"]["Year " .. (cy+1)] = bookAmount
-					data_shrink_log()				
-				end
-				-- debugPrint(state)
-				state.updList =1
-			end
-
-		end,
-
-		handleEvent = function (src, id, name, param)
-			if src=="extendedStats.Main" and id=="StateUpdate" and name=="custom_journal" then
-				-- Construction
-				if param.fullInit then
-					state.custom_journal = param.custom_journal_gui
-				else
-					for i=1, #config.vehicleCat do
-						local cat = config.vehicleCat[i]
-						state.custom_journal[cat].IDs = param.custom_journal[cat].IDs
-						state.custom_journal[cat]["Taxes"].IDs=param.custom_journal[cat]["Taxes"].IDs
-					end
-				end
-			elseif src=="TaxesSubsidies" and id=="Mod_Initiation" and name=="custom_journal" then
-				state.custom_journal = param.custom_journal
-			elseif src =="TaxesSubsidies" and id =="UI_Refresh" and name=="TaxTable" then
-				state.updList = param.updList
-			end
-		end,
-
-		guiHandleEvent = function (id, name, param)
-
 		end,
 	}
 end
