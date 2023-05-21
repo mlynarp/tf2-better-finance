@@ -560,7 +560,7 @@ function ui_tableConstructor(taxTable,NoOfCols,cat,itemNo)
 	end
 	l0_expButton:click()
 end
-function ui_init_detailsTable()
+function initFinanceTable()
 	-- Initiate Custom_Journal if not exists
 	
 			
@@ -654,7 +654,7 @@ function initFinanceTab ()
 	myFinancesOverviewWindow:setLayout(myFinancesOverviewWindowLayout)
 	myFinancesOverviewWindow:setId("myFinancesOverviewWindow")
 
-	local myFinancesOverviewTable = ui_init_detailsTable()
+	local myFinancesOverviewTable = initFinanceTable()
 	myFinancesOverviewTable:setId("myFinancesOverviewTable")
 	taxTable = myFinancesOverviewTable
 
@@ -665,24 +665,23 @@ function initFinanceTab ()
 	--financeTabWindow:addTabText(_("FinanceTabOverviewLabel"), myFinancesOverviewWindow)
 	financeTabWindow:insertTab(txt, myFinancesOverviewWindow, 0)
 end
+
 -- ***************************
 -- ** Main
 -- ***************************
-
 function data()
 	return {
 		save = function ()
 			return state
 		end,
-	
+
 		load = function (data)
-			
 			local correctGameTime = getClosestYearStart(game.interface.getGameTime().time)
 			if data then
 				state.taxIntStartTime = correctGameTime[1]
 				state.taxIntNextTime  = (correctGameTime[1] + 2 * 365.25) -- Current Time + 1 ingame Year
 				state.currentYear 	  = correctGameTime[2]
-				
+
 				state.tax_rates 	  = data.tax_rates or state.tax_rates
 				-- check if Journal exists
 				if not data.custom_journal then
@@ -694,23 +693,22 @@ function data()
 					state.custom_journal  = data.custom_journal
 				end
 				state.updList 		  = data.updList
-				state.LastLinesRefreshMonth	  = data.LastLinesRefreshMonth or (correctGameTime[3]-1)
-							
+				state.LastLinesRefreshMonth	  = data.LastLinesRefreshMonth or (correctGameTime[3]-1)					
 			else
 				state.taxIntStartTime 	= correctGameTime[1]
 				state.taxIntNextTime 	= (correctGameTime[1] + 2 * 365.25) -- Current Time + 1 ingame Year
 				state.currentYear		= correctGameTime[2]
 				state.updList			= nil
 				state.LastLinesRefreshMonth  = (correctGameTime[3]-1)
-				
+
 				state.custom_journal = data_init_customJournal()
 				data_refresh_pastYears()
-				
+
 				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","custom_journal",{custom_journal = state.custom_journal,fullInit=true}))
 				print("Created Custom Journal")
 			end
 		end,
-	
+
 		guiUpdate = function ()
 			if callback then
 				for k,v in pairs(callback) do v() end
@@ -726,33 +724,33 @@ function data()
 				state.taxTabCreated = true
 				callbacks[#callbacks + 1] = api.cmd.sendCommand(api.cmd.make.sendScriptEvent("TaxesSubsidies","Mod_Initiation","GuiObjects",{taxTabCreated = state.taxTabCreated, updList = state.updList}))
 			end
-			
+
 		end,
 		guiInit = function ()
 			initFinanceTab()
 		end,
 		update = function ()
-			
+
 			local currentYearStart = getClosestYearStart(game.interface.getGameTime().time) -- returns 3 parameters: Time in seconds and Year (counted from the beginning of the Savegame), Month in current Year 
 			local nextRefresh = getRefreshStart(game.interface.getGameTime().time)
 			if (nextRefresh == currentYearStart[4][1] or nextRefresh == currentYearStart[4][2] or nextRefresh == currentYearStart[4][3] or nextRefresh == currentYearStart[4][4] or nextRefresh == currentYearStart[4][5] or nextRefresh == currentYearStart[4][6]) and state.LastLinesRefreshMonth ~= nextRefresh then -- Update every second month
 				state.LastLinesRefreshMonth = nextRefresh
-				
+
 				bookAmount = 0
 				-- get Journal for the past 365 ingame days
 				journal = game.interface.getPlayerJournal(1000*state.taxIntStartTime, 1000*(state.taxIntNextTime-0.001), false)
-				
+
 				-- set new timeline today to today +365
 				state.taxIntStartTime = currentYearStart[1]
 				state.taxIntNextTime = (state.taxIntStartTime + 2 * 365.25)
 				state.custom_journal.header.labels["Year "..state.currentYear]=state.currentYear
 				local cy = state.currentYear
-				
+
 				for i=1,#config.vehicleCat do
 					local vc=config.vehicleCat[i]
 					-- add income to custom_journal
 						bookAmount = bookAmount + data_calc_incomeTax(journal.income[vc],journal.maintenance[vc]._sum,state.tax_rates[vc].Income,vc)
-						
+
 					-- Vehicle Acquisitions
 						local vehicleAcq = journal.acquisition[vc]
 						local vehicleTax = math.abs(vehicleAcq) * state.tax_rates[vc].Vehicles
@@ -769,7 +767,7 @@ function data()
 						state.custom_journal[vc]["Taxes"]["Infrastructure"]["Year "..cy]=vehicleTypeInfrastructureTax
 						-- add to total Tax
 						bookAmount = bookAmount + vehicleTypeInfrastructureTax
-						
+
 				end
 				state.currentYear = currentYearStart[2] -- Update Year
 				state.custom_journal.interest["Year "..cy] = journal.interest
@@ -784,9 +782,9 @@ function data()
 				-- debugPrint(state)
 				state.updList =1
 			end
-		
+
 		end,
-	
+
 		handleEvent = function (src, id, name, param)
 			if src=="extendedStats.Main" and id=="StateUpdate" and name=="custom_journal" then
 				-- Construction
@@ -805,9 +803,9 @@ function data()
 				state.updList = param.updList
 			end
 		end,
-		
+
 		guiHandleEvent = function (id, name, param)
-			
+
 		end,
 	}
 end
