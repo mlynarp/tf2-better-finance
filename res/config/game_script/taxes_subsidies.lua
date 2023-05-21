@@ -385,6 +385,198 @@ function ui_tableConstructor(taxTable,NoOfCols,cat,itemNo)
 	l0_expButton:click()
 end
 
+function addLabelCellLevel0(taxTable, row, cat, itemNo)
+	local icon_expand_path = "ui/design/components/slim_arrow_right@2x.tga"
+	local icon_collapse_path = "ui/design/components/slim_arrow_down@2x.tga"
+	
+	
+	-- Button + Children Elements
+	local l0_expBut_image = api.gui.comp.ImageView.new(icon_collapse_path)
+	local l0ExpButton = api.gui.comp.Button.new(l0_expBut_image,false)
+	
+	--style
+	l0ExpButton:setStyleClassList({"level0","tableElement","Button","Tax"})
+	l0ExpButton:onClick(function() 
+				
+				local start= (itemNo - 1)*7 + 2 
+				local lastRowToHide = start + 5
+				local firstElement = taxTable:getItem(start,0)
+				local setToVisible = not firstElement:isVisible()
+				for c=0,8 do
+					for r = start,lastRowToHide  do
+						local element = taxTable:getItem(r,c)
+						element:setVisible(setToVisible,false)
+						if setToVisible then
+							l0_expBut_image:setImage(icon_collapse_path,false)
+							ui_hide_detailRows(taxTable,itemNo,cat)
+						else
+							l0_expBut_image:setImage(icon_expand_path,false)
+						end
+					end
+				end
+			end)
+		
+	local l0_component = api.gui.comp.Component.new(_(cat))
+	local l0_layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
+	local txt = api.gui.comp.TextView.new(_(cat))
+		-- Add Button to Component if Column 1
+	l0_layout:addItem(l0ExpButton)
+	txt:setStyleClassList({"level0","tableElement","Total","Tax"})
+	l0_component:setStyleClassList({"level0","Label","Tax"})
+	--txt:setId("Tax"..cat..math.abs(7))		
+		
+	l0_layout:setName("L0Layout")
+	l0_layout:addItem(txt)
+	l0_component:setLayout(l0_layout)
+	table.insert(row,l0_component)		
+end
+
+
+function addTableCategory(taxTable,NoOfCols,cat,itemNo)
+	local icon_expand_path = "ui/design/components/slim_arrow_right@2x.tga"
+	local icon_collapse_path = "ui/design/components/slim_arrow_down@2x.tga"
+	
+	
+	-- Button + Children Elements
+	local l0_expBut_image = api.gui.comp.ImageView.new(icon_collapse_path)
+	local l0ExpButton = api.gui.comp.Button.new(l0_expBut_image,false)
+	local row ={}
+	
+	--style
+	l0ExpButton:setId("L0Button"..cat)
+	l0ExpButton:setStyleClassList({"level0","tableElement","Button","Tax"})
+	l0ExpButton:onClick(function() 
+				
+				local start= (itemNo - 1)*7 + 2 
+				local lastRowToHide = start + 5
+				local firstElement = taxTable:getItem(start,0)
+				local setToVisible = not firstElement:isVisible()
+				for c=0,8 do
+					for r = start,lastRowToHide  do
+						local element = taxTable:getItem(r,c)
+						element:setVisible(setToVisible,false)
+						if setToVisible then
+							l0_expBut_image:setImage(icon_collapse_path,false)
+							ui_hide_detailRows(taxTable,itemNo,cat)
+						else
+							l0_expBut_image:setImage(icon_expand_path,false)
+						end
+					end
+				end
+			end)
+		
+	for i = 1, NoOfCols do
+		-- Add Button to Component if Column 1
+		if i==1 then
+			addLabelCellLevel0(taxTable, row, cat, itemNo)
+			
+		else
+			local l0_component = api.gui.comp.Component.new(cat)
+			local l0_layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
+			local txt = api.gui.comp.TextView.new(_(cat))
+			txt:setText("")
+			txt:setStyleClassList({"level0","tableElement","Tax"})
+			l0_component:setStyleClassList({"level0","Tax"})
+			txt:setId("Tax"..cat..math.abs(i-NoOfCols-1))		
+		
+			l0_layout:setName("L0Layout")
+			l0_layout:addItem(txt)
+			l0_component:setLayout(l0_layout)
+			table.insert(row,l0_component)		
+		end
+		
+	end
+	taxTable:addRow(row)
+	row ={}
+	-- add other Elements
+	for l1 = 1,#level1Elements do
+		local L_one_Element = level1Elements[l1]
+		for i = 1, NoOfCols do
+			local guiComp = api.gui.comp.Component.new(L_one_Element)
+			local guiLayout = api.gui.layout.BoxLayout.new("HORIZONTAL")
+			local guiText = api.gui.comp.TextView.new(_(L_one_Element))
+			
+			-- Add Button to Component if Column 1
+			if i==1 then
+				-- Expand Button 
+				
+				local guiExpBut_image = api.gui.comp.ImageView.new(icon_collapse_path)
+				local guiExpButton = api.gui.comp.Button.new(guiExpBut_image,false)
+				guiExpBut_image:setId("bt"..cat..l1)
+				guiExpButton:setName("expanded")
+				guiExpButton:setStyleClassList({"level1","tableElement","Button","Tax"})
+			
+				guiLayout:addItem(guiExpButton)
+				guiText:setStyleClassList({"level1","tableElement","Label","Tax"})
+				guiComp:setStyleClassList({"level1","Label","Tax"})
+				
+			
+			elseif i==2 or i==3 or i==6 or i==7 then
+				guiText:setText("")
+				guiText:setStyleClassList({"level1","tableElement","Tax","odd"})
+				guiComp:setStyleClassList({"level1","Tax","odd"})
+				
+			elseif i==4 or i==5 or i==8 or i==9 then
+				guiText:setText("")
+				guiText:setStyleClassList({"level1","tableElement","Tax","even"})
+				guiComp:setStyleClassList({"level1","Tax","even"})
+			end
+			guiText:setId("Tax"..cat..L_one_Element..math.abs(i-NoOfCols-1))		
+			
+			guiLayout:addItem(guiText)
+			guiComp:setLayout(guiLayout)
+			
+			-- Add Component to Row Element
+			table.insert(row,guiComp)		
+		end
+		taxTable:addRow(row)
+		row = {}
+		
+		for l2 =1, #level2Elements[L_one_Element] do
+			local L_two_Element  = level2Elements[L_one_Element][l2]
+			for i = 1, NoOfCols do
+				local guiComp = api.gui.comp.Component.new(L_two_Element)
+				local guiLayout = api.gui.layout.BoxLayout.new("HORIZONTAL")
+				local guiText = api.gui.comp.TextView.new(_(L_two_Element))
+				-- Add Button to Component if Column 1
+				if i==1 then
+					guiText:setStyleClassList({"level2","tableElement","Label","Tax"})
+					guiComp:setStyleClassList({"level2","Label","Tax"})
+					
+				elseif i==2 or i==3 or i==6 or i==7 then
+					guiText:setText("")
+					guiText:setStyleClassList({"level2","tableElement","Tax","odd"})
+					guiComp:setStyleClassList({"level2","Tax","odd"})
+					
+				elseif i==4 or i==5 or i==8 or i==9 then
+					guiText:setText("")
+					guiText:setStyleClassList({"level2","tableElement","Tax","even"})
+					guiComp:setStyleClassList({"level2","Tax","even"})
+				end
+				if i%2== 1 then
+					if L_one_Element=="Income" and L_two_Element=="Income" then
+						guiText:setTooltip("Gross Profit Margin")
+					elseif L_one_Element=="Income" and L_two_Element=="Maintenance" then
+						guiText:setTooltip("Taxrate")
+					end
+				end
+				
+				guiText:setId("Tax"..cat..L_one_Element..L_two_Element..math.abs(i-NoOfCols-1))		
+				
+				guiLayout:addItem(guiText)
+				guiComp:setLayout(guiLayout)
+				
+				-- Add Component to Row Element
+				table.insert(row,guiComp)		
+			end
+			taxTable:addRow(row)
+			row = {}
+			
+		end
+	end
+	l0ExpButton:click()
+end
+
 function addTableHeader(financeTable, numberOfYears)
 	local row = {} 
 	
@@ -417,6 +609,7 @@ function initFinanceTable()
 	for j = 1, #config.vehicleCat do
 		local vc = config.vehicleCat[j]
 		--ui_tableConstructor(tblDetails,NoOfCols,vc,j)
+		addTableCategory(financeTable,NoOfCols,vc,j)
 	end
 	-- Summary Rows
 	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"empty",""},"empty")
