@@ -400,7 +400,7 @@ function addTableHeader(financeTable, numberOfYears)
 		table.insert(row, textView)
 	end
 
-	textView = api.gui.comp.TextView.new("Total")
+	textView = api.gui.comp.TextView.new(_("Total"))
 	textView:setStyleClassList({"Subheader"})
 	table.insert(row, textView)
 	
