@@ -409,14 +409,9 @@ end
 
 function initFinanceTable()
 	local NoOfCols = 9
-	local tblDetails = api.gui.comp.Table.new(NoOfCols,"NONE")
-	local icon_expand_path = "ui/design/components/slim_arrow_right@2x.tga"
-	local icon_collapse_path = "ui/design/components/slim_arrow_down@2x.tga"
+	local financeTable = api.gui.comp.Table.new(NoOfCols,"NONE")
 
-	addTableHeader(tblDetails, 7)
-	
-	local expandButton
-	local row ={} -- Local Variable holding all rows for the table
+	addTableHeader(financeTable, 7)
 	
 	-- Vehicle Rows
 	for j = 1, #config.vehicleCat do
@@ -435,7 +430,7 @@ function initFinanceTable()
 	
 	--ui_refresh_taxDetails()
 	print("Created Details Table")
-	return tblDetails
+	return financeTable
 end
 
 function initFinanceTab ()
