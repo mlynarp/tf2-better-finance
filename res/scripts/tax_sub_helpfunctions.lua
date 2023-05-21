@@ -86,14 +86,9 @@ function getYearStart_End(Year)
 	end
 end
 function getCurrentGameYear()
-	return getClosestYearStart(api.engine.getComponent(0,16).gameTime/1000)[2]
+	return game.interface.getGameTime().date.year
 end
-function getCurrentGameMonth()
-	return getClosestYearStart(api.engine.getComponent(0,16).gameTime/1000)[3]
-end
-function getYearForTimeMils(timeInMils)
-	return getClosestYearStart(timeInMils/1000)[2]
-end
+
 function getRefreshStart(time)
 	local importantTime = getClosestYearStart(time)
 	local returnValue = nil

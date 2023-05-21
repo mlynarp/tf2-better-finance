@@ -388,28 +388,21 @@ end
 function addTableHeader(financeTable, numberOfYears)
 	local row = {} 
 	
+	local textView = api.gui.comp.TextView.new("")
+	textView:setStyleClassList({"Subheader"})
+	table.insert(row, textView)
+	
+	local gameYear = getCurrentGameYear()
 	for i = 1, numberOfYears do
-		local lbl_element 	= api.gui.comp.Component.new("Subheader")
-		local lbl_layout 	= api.gui.layout.BoxLayout.new("HORIZONTAL")
-		local txt 			= api.gui.comp.TextView.new("")
-			
-		if i== 1 then
-			txt:setStyleClassList({"Subheader","tableElement","Subheader"})
-			lbl_element:setStyleClassList({"Subheader"})
-		elseif i == 9 then
-			txt:setText("Total")
-			txt:setStyleClassList({"Subheader","tableElement","subheader"})
-			lbl_element:setStyleClassList({"Subheader"})
-		else
-			txt:setText("Year")
-			txt:setStyleClassList({"Subheader","tableElement","subheader"})
-			lbl_element:setStyleClassList({"Subheader","Label"})
-		end
-		lbl_layout:addItem(txt)
-		lbl_element:setLayout(lbl_layout)
-		
-		table.insert(row,lbl_element)
+		textView = api.gui.comp.TextView.new(tostring(gameYear - numberOfYears + i))
+		textView:setStyleClassList({"Subheader"})
+		textView:setId("Year"..i)
+		table.insert(row, textView)
 	end
+
+	textView = api.gui.comp.TextView.new("Total")
+	textView:setStyleClassList({"Subheader"})
+	table.insert(row, textView)
 	
 	financeTable:addRow(row)
 end
@@ -420,7 +413,7 @@ function initFinanceTable()
 	local icon_expand_path = "ui/design/components/slim_arrow_right@2x.tga"
 	local icon_collapse_path = "ui/design/components/slim_arrow_down@2x.tga"
 
-	addTableHeader(tblDetails, 9)
+	addTableHeader(tblDetails, 7)
 	
 	local expandButton
 	local row ={} -- Local Variable holding all rows for the table
