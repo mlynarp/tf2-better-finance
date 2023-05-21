@@ -434,7 +434,7 @@ function ui_tableConstructor(taxTable,NoOfCols,cat,itemNo)
 	for i = 1, NoOfCols do
 		local l0_component = api.gui.comp.Component.new(state.custom_journal[cat].label)
 		local l0_layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-		local txt = api.gui.comp.TextView.new(_(state.custom_journal[cat].label))
+		local txt = api.gui.comp.TextView.new(_(cat))
 		-- Add Button to Component if Column 1
 		if i==1 then
 			l0_layout:addItem(l0_expButton)
