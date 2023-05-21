@@ -561,10 +561,6 @@ function ui_tableConstructor(taxTable,NoOfCols,cat,itemNo)
 	l0_expButton:click()
 end
 function initFinanceTable()
-	-- Initiate Custom_Journal if not exists
-	
-			
-	--1: Variable declaration / initalization
 	local NoOfCols = 9
 	local tblDetails = api.gui.comp.Table.new(NoOfCols,"NONE")
 	local icon_expand_path = "ui/design/components/slim_arrow_right@2x.tga"

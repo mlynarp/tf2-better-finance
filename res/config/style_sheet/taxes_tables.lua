@@ -170,42 +170,5 @@ function data()
 			textAlignment={1,0.5}
 		
 		})
-		
-	
-	-- Settings Table
-	-- [Level 0]
-		-- [Label]
-		a("!Setting!Label!tableElement!level0",{
-			backgroundColor = ssu.makeColor(255, 255, 255, 25),
-			textAlignment={0.0,0.5},
-			padding={0,0,0,15},
-			
-		})
-		a("!Setting!tableElement!level0",{
-			backgroundColor = ssu.makeColor(255, 255, 255, 25),
-			textAlignment={0,0.5},		
-			
-		})
-	-- [Level 1]
-		-- [Label]
-		a("!table-item!Setting!Label!level1",{
-			backgroundColor = ssu.makeColor(255, 255, 255, 10),
-			textAlignment={0.0,0.5},
-			padding={0,0,0,25},
-		})
-		a("!table-item!Setting!Slider!level1",{
-			backgroundColor = ssu.makeColor(255, 255, 255, 10),
-			textAlignment={0.0,0.5},
-			
-		})
-		a("!SliderClass",{
-			size={120,-1}
-			
-		})
-	-- SettingsButton
-		a("!SettingsButton",{
-			backgroundColor = ssu.makeColor(150,150,150,150)
-		})
-	
 	return result
 end
