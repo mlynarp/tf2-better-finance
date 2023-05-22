@@ -27,6 +27,20 @@ function data()
 		gravity = {-1.0 ,-1.0},
 	})
 
+	a("!sLevel2",
+	{
+		backgroundColor = ssu.makeColor(255, 255, 255, 10),
+		size={-1, rowHeight},
+		gravity = {-1.0 ,-1.0},
+	})
+
+	a("!sLevel3",
+	{
+		backgroundColor = ssu.makeColor(255, 255, 255, 0),
+		size={-1, rowHeight},
+		gravity = {-1.0 ,-1.0},
+	})
+
 	a("!sLeft",
 	{
 		textAlignment = {0, 1.0}
