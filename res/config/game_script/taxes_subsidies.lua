@@ -3,12 +3,12 @@ require "tax_sub_helpfunctions"
 local journal
 local currentTime = 0
 local taxes= {}
-local level1Elements = {"Investments","Income"}
-local level2Elements = {Investments={"Vehicles","Infrastructure"},Income={"Income","Maintenance"}}
+local level1Elements = {"Income", "Maintenance", "Profit", "Investments"}
+local level2Elements = {Income={}, Maintenance={"Vehicles","Infrastructure"}, Profit={}, Investments={"Construction", "Acquisiton"}}
 local taxTable
 
 local config = {
-	vehicleCat ={"rail","road","tram","air","water"},
+	vehicleCat ={"road", "tram", "rail", "water", "air"},
 	taxes ={
 		Categories= {"Income","Maintenance","Vehicles","Infrastructure","Taxes"},
 		TaxCategories= {"Income","Vehicles","Infrastructure"},
@@ -297,7 +297,7 @@ function ui_tableConstructor(taxTable,NoOfCols,cat,itemNo)
 				local guiExpButton = api.gui.comp.Button.new(guiExpBut_image,false)
 				guiExpBut_image:setId("bt"..cat..l1)
 				guiExpButton:setName("expanded")
-				guiExpButton:setStyleClassList({"level1","tableElement","Button","Tax"})
+				guiExpButton:setStyleClassList({"Level1","Button"})
 				guiExpButton:onClick(function() 
 					local start= (itemNo - 1)*7 + 3 + (l1-1)*3 +1
 					local lastRowToHide = start + 1
@@ -395,7 +395,7 @@ function addLabelCellLevel0(taxTable, row, cat, itemNo)
 	local l0ExpButton = api.gui.comp.Button.new(l0_expBut_image,false)
 	
 	--style
-	l0ExpButton:setStyleClassList({"level0","tableElement","Button","Tax"})
+	l0ExpButton:setStyleClassList({"sLevel0","sButton"})
 	l0ExpButton:onClick(function() 
 				
 				local start= (itemNo - 1)*7 + 2 
@@ -421,9 +421,9 @@ function addLabelCellLevel0(taxTable, row, cat, itemNo)
 	local txt = api.gui.comp.TextView.new(_(cat))
 		-- Add Button to Component if Column 1
 	l0_layout:addItem(l0ExpButton)
-	txt:setStyleClassList({"level0","tableElement","Total","Tax"})
-	l0_component:setStyleClassList({"level0","Label","Tax"})
-	--txt:setId("Tax"..cat..math.abs(7))		
+	txt:setStyleClassList({"sLevel0", "sLeft"})
+	l0_component:setStyleClassList({"sLevel0"})
+	--txt:setId("Tax"..cat)		
 		
 	l0_layout:setName("L0Layout")
 	l0_layout:addItem(txt)
@@ -443,8 +443,8 @@ function addTableCategory(taxTable,NoOfCols,cat,itemNo)
 	local row ={}
 	
 	--style
-	l0ExpButton:setId("L0Button"..cat)
-	l0ExpButton:setStyleClassList({"level0","tableElement","Button","Tax"})
+	l0ExpButton:setId("button"..cat)
+	l0ExpButton:setStyleClassList({"sLevel0", "sButton"})
 	l0ExpButton:onClick(function() 
 				
 				local start= (itemNo - 1)*7 + 2 
@@ -474,9 +474,9 @@ function addTableCategory(taxTable,NoOfCols,cat,itemNo)
 			local l0_component = api.gui.comp.Component.new(cat)
 			local l0_layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
 			local txt = api.gui.comp.TextView.new(_(cat))
-			txt:setText("")
-			txt:setStyleClassList({"level0","tableElement","Tax"})
-			l0_component:setStyleClassList({"level0","Tax"})
+			txt:setText("0")
+			txt:setStyleClassList({"sLevel0", "sRight"})
+			l0_component:setStyleClassList({"sLevel0"})
 			txt:setId("Tax"..cat..math.abs(i-NoOfCols-1))		
 		
 			l0_layout:setName("L0Layout")
@@ -489,7 +489,7 @@ function addTableCategory(taxTable,NoOfCols,cat,itemNo)
 	taxTable:addRow(row)
 	row ={}
 	-- add other Elements
-	for l1 = 1,#level1Elements do
+	for l1 = 1, #level1Elements do
 		local L_one_Element = level1Elements[l1]
 		for i = 1, NoOfCols do
 			local guiComp = api.gui.comp.Component.new(L_one_Element)
@@ -503,26 +503,22 @@ function addTableCategory(taxTable,NoOfCols,cat,itemNo)
 				local guiExpBut_image = api.gui.comp.ImageView.new(icon_collapse_path)
 				local guiExpButton = api.gui.comp.Button.new(guiExpBut_image,false)
 				guiExpBut_image:setId("bt"..cat..l1)
-				guiExpButton:setName("expanded")
-				guiExpButton:setStyleClassList({"level1","tableElement","Button","Tax"})
+				guiExpButton:setStyleClassList({"sLevel1","sButton"})
 			
 				guiLayout:addItem(guiExpButton)
-				guiText:setStyleClassList({"level1","tableElement","Label","Tax"})
-				guiComp:setStyleClassList({"level1","Label","Tax"})
+				guiText:setStyleClassList({"sLevel1", "sRight"})
+				guiComp:setStyleClassList({"sLevel1"})
 				
 			
-			elseif i==2 or i==3 or i==6 or i==7 then
-				guiText:setText("")
-				guiText:setStyleClassList({"level1","tableElement","Tax","odd"})
-				guiComp:setStyleClassList({"level1","Tax","odd"})
-				
-			elseif i==4 or i==5 or i==8 or i==9 then
-				guiText:setText("")
-				guiText:setStyleClassList({"level1","tableElement","Tax","even"})
-				guiComp:setStyleClassList({"level1","Tax","even"})
+			else
+				guiText:setText("0")
+				guiText:setStyleClassList({"sLevel1", "sRight"})
+				guiComp:setStyleClassList({"sLevel1"})
+				guiText:setId("Tax"..cat..L_one_Element..math.abs(i-NoOfCols-1))		
 			end
-			guiText:setId("Tax"..cat..L_one_Element..math.abs(i-NoOfCols-1))		
 			
+			
+			guiLayout:setName("L1Layout")
 			guiLayout:addItem(guiText)
 			guiComp:setLayout(guiLayout)
 			
@@ -581,19 +577,19 @@ function addTableHeader(financeTable, numberOfYears)
 	local row = {} 
 	
 	local textView = api.gui.comp.TextView.new("")
-	textView:setStyleClassList({"Header"})
+	textView:setStyleClassList({"sHeader", "sRight"})
 	table.insert(row, textView)
 	
 	local gameYear = getCurrentGameYear()
 	for i = 1, numberOfYears do
 		textView = api.gui.comp.TextView.new(tostring(gameYear - numberOfYears + i))
-		textView:setStyleClassList({"Header"})
+		textView:setStyleClassList({"sHeader", "sRight"})
 		textView:setId("Year"..i)
 		table.insert(row, textView)
 	end
 
 	textView = api.gui.comp.TextView.new(_("Total"))
-	textView:setStyleClassList({"Header"})
+	textView:setStyleClassList({"sHeader", "sRight"})
 	table.insert(row, textView)
 	
 	financeTable:addRow(row)
@@ -633,7 +629,6 @@ function initFinanceTab ()
 	local myFinancesOverviewWindow = api.gui.comp.Component.new("myFinancesOverviewWindow")
 	myFinancesOverviewWindow:setLayout(myFinancesOverviewWindowLayout)
 	myFinancesOverviewWindow:setId("myFinancesOverviewWindow")
-
 	local myFinancesOverviewTable = initFinanceTable()
 	myFinancesOverviewTable:setId("myFinancesOverviewTable")
 	taxTable = myFinancesOverviewTable

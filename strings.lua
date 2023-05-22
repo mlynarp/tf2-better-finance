@@ -32,6 +32,8 @@ function data()
 			["#Tooltip.Details.Taxes.Infrastructure"]=("Taxes on new constructions"),
 			["Income"]=("Příjem"),
 			["Maintenance"]=("Údržba"),
+			["Profit"]=("Provozní zisk"),
+			["Investments"]=("Investice"),
 			["Infrastructure"]=("Infrastruktura"),
 			["Vehicles"] = ("Vozidla"),
 			["rail"] = ("Železniční doprava"),
