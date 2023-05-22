@@ -1,7 +1,6 @@
 function data()
 	return {
 		en = {
-			["#TaxesDescription"]=("This Tab displays an alternate Journal displaying figures per vehicle category and grouped by Investment related and Income related numbers.\nFirst Column displays the actual result, second column displays the taxes that will be charged.\nTaxes will be payed on the first day of the next year.\nClick on Settings to adjust the parameters of this mod."),
 			["#Tooltip.Details.Income"] = ("Your Income"),
 			["#Tooltip.Details.Maintenance"] = ("Total Maintenance incl. buildings and vehicles"),
 			["#Tooltip.Details.Vehicles"] = ("Acquisition of new vehicles"),
@@ -22,7 +21,6 @@ function data()
 			["Total"] = ("Total"),
 		},
 		cs_CZ = {
-			["#TaxesDescription"]=("This Tab displays an alternate Journal displaying figures per vehicle category and grouped by Investment related and Income related numbers.\nFirst Column displays the actual result, second column displays the taxes that will be charged.\nTaxes will be payed on the first day of the next year.\nClick on Settings to adjust the parameters of this mod."),
 			["#Tooltip.Details.Income"] = ("Your Income"),
 			["#Tooltip.Details.Maintenance"] = ("Total Maintenance incl. buildings and vehicles"),
 			["#Tooltip.Details.Vehicles"] = ("Acquisition of new vehicles"),
@@ -30,18 +28,19 @@ function data()
 			["#Tooltip.Details.Taxes.Income"] = ("Taxes or Subsidies on Income"),
 			["#Tooltip.Details.Taxes.Vehicles"] = ("Taxes on Vehicle acquisitions"),
 			["#Tooltip.Details.Taxes.Infrastructure"]=("Taxes on new constructions"),
+			["FinanceTabOverviewLabel"] = ("Finance - Přehled"),
+			["rail"] = ("Železniční doprava"),
+			["road"] = ("Silniční doprava"),
+			["tram"] = ("Tramvajová doprava"),
+			["air"] = ("Letecká doprava"),
+			["water"] = ("Lodní doprava"),
 			["Income"]=("Příjem"),
 			["Maintenance"]=("Údržba"),
 			["Profit"]=("Provozní zisk"),
 			["Investments"]=("Investice"),
 			["Infrastructure"]=("Infrastruktura"),
 			["Vehicles"] = ("Vozidla"),
-			["rail"] = ("Železniční doprava"),
-			["road"] = ("Silniční doprava"),
-			["tram"] = ("Tramvajová doprava"),
-			["air"] = ("Letecká doprava"),
-			["water"] = ("Lodní doprava"),
-			["FinanceTabOverviewLabel"] = ("Finance - Přehled"),
+			["Acquisiton"] = ("Nákup vozidel"),
 			["Total"] = ("Celkem"),
 		}
 	}

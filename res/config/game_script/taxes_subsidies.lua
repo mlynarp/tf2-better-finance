@@ -2,7 +2,7 @@ require "tax_sub_helpfunctions"
 
 local currentTime = 0
 local level1Elements = {"Income", "Maintenance", "Profit", "Investments"}
-local level2Elements = {Income={}, Maintenance={"Vehicles", "Infrastructure"}, Profit={}, Investments={"Construction", "Acquisiton"}}
+local level2Elements = {Income={}, Maintenance={"Vehicles", "Infrastructure"}, Profit={}, Investments={"Acquisiton", "Construction"}}
 local level3Elements = {Vehicles={}, Infrastructure={}, Construction={"Stations", "Depots", "Track"}, Acquisiton={}}
 local taxTable
 local numberOfYearColumns = 5
@@ -247,9 +247,9 @@ function createExpandButton(sLevel, financeTable)
 	return button
 end
 
-function createTextView(text, sLevel, sSide, id)
+function createTextView(text, sLevel, sOtherStyle, id)
 	local textView = api.gui.comp.TextView.new(text)
-	textView:setStyleClassList({sLevel, sSide})
+	textView:setStyleClassList({sLevel, sOtherStyle})
 	textView:setId(id)
 	return textView
 end
@@ -266,27 +266,15 @@ function layoutComponentsHorizontal(components, sLevel)
 	return component
 end
 
-function addLineWithExpandButton(financeTable, cat, sLevel, label)
+function addTableLine(financeTable, cat, sLevel, label, button)
 	local row = {}
-	local button = createExpandButton(sLevel, financeTable)
 	local textView = createTextView(label, sLevel, "sLeft", "")
-	table.insert(row, layoutComponentsHorizontal({button, textView}, sLevel))
-
-	for i = 1, numberOfYearColumns do
-		textView = createTextView("0", sLevel, "sRight", label..cat..i)
+	if button then
+		table.insert(row, layoutComponentsHorizontal({button, textView}, sLevel))	
+	else
 		table.insert(row, layoutComponentsHorizontal({textView}, sLevel))
+		textView:addStyleClass("sLevelPadding")
 	end
-
-	textView = createTextView("0", sLevel, "sRight", label..cat.."total")
-	table.insert(row, layoutComponentsHorizontal({textView}, sLevel))
-
-	financeTable:addRow(row)
-end
-
-function addLine(financeTable, cat, sLevel, label)
-	local row = {}
-	local textView = createTextView(label, sLevel, "sRight", "")
-	table.insert(row, layoutComponentsHorizontal({textView}, sLevel))
 
 	for i = 1, numberOfYearColumns do
 		textView = createTextView("0", sLevel, "sRight", label..cat..i)
@@ -301,26 +289,26 @@ end
 
 function addTableCategory(financeTable,cat)
 	-- level 0
-	addLineWithExpandButton(financeTable, cat, "sLevel0", _(cat))
+	addTableLine(financeTable, cat, "sLevel0", _(cat), createExpandButton("sLevel0", financeTable))
 
 	-- level 1
 	for i = 1, #level1Elements do
 		local l1Element = level1Elements[i]
 		if ( #level2Elements[l1Element] == 0) then
-			addLine(financeTable, cat, "sLevel1", _(l1Element))
+			addTableLine(financeTable, cat, "sLevel1", _(l1Element), nil)
 		else
-			addLineWithExpandButton(financeTable, cat, "sLevel1", _(l1Element))
+			addTableLine(financeTable, cat, "sLevel1", _(l1Element), createExpandButton("sLevel1", financeTable))
 			-- level 2
 			for j = 1, #level2Elements[l1Element] do
 				local l2Element = level2Elements[l1Element][j]
 				if ( #level3Elements[l2Element] == 0) then
-					addLine(financeTable, cat, "sLevel2", _(l2Element))
+					addTableLine(financeTable, cat, "sLevel2", _(l2Element), nil)
 				else
-					addLineWithExpandButton(financeTable, cat, "sLevel2", _(l2Element))
+					addTableLine(financeTable, cat, "sLevel2", _(l2Element), createExpandButton("sLevel2", financeTable))
 					-- level 3
 					for k = 1, #level3Elements[l2Element] do
 						local l3Element = level3Elements[l2Element][k]
-						addLine(financeTable, cat, "sLevel3", _(l3Element))
+						addTableLine(financeTable, cat, "sLevel3", _(l3Element), nil)
 					end
 				end
 			end
