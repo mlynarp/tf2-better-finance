@@ -6,15 +6,9 @@ function data()
 	local result = { }
 	local a = ssu.makeAdder(result)
 	
-	a("!Header,!Header!tableElement!Total!Label", {
-		color = ssu.makeColor(240,240,240,200),
-		backgroundColor = ssu.makeColor(255, 255, 255,50),
-		gravity = {-1.0 ,-1.0},
-		textAlignment = {1.0, .5}
-	})
-	a("!Subheader", {
+	a("!Header", {
 		color = ssu.makeColor(220,220,220,200),
-		backgroundColor = ssu.makeColor(255, 255, 255,35),
+		backgroundColor = ssu.makeColor(255, 255, 255,50),
 		gravity = {-1.0 ,-1.0},
 		textAlignment = {1.0, .5}
 	})

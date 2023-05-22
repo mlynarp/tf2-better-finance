@@ -1,6 +1,6 @@
 function data()
 	return {
-		en ={
+		en = {
 			["#TaxesDescription"]=("This Tab displays an alternate Journal displaying figures per vehicle category and grouped by Investment related and Income related numbers.\nFirst Column displays the actual result, second column displays the taxes that will be charged.\nTaxes will be payed on the first day of the next year.\nClick on Settings to adjust the parameters of this mod."),
 			["#Tooltip.Details.Income"] = ("Your Income"),
 			["#Tooltip.Details.Maintenance"] = ("Total Maintenance incl. buildings and vehicles"),

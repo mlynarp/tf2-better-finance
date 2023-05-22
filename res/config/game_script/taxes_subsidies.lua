@@ -581,19 +581,19 @@ function addTableHeader(financeTable, numberOfYears)
 	local row = {} 
 	
 	local textView = api.gui.comp.TextView.new("")
-	textView:setStyleClassList({"Subheader"})
+	textView:setStyleClassList({"Header"})
 	table.insert(row, textView)
 	
 	local gameYear = getCurrentGameYear()
 	for i = 1, numberOfYears do
 		textView = api.gui.comp.TextView.new(tostring(gameYear - numberOfYears + i))
-		textView:setStyleClassList({"Subheader"})
+		textView:setStyleClassList({"Header"})
 		textView:setId("Year"..i)
 		table.insert(row, textView)
 	end
 
 	textView = api.gui.comp.TextView.new(_("Total"))
-	textView:setStyleClassList({"Subheader"})
+	textView:setStyleClassList({"Header"})
 	table.insert(row, textView)
 	
 	financeTable:addRow(row)
