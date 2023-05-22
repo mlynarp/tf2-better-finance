@@ -88,22 +88,3 @@ end
 function getCurrentGameYear()
 	return game.interface.getGameTime().date.year
 end
-
-function getRefreshStart(time)
-	local importantTime = getClosestYearStart(time)
-	local returnValue = nil
-	if time >= importantTime[4][1] and time < importantTime[4][2] then
-		returnValue =importantTime[4][1]
-	elseif time >= importantTime[4][2] and time < importantTime[4][3] then
-		returnValue =importantTime[4][2]
-	elseif time >= importantTime[4][3] and time < importantTime[4][4] then
-		returnValue =importantTime[4][3]
-	elseif time >= importantTime[4][4] and time < importantTime[4][5] then
-		returnValue =importantTime[4][4]
-	elseif time >= importantTime[4][5] and time < importantTime[4][6] then
-		returnValue =importantTime[4][5]
-	else
-		returnValue =importantTime[4][6]
-	end
-	return returnValue
-end
