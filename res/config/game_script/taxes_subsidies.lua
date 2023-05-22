@@ -391,6 +391,25 @@ function createExpandButton(sLevel, financeTable)
 	local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
 	local button = api.gui.comp.Button.new(imageView, false)
 	button:setStyleClassList({sLevel,"sButton"})
+	button:onClick(function() 
+				
+		local start= (itemNo - 1)*7 + 2 
+		local lastRowToHide = start + 5
+		local firstElement = taxTable:getItem(start,0)
+		local setToVisible = not firstElement:isVisible()
+		for c=0, financeTable:getNumCols() - 1 do
+			for r = start,lastRowToHide  do
+				local element = taxTable:getItem(r,c)
+				element:setVisible(setToVisible,false)
+				if setToVisible then
+					l0_expBut_image:setImage(icon_collapse_path,false)
+					ui_hide_detailRows(taxTable,itemNo,cat)
+				else
+					l0_expBut_image:setImage(icon_expand_path,false)
+				end
+			end
+		end
+	end)
 	return button
 end
 
@@ -416,7 +435,7 @@ end
 function addLineWithExpandButton(financeTable, cat, sLevel, label, years)
 	local row = {}
 	local button = createExpandButton(sLevel, financeTable)
-	local textView = createTextView(_(cat), sLevel, "sLeft", "")
+	local textView = createTextView(label, sLevel, "sLeft", "")
 	table.insert(row, layoutComponentsHorizontal({button, textView}, sLevel))
 
 	for i = 1, years do
@@ -430,50 +449,34 @@ function addLineWithExpandButton(financeTable, cat, sLevel, label, years)
 	financeTable:addRow(row)
 end
 
-function addTableCategory(taxTable,NoOfCols,cat,itemNo)
-	local row ={}
-		
-	addLineWithExpandButton(taxTable, cat, "sLevel0", _(cat), 7)
-	
-	-- add other Elements
-	for l1 = 1, #level1Elements do
-		local L_one_Element = level1Elements[l1]
-		for i = 1, NoOfCols do
-			local guiComp = api.gui.comp.Component.new(L_one_Element)
-			local guiLayout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-			local guiText = api.gui.comp.TextView.new(_(L_one_Element))
-			
-			-- Add Button to Component if Column 1
-			if i==1 then
-				-- Expand Button 
-				
-				--local guiExpBut_image = api.gui.comp.ImageView.new(icon_collapse_path)
-				--local guiExpButton = api.gui.comp.Button.new(guiExpBut_image,false)
-				--guiExpBut_image:setId("bt"..cat..l1)
-				--guiExpButton:setStyleClassList({"sLevel1","sButton"})
-			
-				--guiLayout:addItem(guiExpButton)
-				guiText:setStyleClassList({"sLevel1", "sRight"})
-				guiComp:setStyleClassList({"sLevel1"})
-				
-			
-			else
-				guiText:setText("0")
-				guiText:setStyleClassList({"sLevel1", "sRight"})
-				guiComp:setStyleClassList({"sLevel1"})
-				guiText:setId("Tax"..cat..L_one_Element..math.abs(i-NoOfCols-1))		
-			end
-			
-			
-			guiLayout:setName("L1Layout")
-			guiLayout:addItem(guiText)
-			guiComp:setLayout(guiLayout)
-			
-			-- Add Component to Row Element
-			table.insert(row,guiComp)		
+function addLine(financeTable, cat, sLevel, label, years)
+	local row = {}
+	local textView = createTextView(label, sLevel, "sRight", "")
+	table.insert(row, layoutComponentsHorizontal({textView}, sLevel))
+
+	for i = 1, years do
+		textView = createTextView("0", sLevel, "sRight", label..cat..i)
+		table.insert(row, layoutComponentsHorizontal({textView}, sLevel))
+	end
+
+	textView = createTextView("0", sLevel, "sRight", label..cat.."total")
+	table.insert(row, layoutComponentsHorizontal({textView}, sLevel))
+
+	financeTable:addRow(row)
+end
+
+function addTableCategory(financeTable,NoOfCols,cat,itemNo)
+	-- level 0
+	addLineWithExpandButton(financeTable, cat, "sLevel0", _(cat), 7)
+
+	-- level 1
+	for i = 1, #level1Elements do
+		local l1Element = level1Elements[i]
+		if ( #level2Elements[l1Element] == 0) then
+			addLine(financeTable, cat, "sLevel1", _(l1Element), 7)
+		else
+			addLineWithExpandButton(financeTable, cat, "sLevel1", _(l1Element), 7)
 		end
-		taxTable:addRow(row)
-		row = {}
 	end
 	--l0ExpButton:click()
 end
