@@ -1,8 +1,8 @@
 require "tax_sub_helpfunctions"
 
 local currentTime = 0
-local level1Elements = {"Income", "Maintenance", "Profit", "Investments"}
-local level2Elements = {Income={}, Maintenance={"Vehicles", "Infrastructure"}, Profit={}, Investments={"Acquisiton", "Construction"}}
+local level1Elements = {"Income", "Maintenance", "Investments"}
+local level2Elements = {Income={}, Maintenance={"Vehicles", "Infrastructure"}, Investments={"Acquisiton", "Construction"}}
 local level3Elements = {Vehicles={}, Infrastructure={}, Construction={"Stations", "Depots", "Track"}, Acquisiton={}}
 local taxTable
 local numberOfYearColumns = 5
@@ -314,6 +314,9 @@ function addTableCategory(financeTable,cat)
 			end
 		end
 	end
+
+	addTableLine(financeTable, cat, "sLevel0", _("Cashflow"), nil)
+	addTableLine(financeTable, cat, "sLevel0", _("Total"), nil)
 	--l0ExpButton:click()
 end
 
