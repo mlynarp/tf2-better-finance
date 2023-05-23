@@ -239,13 +239,12 @@ end
 
 function createTableLine(labelComponents, category, sLevel, level)
 	local row = {}
+	
 	table.insert(row, layoutComponentsHorizontally(labelComponents, {sLevel}, level))
-
 	for i = 1, numberOfYearColumns do
 		local yearCellView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, category..i)
 		table.insert(row, layoutComponentsHorizontally({yearCellView}, {sLevel}, level))
 	end
-
 	local totalCellView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, category.."total")
 	table.insert(row, layoutComponentsHorizontally({totalCellView}, {sLevel}, level))
 
@@ -255,8 +254,7 @@ end
 function addTableCategory(category)
 	-- level 0
 	local labelView = createTextView(_(category), {"sLevel0", "sLeft"}, "")
-	local button = createExpandButton(0)
-	createTableLine({button, labelView}, category, "sLevel0", 0)
+	createTableLine({createExpandButton(0), labelView}, category, "sLevel0", 0)
 
 	-- level 1
 	for i = 1, #level1Elements do
@@ -266,8 +264,7 @@ function addTableCategory(category)
 			createTableLine({labelView}, category..l1Element, "sLevel1", 1)
 		else
 			labelView = createTextView(_(l1Element), {"sLevel1", "sLeft"}, "")
-			button = createExpandButton(1)
-			createTableLine({button, labelView}, category..l1Element, "sLevel1", 1)
+			createTableLine({createExpandButton(1), labelView}, category..l1Element, "sLevel1", 1)
 			
 			-- level 2
 			for j = 1, #level2Elements[l1Element] do
@@ -277,8 +274,8 @@ function addTableCategory(category)
 					createTableLine({labelView}, category..l2Element, "sLevel2", 2)
 				else
 					labelView = createTextView(_(l2Element), {"sLevel2", "sLeft"}, "")
-					button = createExpandButton(2)
-					createTableLine({button, labelView}, category..l2Element, "sLevel2", 2)
+					createTableLine({createExpandButton(2), labelView}, category..l2Element, "sLevel2", 2)
+					
 					-- level 3
 					for k = 1, #level3Elements[l2Element] do
 						local l3Element = level3Elements[l2Element][k]
@@ -296,23 +293,14 @@ end
 
 function addTableHeader()
 	local row = {} 
-	
-	local textView = api.gui.comp.TextView.new("")
-	textView:setStyleClassList({"sHeader", "sRight"})
-	table.insert(row, textView)
-	
 	local gameYear = getCurrentGameYear()
-	for i = 1, numberOfYearColumns do
-		textView = api.gui.comp.TextView.new(tostring(gameYear - numberOfYearColumns + i))
-		textView:setStyleClassList({"sHeader", "sRight"})
-		textView:setId("Year"..i)
-		table.insert(row, textView)
-	end
 
-	textView = api.gui.comp.TextView.new(_("Total"))
-	textView:setStyleClassList({"sHeader", "sRight"})
-	table.insert(row, textView)
-	
+	table.insert(row, createTextView("", {"sHeader", "sRight"}, ""))
+	for i = 1, numberOfYearColumns do
+		table.insert(row, createTextView(tostring(gameYear - numberOfYearColumns + i), {"sHeader", "sRight"}, "yearLabel"..i))
+	end
+	table.insert(row, createTextView(_("Total"), {"sHeader", "sRight"}, ""))
+
 	financeTable:addRow(row)
 end
 
