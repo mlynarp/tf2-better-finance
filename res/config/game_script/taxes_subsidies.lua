@@ -9,7 +9,7 @@ local numberOfYearColumns = 5
 
 local config =
 {
-	vehicleCat = {"road", "tram", "rail", "water", "air"},
+	vehicleCat = {"road", "tram", "rail", "water", "air", "total"},
 }
 
 local tooltips = {
@@ -181,12 +181,12 @@ function ui_updateText(vehicleType,ID1,ID2,c,value,lvl,sign)
 
 end
 
-function createExpandButton(sLevel, financeTable, level)
+function createExpandButton(financeTable, level)
 	local iconExpandPath = "ui/design/components/slim_arrow_right@2x.tga"
 	local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
 	local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
 	local button = api.gui.comp.Button.new(imageView, false)
-	button:setStyleClassList({sLevel,"sButton"})
+	button:setStyleClassList({"sLevel"..level,"sButton"})
 	local myRowIndex = financeTable:getNumRows()
 	button:onClick(function() 
 		local startRowIndex = myRowIndex + 1
@@ -260,7 +260,7 @@ end
 
 function addTableCategory(financeTable,cat)
 	-- level 0
-	addTableLine(financeTable, cat, "sLevel0", "sLeft", _(cat), createExpandButton("sLevel0", financeTable, 0), 0)
+	addTableLine(financeTable, cat, "sLevel0", "sLeft", _(cat), createExpandButton(financeTable, 0), 0)
 
 	-- level 1
 	for i = 1, #level1Elements do
@@ -268,14 +268,14 @@ function addTableCategory(financeTable,cat)
 		if ( #level2Elements[l1Element] == 0) then
 			addTableLine(financeTable, cat, "sLevel1", "sLeft",  _(l1Element), nil, 1)
 		else
-			addTableLine(financeTable, cat, "sLevel1", "sLeft", _(l1Element), createExpandButton("sLevel1", financeTable, 1), 1)
+			addTableLine(financeTable, cat, "sLevel1", "sLeft", _(l1Element), createExpandButton(financeTable, 1), 1)
 			-- level 2
 			for j = 1, #level2Elements[l1Element] do
 				local l2Element = level2Elements[l1Element][j]
 				if ( #level3Elements[l2Element] == 0) then
 					addTableLine(financeTable, cat, "sLevel2", "sLeft", _(l2Element), nil, 2)
 				else
-					addTableLine(financeTable, cat, "sLevel2", "sLeft", _(l2Element), createExpandButton("sLevel2", financeTable, 2), 2)
+					addTableLine(financeTable, cat, "sLevel2", "sLeft", _(l2Element), createExpandButton(financeTable, 2), 2)
 					-- level 3
 					for k = 1, #level3Elements[l2Element] do
 						local l3Element = level3Elements[l2Element][k]
