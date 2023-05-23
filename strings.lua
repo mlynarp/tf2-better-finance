@@ -42,6 +42,7 @@ function data()
 			["Vehicles"] = ("Vozidla"),
 			["Acquisiton"] = ("Nákup vozidel"),
 			["Total"] = ("Celkem"),
+			["Cashflow"] = ("Celkem"),
 		}
 	}
 end

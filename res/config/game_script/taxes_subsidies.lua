@@ -4,7 +4,7 @@ local currentTime = 0
 local level1Elements = {"Income", "Maintenance", "Investments"}
 local level2Elements = {Income={}, Maintenance={"Vehicles", "Infrastructure"}, Investments={"Acquisiton", "Construction"}}
 local level3Elements = {Vehicles={}, Infrastructure={}, Construction={"Stations", "Depots", "Track"}, Acquisiton={}}
-local taxTable
+local financeTable = nil
 local numberOfYearColumns = 5
 
 local config =
@@ -181,7 +181,7 @@ function ui_updateText(vehicleType,ID1,ID2,c,value,lvl,sign)
 
 end
 
-function createExpandButton(financeTable, level)
+function createExpandButton(level)
 	local iconExpandPath = "ui/design/components/slim_arrow_right@2x.tga"
 	local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
 	local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
@@ -237,61 +237,64 @@ function layoutComponentsHorizontally(components, styleList, level)
 	return component
 end
 
-function addTableLine(financeTable, cat, sLevel, sSide, label, button, level)
+function createTableLine(labelComponent, category, sLevel, level)
 	local row = {}
-	local textView = createTextView(label, {sLevel, sSide}, "")
-	if button then
-		table.insert(row, layoutComponentsHorizontally({button, textView}, {sLevel}, level))
-	else
-		table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
-		textView:addStyleClass("sLevelPadding")
-	end
+	table.insert(row, labelComponent)
 
 	for i = 1, numberOfYearColumns do
-		textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, label..cat..i)
+		local textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, "")
 		table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
 	end
 
-	textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, label..cat.."total")
+	local textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, "")
 	table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
 
 	financeTable:addRow(row)
 end
 
-function addTableCategory(financeTable,cat)
+function addTableCategory(cat)
 	-- level 0
-	addTableLine(financeTable, cat, "sLevel0", "sLeft", _(cat), createExpandButton(financeTable, 0), 0)
+	local labelView = createTextView(_(cat), {"sLevel0", "sLeft"}, "")
+	local button = createExpandButton(0)
+	createTableLine(layoutComponentsHorizontally({button, labelView}, {"sLevel0"}, 0), cat, "sLevel0", 0)
 
 	-- level 1
 	for i = 1, #level1Elements do
 		local l1Element = level1Elements[i]
 		if ( #level2Elements[l1Element] == 0) then
-			addTableLine(financeTable, cat, "sLevel1", "sLeft",  _(l1Element), nil, 1)
+			labelView = createTextView(_(l1Element), {"sLevel1", "sLeft", "sLevelPadding"}, "")
+			createTableLine(layoutComponentsHorizontally({labelView}, {"sLevel1"}, 1), cat, "sLevel1", 1)
 		else
-			addTableLine(financeTable, cat, "sLevel1", "sLeft", _(l1Element), createExpandButton(financeTable, 1), 1)
+			labelView = createTextView(_(l1Element), {"sLevel1", "sLeft"}, "")
+			button = createExpandButton(1)
+			createTableLine(layoutComponentsHorizontally({button, labelView}, {"sLevel1"}, 1), cat, "sLevel1", 1)
+			
 			-- level 2
 			for j = 1, #level2Elements[l1Element] do
 				local l2Element = level2Elements[l1Element][j]
 				if ( #level3Elements[l2Element] == 0) then
-					addTableLine(financeTable, cat, "sLevel2", "sLeft", _(l2Element), nil, 2)
+					labelView = createTextView(_(l2Element), {"sLevel2", "sLeft", "sLevelPadding"}, "")
+					createTableLine(layoutComponentsHorizontally({labelView}, {"sLevel2"}, 2), cat, "sLevel2", 2)
 				else
-					addTableLine(financeTable, cat, "sLevel2", "sLeft", _(l2Element), createExpandButton(financeTable, 2), 2)
+					labelView = createTextView(_(l2Element), {"sLevel2", "sLeft"}, "")
+					button = createExpandButton(2)
+					createTableLine(layoutComponentsHorizontally({button, labelView}, {"sLevel2"}, 2), cat, "sLevel2", 2)
 					-- level 3
 					for k = 1, #level3Elements[l2Element] do
 						local l3Element = level3Elements[l2Element][k]
-						addTableLine(financeTable, cat, "sLevel3", "sLeft", _(l3Element), nil, 3)
+						labelView = createTextView(_(l3Element), {"sLevel3", "sLeft", "sLevelPadding"}, "")
+						createTableLine(layoutComponentsHorizontally({labelView}, {"sLevel3"}, 3), cat, "sLevel3", 3)
 					end
 				end
 			end
 		end
 	end
 
-	addTableLine(financeTable, cat, "sLevel1", "sRight", _("Cashflow"), nil, 0)
-	addTableLine(financeTable, cat, "sLevel1", "sRight", _("Total"), nil, 0)
-	--l0ExpButton:click()
+	labelView = createTextView(_("Total"), {"sLevel1", "sRight"}, "")
+	createTableLine(layoutComponentsHorizontally({labelView}, {"sLevel1"}, 0), cat, "sLevel1", 0)
 end
 
-function addTableHeader(financeTable)
+function addTableHeader()
 	local row = {} 
 	
 	local textView = api.gui.comp.TextView.new("")
@@ -314,15 +317,16 @@ function addTableHeader(financeTable)
 end
 
 function initFinanceTable()
-	local financeTable = api.gui.comp.Table.new(numberOfYearColumns + 2,"NONE")
+	financeTable = api.gui.comp.Table.new(numberOfYearColumns + 2,"NONE")
+	financeTable:setId("myFinancesOverviewTable")
 
-	addTableHeader(financeTable)
+	addTableHeader()
 	
 	-- Vehicle Rows
 	for j = 1, #config.vehicleCat do
 		local vc = config.vehicleCat[j]
 		--ui_tableConstructor(tblDetails,NoOfCols,vc,j)
-		addTableCategory(financeTable,vc)
+		addTableCategory(vc)
 	end
 	-- Summary Rows
 	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"empty",""},"empty")
@@ -335,8 +339,7 @@ function initFinanceTable()
 	-- Tax Summary Details
 	
 	--ui_refresh_taxDetails()
-	print("Created Details Table")
-	return financeTable
+	print("Finance table created.")
 end
 
 function initFinanceTab ()
@@ -346,14 +349,13 @@ function initFinanceTab ()
 	local myFinancesOverviewWindow = api.gui.comp.Component.new("myFinancesOverviewWindow")
 	myFinancesOverviewWindow:setLayout(myFinancesOverviewWindowLayout)
 	myFinancesOverviewWindow:setId("myFinancesOverviewWindow")
-	local myFinancesOverviewTable = initFinanceTable()
-	myFinancesOverviewTable:setId("myFinancesOverviewTable")
-	taxTable = myFinancesOverviewTable
+	initFinanceTable()
+
 
 	local txt = api.gui.comp.TextView.new("")
 	txt:setText(_("FinanceTabOverviewLabel"))
 
-	myFinancesOverviewWindowLayout:addItem(myFinancesOverviewTable)
+	myFinancesOverviewWindowLayout:addItem(financeTable)
 	--financeTabWindow:addTabText(_("FinanceTabOverviewLabel"), myFinancesOverviewWindow)
 	financeTabWindow:insertTab(txt, myFinancesOverviewWindow, 0)
 

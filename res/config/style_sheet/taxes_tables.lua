@@ -89,12 +89,12 @@ function data()
 	-- *************
 	a("!sLeft",
 	{
-		textAlignment = {0, 1.0}
+		textAlignment = {0, 0.5}
 	})
 
 	a("!sRight",
 	{
-		textAlignment = {1.0, .5}
+		textAlignment = {1.0, 0.5}
 	})
 
 	a("!sButton",
