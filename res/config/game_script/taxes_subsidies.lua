@@ -162,23 +162,17 @@ function ui_hide_detailRows(taxTable,itemNo,cat)
 		end
 	end
 end
-function ui_updateText(vehicleType,ID1,ID2,c,value,lvl,sign)
-	local comp = api.gui.util.getById("Tax"..vehicleType..ID1..ID2..c)
-	if comp then
-		if not sign then
-			comp:setText(format_num(value,0,"$","- ","")) 
-		else
-			comp:setText(format_num(value,0,"","- ","%")) 
-		end
-		
-		if c==1 or c==2 or c==5 or c==6 then
-			comp:setStyleClassList({lvl,"tableElement","Tax","even",value > 0 and "positive" or "negative"})
-		elseif c==3 or c==4 or c==7 or c==8 then 
-			comp:setStyleClassList({lvl,"tableElement","Tax","odd",value > 0 and "positive" or "negative"})
-		end
-		
-	end
 
+function updateValueCell(amount, textViewId)
+	local textView = api.gui.util.getById(textViewId)
+	textView:removeStyleClass("negative")
+	textView:removeStyleClass("positive")
+	if amount > 0 then
+		textView:addStyleClass("positive")
+	elseif amount < 0 then
+		textView:addStyleClass("negative")
+	end
+	textView:setText(api.util.formatMoney(amount))
 end
 
 function createExpandButton(level)
@@ -349,6 +343,8 @@ function data()
 	return {
 		guiInit = function ()
 			initFinanceTab()
+			updateValueCell(50, "road2")
+			updateValueCell(-150, "road3")
 		end,
 	}
 end
