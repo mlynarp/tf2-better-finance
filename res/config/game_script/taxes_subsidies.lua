@@ -9,7 +9,7 @@ local numberOfYearColumns = 5
 
 local config =
 {
-	vehicleCat = {"road", "tram", "rail", "water", "air", "total"},
+	vehicleCategory = {"road", "tram", "rail", "water", "air", "total"},
 }
 
 local tooltips = {
@@ -242,12 +242,12 @@ function createTableLine(labelComponents, category, sLevel, level)
 	table.insert(row, layoutComponentsHorizontally(labelComponents, {sLevel}, level))
 
 	for i = 1, numberOfYearColumns do
-		local textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, category..i)
-		table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
+		local yearCellView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, category..i)
+		table.insert(row, layoutComponentsHorizontally({yearCellView}, {sLevel}, level))
 	end
 
-	local textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, category.."total")
-	table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
+	local totalCellView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, category.."total")
+	table.insert(row, layoutComponentsHorizontally({totalCellView}, {sLevel}, level))
 
 	financeTable:addRow(row)
 end
@@ -321,44 +321,31 @@ function initFinanceTable()
 	financeTable:setId("myFinancesOverviewTable")
 
 	addTableHeader()
-	
-	-- Vehicle Rows
-	for j = 1, #config.vehicleCat do
-		local vc = config.vehicleCat[j]
-		--ui_tableConstructor(tblDetails,NoOfCols,vc,j)
-		addTableCategory(vc)
+
+	for j = 1, #config.vehicleCategory do
+		addTableCategory(config.vehicleCategory[j])
 	end
-	-- Summary Rows
-	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"empty",""},"empty")
-	
-	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxInterest","Interest"},"level1")
-	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxPayedTaxes","Payed Taxes (for previous year)"},"level1")
-	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxTotal","Total"},"level1")
-	--ui_tableConstructor_singleLine(tblDetails,NoOfCols,{"TaxNetResult","Net Result"},"Total")
-	
-	-- Tax Summary Details
-	
-	--ui_refresh_taxDetails()
-	print("Finance table created.")
+
+	local companyValueView = createTextView(_("CompanyValue"), {"sLevel0", "sLeft"}, "")
+	createTableLine({companyValueView}, "company", "sLevel0", 0)
+
+	local scoreValueView = createTextView(_("ScoreValue"), {"sLevel0", "sLeft"}, "")
+	createTableLine({scoreValueView}, "score", "sLevel0", 0)
 end
 
 function initFinanceTab ()
-	local financeTabWindow = api.gui.util.getById("menu.finances.category")
-	local myFinancesOverviewWindowLayout = api.gui.layout.BoxLayout.new("VERTICAL")
-
-	local myFinancesOverviewWindow = api.gui.comp.Component.new("myFinancesOverviewWindow")
-	myFinancesOverviewWindow:setLayout(myFinancesOverviewWindowLayout)
-	myFinancesOverviewWindow:setId("myFinancesOverviewWindow")
 	initFinanceTable()
 
+	local verticalLayout = api.gui.layout.BoxLayout.new("VERTICAL")
+	verticalLayout:addItem(financeTable)
 
-	local txt = api.gui.comp.TextView.new("")
-	txt:setText(_("FinanceTabOverviewLabel"))
+	local myFinancesOverviewWindow = api.gui.comp.Component.new("myFinancesOverviewWindow")
+	myFinancesOverviewWindow:setLayout(verticalLayout)
+	myFinancesOverviewWindow:setId("myFinancesOverviewWindow")
 
-	myFinancesOverviewWindowLayout:addItem(financeTable)
-	--financeTabWindow:addTabText(_("FinanceTabOverviewLabel"), myFinancesOverviewWindow)
-	financeTabWindow:insertTab(txt, myFinancesOverviewWindow, 0)
-
+	local financeTabWindow = api.gui.util.getById("menu.finances.category")
+	financeTabWindow:insertTab(api.gui.comp.TextView.new(_("FinanceTabOverviewLabel")), myFinancesOverviewWindow, 0)
+	financeTabWindow:setCurrentTab(0, true)
 	financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
 		if visible then
 			print("visibility changed")
@@ -369,7 +356,7 @@ end
 
 -- ***************************
 -- ** Main
--- ***************************
+-- ***************************`
 function data()
 	return {
 		guiInit = function ()
