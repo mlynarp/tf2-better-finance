@@ -180,44 +180,6 @@ function ui_updateText(vehicleType,ID1,ID2,c,value,lvl,sign)
 	end
 
 end
-function ui_tableConstructor_singleLine(taxTable,NoOfCols,texts,level)
-	local row = {}
-	for i = 1, NoOfCols do
-		local lbl_element 	= api.gui.comp.Component.new("Taxtotal")
-		local lbl_layout 	= api.gui.layout.BoxLayout.new("HORIZONTAL")
-		local txt 			= api.gui.comp.TextView.new("")
-		txt:setId(texts[1]..math.abs(i-NoOfCols-1))
-		if level ~="empty" then 
-			if i ==1 then
-				txt:setText(_(texts[2]))
-				txt:setStyleClassList({level,"tableElement","Total","Tax"})
-				lbl_element:setStyleClassList({"level1","Label","Tax"})
-			
-			elseif i==2 or i==3 or i==6 or i==7 then
-				txt:setText("")
-				txt:setStyleClassList({level,"tableElement","Tax","odd"})
-				lbl_element:setStyleClassList({"level1","Tax","odd"})
-				
-			elseif i==4 or i==5 or i==8 or i==9 then
-				txt:setText("")
-				txt:setStyleClassList({level,"tableElement","Tax","even"})
-				lbl_element:setStyleClassList({"level1","Tax","even"})
-			
-			end
-		else
-			txt:setText("")
-			txt:setStyleClassList({"empty"})
-			lbl_element:setStyleClassList({"empty"})
-		end
-		lbl_layout:addItem(txt)
-		lbl_element:setLayout(lbl_layout)
-		
-		table.insert(row,lbl_element)
-	end
-	taxTable:addRow(row)
-	row ={}
-
-end
 
 function createExpandButton(sLevel, financeTable)
 	local iconExpandPath = "ui/design/components/slim_arrow_right@2x.tga"
