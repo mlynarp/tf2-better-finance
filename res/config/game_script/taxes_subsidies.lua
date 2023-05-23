@@ -237,53 +237,53 @@ function layoutComponentsHorizontally(components, styleList, level)
 	return component
 end
 
-function createTableLine(labelComponent, category, sLevel, level)
+function createTableLine(labelComponents, category, sLevel, level)
 	local row = {}
-	table.insert(row, labelComponent)
+	table.insert(row, layoutComponentsHorizontally(labelComponents, {sLevel}, level))
 
 	for i = 1, numberOfYearColumns do
-		local textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, "")
+		local textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, category..i)
 		table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
 	end
 
-	local textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, "")
+	local textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, category.."total")
 	table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
 
 	financeTable:addRow(row)
 end
 
-function addTableCategory(cat)
+function addTableCategory(category)
 	-- level 0
-	local labelView = createTextView(_(cat), {"sLevel0", "sLeft"}, "")
+	local labelView = createTextView(_(category), {"sLevel0", "sLeft"}, "")
 	local button = createExpandButton(0)
-	createTableLine(layoutComponentsHorizontally({button, labelView}, {"sLevel0"}, 0), cat, "sLevel0", 0)
+	createTableLine({button, labelView}, category, "sLevel0", 0)
 
 	-- level 1
 	for i = 1, #level1Elements do
 		local l1Element = level1Elements[i]
 		if ( #level2Elements[l1Element] == 0) then
 			labelView = createTextView(_(l1Element), {"sLevel1", "sLeft", "sLevelPadding"}, "")
-			createTableLine(layoutComponentsHorizontally({labelView}, {"sLevel1"}, 1), cat, "sLevel1", 1)
+			createTableLine({labelView}, category..l1Element, "sLevel1", 1)
 		else
 			labelView = createTextView(_(l1Element), {"sLevel1", "sLeft"}, "")
 			button = createExpandButton(1)
-			createTableLine(layoutComponentsHorizontally({button, labelView}, {"sLevel1"}, 1), cat, "sLevel1", 1)
+			createTableLine({button, labelView}, category..l1Element, "sLevel1", 1)
 			
 			-- level 2
 			for j = 1, #level2Elements[l1Element] do
 				local l2Element = level2Elements[l1Element][j]
 				if ( #level3Elements[l2Element] == 0) then
 					labelView = createTextView(_(l2Element), {"sLevel2", "sLeft", "sLevelPadding"}, "")
-					createTableLine(layoutComponentsHorizontally({labelView}, {"sLevel2"}, 2), cat, "sLevel2", 2)
+					createTableLine({labelView}, category..l2Element, "sLevel2", 2)
 				else
 					labelView = createTextView(_(l2Element), {"sLevel2", "sLeft"}, "")
 					button = createExpandButton(2)
-					createTableLine(layoutComponentsHorizontally({button, labelView}, {"sLevel2"}, 2), cat, "sLevel2", 2)
+					createTableLine({button, labelView}, category..l2Element, "sLevel2", 2)
 					-- level 3
 					for k = 1, #level3Elements[l2Element] do
 						local l3Element = level3Elements[l2Element][k]
 						labelView = createTextView(_(l3Element), {"sLevel3", "sLeft", "sLevelPadding"}, "")
-						createTableLine(layoutComponentsHorizontally({labelView}, {"sLevel3"}, 3), cat, "sLevel3", 3)
+						createTableLine({labelView}, category..l3Element, "sLevel3", 3)
 					end
 				end
 			end
@@ -291,7 +291,7 @@ function addTableCategory(cat)
 	end
 
 	labelView = createTextView(_("Total"), {"sLevel1", "sRight"}, "")
-	createTableLine(layoutComponentsHorizontally({labelView}, {"sLevel1"}, 0), cat, "sLevel1", 0)
+	createTableLine({labelView}, category.."total", "sLevel1", 0)
 end
 
 function addTableHeader()
