@@ -181,27 +181,36 @@ function ui_updateText(vehicleType,ID1,ID2,c,value,lvl,sign)
 
 end
 
-function createExpandButton(sLevel, financeTable)
+function createExpandButton(sLevel, financeTable, level)
 	local iconExpandPath = "ui/design/components/slim_arrow_right@2x.tga"
 	local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
 	local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
 	local button = api.gui.comp.Button.new(imageView, false)
 	button:setStyleClassList({sLevel,"sButton"})
+	local myRowIndex = financeTable:getNumRows()
 	button:onClick(function() 
-				
-		local start= (itemNo - 1)*7 + 2 
-		local lastRowToHide = start + 5
-		local firstElement = taxTable:getItem(start,0)
-		local setToVisible = not firstElement:isVisible()
+		local startRowIndex = myRowIndex + 1
+		print("Start index"..tostring(startRowIndex))
+		local lastRowIndex = myRowIndex + 1
+		local setToVisible = not financeTable:getItem(startRowIndex, 0):isVisible()
+		for i = 1, 11 do
+			if tonumber(financeTable:getItem(startRowIndex + i - 1, 0):getName()) <= level then
+				lastRowIndex = myRowIndex + i - 1
+				print("Last index"..tostring(lastRowIndex))
+				print("Visible"..tostring(setToVisible))
+				break
+			end
+		end
+		
 		for c=0, financeTable:getNumCols() - 1 do
-			for r = start,lastRowToHide  do
-				local element = taxTable:getItem(r,c)
+			for r = startRowIndex,lastRowIndex  do
+				local element = financeTable:getItem(r,c)
 				element:setVisible(setToVisible,false)
 				if setToVisible then
-					l0_expBut_image:setImage(icon_collapse_path,false)
-					ui_hide_detailRows(taxTable,itemNo,cat)
+					imageView:setImage(iconCollapsePath,false)
+					--ui_hide_detailRows(taxTable,itemNo,cat)
 				else
-					l0_expBut_image:setImage(icon_expand_path,false)
+					imageView:setImage(iconExpandPath,false)
 				end
 			end
 		end
@@ -209,18 +218,18 @@ function createExpandButton(sLevel, financeTable)
 	return button
 end
 
-function createTextView(text, sLevel, sOtherStyle, id)
+function createTextView(text, styleList, id)
 	local textView = api.gui.comp.TextView.new(text)
-	textView:setStyleClassList({sLevel, sOtherStyle})
+	textView:setStyleClassList(styleList)
 	textView:setId(id)
 	return textView
 end
 
-function layoutComponentsHorizontal(components, sLevel)
-	local component = api.gui.comp.Component.new("")
+function layoutComponentsHorizontally(components, styleList, level)
+	local component = api.gui.comp.Component.new(tostring(level))
 	local layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-	layout:setName(sLevel)
-	component:setStyleClassList({sLevel})
+	layout:setName(tostring(level))
+	component:setStyleClassList(styleList)
 	for i = 1, #components do
 		layout:addItem(components[i])
 	end
@@ -228,57 +237,57 @@ function layoutComponentsHorizontal(components, sLevel)
 	return component
 end
 
-function addTableLine(financeTable, cat, sLevel, label, button)
+function addTableLine(financeTable, cat, sLevel, sSide, label, button, level)
 	local row = {}
-	local textView = createTextView(label, sLevel, "sLeft", "")
+	local textView = createTextView(label, {sLevel, sSide}, "")
 	if button then
-		table.insert(row, layoutComponentsHorizontal({button, textView}, sLevel))	
+		table.insert(row, layoutComponentsHorizontally({button, textView}, {sLevel}, level))
 	else
-		table.insert(row, layoutComponentsHorizontal({textView}, sLevel))
+		table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
 		textView:addStyleClass("sLevelPadding")
 	end
 
 	for i = 1, numberOfYearColumns do
-		textView = createTextView("0", sLevel, "sRight", label..cat..i)
-		table.insert(row, layoutComponentsHorizontal({textView}, sLevel))
+		textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, label..cat..i)
+		table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
 	end
 
-	textView = createTextView("0", sLevel, "sRight", label..cat.."total")
-	table.insert(row, layoutComponentsHorizontal({textView}, sLevel))
+	textView = createTextView(api.util.formatMoney(0), {sLevel, "sRight"}, label..cat.."total")
+	table.insert(row, layoutComponentsHorizontally({textView}, {sLevel}, level))
 
 	financeTable:addRow(row)
 end
 
 function addTableCategory(financeTable,cat)
 	-- level 0
-	addTableLine(financeTable, cat, "sLevel0", _(cat), createExpandButton("sLevel0", financeTable))
+	addTableLine(financeTable, cat, "sLevel0", "sLeft", _(cat), createExpandButton("sLevel0", financeTable, 0), 0)
 
 	-- level 1
 	for i = 1, #level1Elements do
 		local l1Element = level1Elements[i]
 		if ( #level2Elements[l1Element] == 0) then
-			addTableLine(financeTable, cat, "sLevel1", _(l1Element), nil)
+			addTableLine(financeTable, cat, "sLevel1", "sLeft",  _(l1Element), nil, 1)
 		else
-			addTableLine(financeTable, cat, "sLevel1", _(l1Element), createExpandButton("sLevel1", financeTable))
+			addTableLine(financeTable, cat, "sLevel1", "sLeft", _(l1Element), createExpandButton("sLevel1", financeTable, 1), 1)
 			-- level 2
 			for j = 1, #level2Elements[l1Element] do
 				local l2Element = level2Elements[l1Element][j]
 				if ( #level3Elements[l2Element] == 0) then
-					addTableLine(financeTable, cat, "sLevel2", _(l2Element), nil)
+					addTableLine(financeTable, cat, "sLevel2", "sLeft", _(l2Element), nil, 2)
 				else
-					addTableLine(financeTable, cat, "sLevel2", _(l2Element), createExpandButton("sLevel2", financeTable))
+					addTableLine(financeTable, cat, "sLevel2", "sLeft", _(l2Element), createExpandButton("sLevel2", financeTable, 2), 2)
 					-- level 3
 					for k = 1, #level3Elements[l2Element] do
 						local l3Element = level3Elements[l2Element][k]
-						addTableLine(financeTable, cat, "sLevel3", _(l3Element), nil)
+						addTableLine(financeTable, cat, "sLevel3", "sLeft", _(l3Element), nil, 3)
 					end
 				end
 			end
 		end
 	end
 
-	addTableLine(financeTable, cat, "sLevel0", _("Cashflow"), nil)
-	addTableLine(financeTable, cat, "sLevel0", _("Total"), nil)
+	addTableLine(financeTable, cat, "sLevel1", "sRight", _("Cashflow"), nil, 0)
+	addTableLine(financeTable, cat, "sLevel1", "sRight", _("Total"), nil, 0)
 	--l0ExpButton:click()
 end
 
