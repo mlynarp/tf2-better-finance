@@ -333,7 +333,7 @@ function initFinanceTable()
 	createTableLine({scoreValueView}, "score", "sLevel0", 0)
 end
 
-function initFinanceTab ()
+function initFinanceTab()
 	initFinanceTable()
 
 	local verticalLayout = api.gui.layout.BoxLayout.new("VERTICAL")
