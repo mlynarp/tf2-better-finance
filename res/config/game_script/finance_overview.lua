@@ -1,16 +1,32 @@
 require "helper_functions"
 
-local currentTime = 0
-local level1Elements = {"Income", "Maintenance", "Investments"}
-local level2Elements = {Income={}, Maintenance={"Vehicles", "Infrastructure"}, Investments={"Acquisiton", "Construction"}}
-local level3Elements = {Vehicles={}, Infrastructure={}, Construction={"Stations", "Depots", "Track"}, Acquisiton={}}
+local VEHICLE_CATEGORY_ROAD = "road"
+local VEHICLE_CATEGORY_TRAM = "tram"
+local VEHICLE_CATEGORY_RAIL = "rail"
+local VEHICLE_CATEGORY_WATER = "water"
+local VEHICLE_CATEGORY_AIR = "air"
+
+local CAT_INCOME = "Income"
+local CAT_MAINTENANCE = "Maintenance"
+local CAT_INVESTMENTS = "Investments"
+
+local CAT_MAINTENANCE_VEHICLES = "Vehicles"
+local CAT_MAINTENANCE_INFRASTRUCTURE = "Infrastructure"
+
+local CAT_INVESTMENTS_VEHICLES = "Acquisiton"
+local CAT_INVESTMENTS_STATIONS = "Stations"
+local CAT_INVESTMENTS_DEPOTS = "Depots"
+local CAT_INVESTMENTS_TRACKS = "Track"
+
+local vehicleCategories = { VEHICLE_CATEGORY_ROAD, VEHICLE_CATEGORY_TRAM, VEHICLE_CATEGORY_RAIL, VEHICLE_CATEGORY_WATER, VEHICLE_CATEGORY_AIR, "total" }
+local level1Elements = { CAT_INCOME, CAT_MAINTENANCE, CAT_INVESTMENTS }
+local level2Elements = { Income={},
+						 Maintenance={CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE},
+						 Investments={CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_STATIONS, CAT_INVESTMENTS_DEPOTS, CAT_INVESTMENTS_TRACKS}
+					   }
 local financeTable = nil
 local numberOfYearColumns = 5
 
-local config =
-{
-	vehicleCategory = {"road", "tram", "rail", "water", "air", "total"},
-}
 
 local tooltips = {
 	settings ={
@@ -35,15 +51,39 @@ local state = {
 	currentYear = 0,
 }
 
-function refreshColumnValues(primaryCategory, secondaryCategory, year)
+function getValueFromJournal(journal, vehicleCategory, category)
+	if category == "" then
+		
+	end
+end
+
+function updateValueCell(amount, textViewId)
+	local textView = api.gui.util.getById(textViewId)
+	textView:removeStyleClass("negative")
+	textView:removeStyleClass("positive")
+	if amount > 0 then
+		textView:addStyleClass("positive")
+	elseif amount < 0 then
+		textView:addStyleClass("negative")
+	end
+	textView:setText(api.util.formatMoney(amount))
+end
+
+function refreshCategoryValues(category, year)
+	local yearColumnIndex = getYearColumnIndex(year, numberOfYearColumns)
 	local yearStartEnd = getYearStartEndTime(year)
-	print("start time = "..tostring(yearStartEnd[1]))
-	print("endTime time = "..tostring(yearStartEnd[2]))
-	local columnIndex = getYearColumnIndex(year, numberOfYearColumns)
-	print("column time = "..tostring(columnIndex))
-	local yearJournal = game.interface.getPlayerJournal(yearStartEnd[1], yearStartEnd[2], true)
-	debugPrint(yearJournal)
-	updateValueCell(yearJournal.maintenance._sum, primaryCategory..secondaryCategory..columnIndex)
+	local yearJournal = game.interface.getPlayerJournal(yearStartEnd[1], yearStartEnd[2], false)
+
+	local categoryCashflow = yearJournal.income[category] + yearJournal.maintenance[category]._sum
+	local categoryTotal = yearJournal.income[category] + yearJournal.maintenance[category]._sum + yearJournal.construction[category]._sum + yearJournal.acquisition[category]
+
+	updateValueCell(categoryCashflow, category..yearColumnIndex)
+	updateValueCell(categoryTotal, category.."total"..yearColumnIndex)
+	updateValueCell(yearJournal.maintenance[category]._sum, category.."Maintenance"..yearColumnIndex)
+end
+
+function refreshColumnValues(primaryCategory, secondaryCategory, year)
+	refreshCategoryValues(primaryCategory, year)
 end
 
 function createExpandButton(level)
@@ -134,20 +174,8 @@ function addTableCategory(category)
 			-- level 2
 			for j = 1, #level2Elements[l1Element] do
 				local l2Element = level2Elements[l1Element][j]
-				if ( #level3Elements[l2Element] == 0) then
-					labelView = createTextView(_(l2Element), {"sLevel2", "sLeft", "sLevelPadding"}, "")
-					createTableLine({labelView}, category..l2Element, "sLevel2", 2)
-				else
-					labelView = createTextView(_(l2Element), {"sLevel2", "sLeft"}, "")
-					createTableLine({createExpandButton(2), labelView}, category..l2Element, "sLevel2", 2)
-					
-					-- level 3
-					for k = 1, #level3Elements[l2Element] do
-						local l3Element = level3Elements[l2Element][k]
-						labelView = createTextView(_(l3Element), {"sLevel3", "sLeft", "sLevelPadding"}, "")
-						createTableLine({labelView}, category..l3Element, "sLevel3", 3)
-					end
-				end
+				labelView = createTextView(_(l2Element), {"sLevel2", "sLeft", "sLevelPadding"}, "")
+				createTableLine({labelView}, category..l2Element, "sLevel2", 2)
 			end
 		end
 	end
@@ -175,8 +203,8 @@ function initFinanceTable()
 
 	addTableHeader()
 
-	for j = 1, #config.vehicleCategory do
-		addTableCategory(config.vehicleCategory[j])
+	for j = 1, #vehicleCategories do
+		addTableCategory(vehicleCategories[j])
 	end
 
 	local companyValueView = createTextView(_("CompanyValue"), {"sLevel0", "sLeft"}, "")
@@ -202,6 +230,8 @@ function initFinanceTab()
 	financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
 		if visible then
 			print("visibility changed")
+			refreshColumnValues("rail", "Maintenance", 1850 )
+			refreshColumnValues("rail", "Maintenance", 1851 )
 		end
 	end)
 end
