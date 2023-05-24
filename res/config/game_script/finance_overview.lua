@@ -87,6 +87,9 @@ end
 
 function updateValueCell(amount, textViewId)
 	local textView = api.gui.util.getById(textViewId)
+	if not textView then
+		return
+	end
 	textView:removeStyleClass("negative")
 	textView:removeStyleClass("positive")
 	if not amount then
@@ -211,8 +214,10 @@ function addTableCategory(transportType)
 			-- level 2
 			for j = 1, #level2Categories[level1Category] do
 				local level2Category = level2Categories[level1Category][j]
-				labelView = createTextView(_(level2Category), {"sLevel2", "sLeft", "sLevelPadding"}, "")
-				createTableLine({labelView}, transportType..level2Category, "sLevel2", 2)
+				if isCategoryValidForTransportType(transportType, level2Category) then
+					labelView = createTextView(_(level2Category), {"sLevel2", "sLeft", "sLevelPadding"}, "")
+					createTableLine({labelView}, transportType..level2Category, "sLevel2", 2)	
+				end
 			end
 		end
 	end
