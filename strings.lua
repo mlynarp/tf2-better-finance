@@ -35,7 +35,7 @@ function data()
 			["investments"]=("Investice"),
 			["investments_vehicles"]=("Nákup vozidel"),
 			["investments_tracks"]=("Železnice/Silnice"),
-			["investmens_infrastructure"]=("Infrastruktura"),
+			["investments_infrastructure"]=("Infrastruktura"),
 			["Total"] = ("Celkem"),
 			["Parameter.Label"] = ("Počet roků v přehledu"),
 			["Parameter.Tooltip"] = ("Vyberte počet roků, které se mají zobrazit v tabulce finančního přehledu."),
