@@ -67,7 +67,11 @@ function getValueFromJournal(journal, transportCategory, category)
 	elseif category == CAT_MAINTENANCE_VEHICLES then
 		return journal.maintenance[transportCategory].vehicle
 	elseif category == CAT_MAINTENANCE_TRACKS then
-		return journal.maintenance[transportCategory].track
+		if transportCategory == TRANSPORT_CATEGORY_RAIL then
+			return journal.maintenance[transportCategory].track
+		else
+			return journal.maintenance[transportCategory].street
+		end
 	elseif category == CAT_MAINTENANCE_INFRASTRUCTURE then
 		return journal.maintenance[transportCategory].infrastructure
 	--investment		
@@ -267,7 +271,7 @@ function initFinanceTab()
 	financeTabWindow:setCurrentTab(0, true)
 	financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
 		if visible then
-			for i = 1850, getCurrentGameYear() do
+			for i = getCurrentGameYear() - numberOfYearColumns + 1, getCurrentGameYear() do
 				local yearStartEnd = getYearStartEndTime(i)
 				local yearJournal = game.interface.getPlayerJournal(yearStartEnd[1], yearStartEnd[2], false)
 				for j = 1, #transportCategories do
