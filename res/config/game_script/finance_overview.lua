@@ -26,8 +26,8 @@ local COLUMN_TOTAL = "total"
 local transportTypes = { TRANSPORT_TYPE_ROAD, TRANSPORT_TYPE_TRAM, TRANSPORT_TYPE_RAIL, TRANSPORT_TYPE_WATER, TRANSPORT_TYPE_AIR }
 local level1Categories = { CAT_INCOME, CAT_MAINTENANCE, CAT_INVESTMENTS }
 local level2Categories = { [CAT_INCOME]={},
-						 [CAT_MAINTENANCE]={CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE},
-						 [CAT_INVESTMENTS]={CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_TRACKS, CAT_INVESTMENTS_INFRASTRUCTURE}
+						 [CAT_MAINTENANCE]={ CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE },
+						 [CAT_INVESTMENTS]={ CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_INFRASTRUCTURE, CAT_INVESTMENTS_TRACKS }
 					   }
 local financeTable = nil
 local numberOfYearColumns = 5
@@ -215,7 +215,11 @@ function addTableCategory(transportType)
 			for j = 1, #level2Categories[level1Category] do
 				local level2Category = level2Categories[level1Category][j]
 				if isCategoryValidForTransportType(transportType, level2Category) then
-					labelView = createTextView(_(level2Category), {"sLevel2", "sLeft", "sLevelPadding"}, "")
+					local title = level2Category
+					if level2Category == CAT_INVESTMENTS_TRACKS and transportType == TRANSPORT_TYPE_ROAD then
+						title = "investments_roads"
+					end
+					labelView = createTextView(_(title), {"sLevel2", "sLeft", "sLevelPadding"}, "")
 					createTableLine({labelView}, transportType..level2Category, "sLevel2", 2)	
 				end
 			end
