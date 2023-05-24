@@ -1,5 +1,5 @@
 ﻿local vMajor = 1
-local vMinor = 6
+local vMinor = 0
 
 function data()
 	return {
@@ -8,7 +8,7 @@ function data()
 			minorVersion = vMinor,
 			severityAdd = "NONE",
 			severityRemove = "NONE",
-			name = "Taxes and Subsidies",
+			name = "Better financial overview",
 			description = ("This mod extends the game with the option to add some extra challenge by substracting taxes from your income or with some support in case you are having a hard time to get started.\n"..
 			"A new Tab 'Taxes' has been added to the financial menu showing the journal in a slightly reshaped format: Income, Maintenance and Investments are grouped by the vehicle category. Taxes / Subsidies are separately listed here and show the taxes by category as well.\n"..
 			"To change the rates you can access the settings menu from here. All changes are saved to your savegame.\n"..
@@ -27,21 +27,15 @@ function data()
 			"\n[h1]Release Notes[/h1]\n - v1.4: Update of calculation timing and data refresh: Taxforecast / Journal is updated every 2nd month. Taxes are payed only once per year on January 1st of the following year. Taxes Tab has been improved to display results and taxes payed seperately side by side."..
 			"\n v1.5: Minor Bugfix, Visual adjustments to the table for easier reading. Smothening the Tax calculation.\n"..
 			"v1.6: Bugfix for first Start"),
-			authors = { 
+			authors = {
 				{
-					name = "TransportTycoon_Joker",
+					name = "Petr Mlynar",
 					role = "CREATOR",
 				}
-			}, --authors
+			},
 			tags = { "Script Mod" },
-				
 		},
-		
-		
-		
-		
-		} --return
-	
+	}
 end
 
 

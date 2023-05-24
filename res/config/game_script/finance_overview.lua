@@ -1,4 +1,4 @@
-require "tax_sub_helpfunctions"
+require "helper_functions"
 
 local currentTime = 0
 local level1Elements = {"Income", "Maintenance", "Investments"}
@@ -35,144 +35,15 @@ local state = {
 	currentYear = 0,
 }
 
--- ############
--- ## User Interface 
--- ############
-function ui_refresh_taxDetails()
-	local cyTotal = getCurrentGameYear()
-	local cy,comp
-	-- Header:
-	for c=1,7,2 do
-		cy = cyTotal-((c-1)/2)
-		comp=api.gui.util.getById("TaxHeader"..c)
-		if comp and state.custom_journal.header.labels["Year "..cy] then 
-			comp:setText(_("Year").." "..state.custom_journal.header.labels["Year "..cy]..sum) 
-		end
-	end
-	-- Values
-	
-	
-	local vc
-	for c=1,7,2 do
-		local totals =0
-		local totalTax = 0
-		cy = cyTotal-((c-1)/2)
-		for i = 1,#config.vehicleCat do 
-			vc = config.vehicleCat[i]
-			
-			local vehiclesum =0
-			local value, tax, veh, infr = 0,0,0,0
-			-- Investments
-				veh = state.custom_journal[vc].Vehicles["Year "..cy] or 0
-				infr = state.custom_journal[vc].Infrastructure["Year "..cy] or 0
-				value = veh + infr
-				vehiclesum = vehiclesum + value
-				
-				ui_updateText(vc,"Investments","",1+c,value,"level1") -- Sum
-				ui_updateText(vc,"Investments","Infrastructure",1+c,infr,"level2") -- Infrastructure
-				ui_updateText(vc,"Investments","Vehicles",1+c,veh,"level2") -- Vehicle
-				veh =0
-				infr=0
-				value =0
-			-- Investments Taxes
-				veh = state.custom_journal[vc].Taxes.Vehicles["Year "..cy] or 0
-				infr = state.custom_journal[vc].Taxes.Infrastructure["Year "..cy] or 0
-				value = veh + infr
-				tax = tax + value
-				
-				ui_updateText(vc,"Investments","",c,value,"level1") -- Sum
-				ui_updateText(vc,"Investments","Infrastructure",c,infr,"level2") -- Infrastructure
-				ui_updateText(vc,"Investments","Vehicles",c,veh,"level2") -- Vehicle	
-				veh =0
-				infr=0
-				value =0
-			-- Income
-				infr = state.custom_journal[vc].Income._sum["Year "..cy] or 0
-				veh = state.custom_journal[vc].Maintenance._sum["Year "..cy] or 0
-				value = veh + infr
-				vehiclesum = vehiclesum + value
-				
-				ui_updateText(vc,"Income","",c+1,value,"level1") -- Sum
-				ui_updateText(vc,"Income","Income",c+1,infr,"level2") -- Infrastructure
-				ui_updateText(vc,"Income","Maintenance",c+1,veh,"level2") -- Vehicle
-				veh =0
-				infr=0
-				value =0
-			-- Income Taxes
-				value = state.custom_journal[vc].Taxes.Income["Year "..cy] or 0
-				tax = tax + value
-				
-				ui_updateText(vc,"Income","",c,value,"level1") -- Sum
-				value =0
-				if state.custom_journal[vc].Income.GPMargin then
-					value = state.custom_journal[vc].Income.GPMargin["Year "..cy] or 0
-				end
-				ui_updateText(vc,"Income","Income",c,value*100,"level2","%")
-				
-				value =0
-				if state.custom_journal[vc].Income.TaxRate then
-					value = state.custom_journal[vc].Income.TaxRate["Year "..cy] or 0
-				end
-				ui_updateText(vc,"Income","Maintenance",c,value*100,"level2","%")
-				
-				veh =0
-				infr=0
-				value =0
-			-- Vehicle Sum
-				ui_updateText(vc,"","",c+1,vehiclesum,"level0") -- Sum Results
-				ui_updateText(vc,"","",c,tax,"level0") -- Sum Taxes
-				
-				totals = totals + vehiclesum
-				totalTax = totalTax + tax
-		end -- categories
-		value = state.custom_journal.interest["Year " ..cy] or 0
-		ui_updateText("Interest","","",c+1,value,"level1") -- Sum Results
-		
-		totals = totals  + value
-		value = 0
-		
-		if state.custom_journal.TotalTax then 
-			value = state.custom_journal.TotalTax["Year " ..cy] or 0
-			ui_updateText("PayedTaxes","","",c+1,value,"level1") -- Sum Results
-			totals = totals  + value
-		end
-		value = 0
-		
-		ui_updateText("Total","","",c,totalTax,"level1") -- Sum Results
-		ui_updateText("Total","","",c+1,totals,"level1") -- Sum Results
-		
-		ui_updateText("NetResult","","",c+1,(totals+totalTax),"Total") -- Sum Results
-		
-	end -- columns	
- end -- function
-function ui_hide_detailRows(taxTable,itemNo,cat)
-	local icon_expand_path = "ui/design/components/slim_arrow_right@2x.tga"
-	local icon_collapse_path = "ui/design/components/slim_arrow_down@2x.tga"
-	
-	for i = 1,2 do
-		local guiExpBut_image = api.gui.util.getById("bt"..cat..i)
-		local start= (itemNo - 1)*7 + 3 + (i-1)*3 +1
-		local lastRowToHide = start + 1
-		for c=0,8 do
-			for r = start,lastRowToHide  do
-				local element = taxTable:getItem(r,c)
-				element:setVisible(false,false)
-				guiExpBut_image:setImage(icon_expand_path,false)				
-			end
-		end
-	end
-end
-
-function updateValueCell(amount, textViewId)
-	local textView = api.gui.util.getById(textViewId)
-	textView:removeStyleClass("negative")
-	textView:removeStyleClass("positive")
-	if amount > 0 then
-		textView:addStyleClass("positive")
-	elseif amount < 0 then
-		textView:addStyleClass("negative")
-	end
-	textView:setText(api.util.formatMoney(amount))
+function refreshColumnValues(primaryCategory, secondaryCategory, year)
+	local yearStartEnd = getYearStartEndTime(year)
+	print("start time = "..tostring(yearStartEnd[1]))
+	print("endTime time = "..tostring(yearStartEnd[2]))
+	local columnIndex = getYearColumnIndex(year, numberOfYearColumns)
+	print("column time = "..tostring(columnIndex))
+	local yearJournal = game.interface.getPlayerJournal(yearStartEnd[1], yearStartEnd[2], true)
+	debugPrint(yearJournal)
+	updateValueCell(yearJournal.maintenance._sum, primaryCategory..secondaryCategory..columnIndex)
 end
 
 function createExpandButton(level)
@@ -291,7 +162,7 @@ function addTableHeader()
 
 	table.insert(row, createTextView("", {"sHeader", "sRight"}, ""))
 	for i = 1, numberOfYearColumns do
-		table.insert(row, createTextView(tostring(gameYear - numberOfYearColumns + i), {"sHeader", "sRight"}, "yearLabel"..i))
+		table.insert(row, createTextView(tostring(gameYear - numberOfYearColumns + i), {"sHeader", "sRight"}, "year"..i))
 	end
 	table.insert(row, createTextView(_("Total"), {"sHeader", "sRight"}, ""))
 
@@ -331,7 +202,6 @@ function initFinanceTab()
 	financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
 		if visible then
 			print("visibility changed")
-			--ui_refresh_taxDetails()
 		end
 	end)
 end
@@ -343,8 +213,6 @@ function data()
 	return {
 		guiInit = function ()
 			initFinanceTab()
-			updateValueCell(50, "road2")
-			updateValueCell(-150, "road3")
 		end,
 	}
 end
