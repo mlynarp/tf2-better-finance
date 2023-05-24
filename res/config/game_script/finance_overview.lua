@@ -6,18 +6,16 @@ local TRANSPORT_CATEGORY_RAIL = "rail"
 local TRANSPORT_CATEGORY_WATER = "water"
 local TRANSPORT_CATEGORY_AIR = "air"
 
-local CAT_INCOME = "Income"
+local CAT_INCOME = "income"
 
-local CAT_MAINTENANCE = "Maintenance"
-local CAT_MAINTENANCE_VEHICLES = "Vehicles"
-local CAT_MAINTENANCE_TRACKS = "Tracks"
-local CAT_MAINTENANCE_INFRASTRUCTURE = "Infrastructure"
+local CAT_MAINTENANCE = "maintenance"
+local CAT_MAINTENANCE_VEHICLES = "maintenance_vehicles"
+local CAT_MAINTENANCE_INFRASTRUCTURE = "maintenance_infrastructure"
 
-local CAT_INVESTMENTS = "Investments"
-local CAT_INVESTMENTS_VEHICLES = "Acquisiton"
-local CAT_INVESTMENTS_TRACKS = "Track"
-local CAT_INVESTMENTS_STATIONS = "Stations"
-local CAT_INVESTMENTS_DEPOTS = "Depots"
+local CAT_INVESTMENTS = "investments"
+local CAT_INVESTMENTS_VEHICLES = "investments_vehicles"
+local CAT_INVESTMENTS_TRACKS = "investments_tracks"
+local CAT_INVESTMENTS_INFRASTRUCTURE = "investments_infrastructure"
 
 local CAT_TOTAL = "Total"
 
@@ -27,9 +25,9 @@ local COLUMN_TOTAL = "total"
 
 local transportCategories = { TRANSPORT_CATEGORY_ROAD, TRANSPORT_CATEGORY_TRAM, TRANSPORT_CATEGORY_RAIL, TRANSPORT_CATEGORY_WATER, TRANSPORT_CATEGORY_AIR }
 local level1Elements = { CAT_INCOME, CAT_MAINTENANCE, CAT_INVESTMENTS }
-local level2Elements = { Income={},
-						 Maintenance={CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_TRACKS, CAT_MAINTENANCE_INFRASTRUCTURE},
-						 Investments={CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_TRACKS, CAT_INVESTMENTS_STATIONS, CAT_INVESTMENTS_DEPOTS}
+local level2Elements = { [CAT_INCOME]={},
+						 [CAT_MAINTENANCE]={CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE},
+						 [CAT_INVESTMENTS]={CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_TRACKS, CAT_INVESTMENTS_INFRASTRUCTURE}
 					   }
 local financeTable = nil
 local numberOfYearColumns = 5
@@ -66,12 +64,6 @@ function getValueFromJournal(journal, transportCategory, category)
 		return journal.maintenance[transportCategory]._sum
 	elseif category == CAT_MAINTENANCE_VEHICLES then
 		return journal.maintenance[transportCategory].vehicle
-	elseif category == CAT_MAINTENANCE_TRACKS then
-		if transportCategory == TRANSPORT_CATEGORY_RAIL then
-			return journal.maintenance[transportCategory].track
-		else
-			return journal.maintenance[transportCategory].street
-		end
 	elseif category == CAT_MAINTENANCE_INFRASTRUCTURE then
 		return journal.maintenance[transportCategory].infrastructure
 	--investment		
@@ -81,14 +73,12 @@ function getValueFromJournal(journal, transportCategory, category)
 		return journal.acquisition[transportCategory]
 	elseif category == CAT_INVESTMENTS_TRACKS then
 		if transportCategory == TRANSPORT_CATEGORY_RAIL then
-			return journal.construction[transportCategory].track	
+			return journal.construction[transportCategory].track
 		else
-			return journal.construction[transportCategory].street					
+			return journal.construction[transportCategory].street
 		end
-	elseif category == CAT_INVESTMENTS_STATIONS then
-		return journal.construction[transportCategory].station
-	elseif category == CAT_INVESTMENTS_DEPOTS then
-		return journal.construction[transportCategory].depot
+	elseif category == CAT_INVESTMENTS_INFRASTRUCTURE then
+		return journal.construction[transportCategory].station + journal.construction[transportCategory].depot + journal.construction[transportCategory].signal
 	--total
 	elseif category == CAT_TOTAL then
 		return journal.construction[transportCategory]._sum + journal.acquisition[transportCategory] + journal.income[transportCategory] + journal.maintenance[transportCategory]._sum
@@ -120,14 +110,12 @@ function refreshVehicleCategoryValues(transportCategory, journal, column)
 	--maintenance
 	updateValueCell(maintenance, transportCategory..CAT_MAINTENANCE..column)
 	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_MAINTENANCE_VEHICLES), transportCategory..CAT_MAINTENANCE_VEHICLES..column)
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_MAINTENANCE_TRACKS), transportCategory..CAT_MAINTENANCE_TRACKS..column)
 	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_MAINTENANCE_INFRASTRUCTURE), transportCategory..CAT_MAINTENANCE_INFRASTRUCTURE..column)
 	--investment
 	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS), transportCategory..CAT_INVESTMENTS..column)
 	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS_VEHICLES), transportCategory..CAT_INVESTMENTS_VEHICLES..column)
 	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS_TRACKS), transportCategory..CAT_INVESTMENTS_TRACKS..column)
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS_STATIONS), transportCategory..CAT_INVESTMENTS_STATIONS..column)
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS_DEPOTS), transportCategory..CAT_INVESTMENTS_DEPOTS..column)
+	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS_INFRASTRUCTURE), transportCategory..CAT_INVESTMENTS_INFRASTRUCTURE..column)
 	--total
 	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_TOTAL), transportCategory..CAT_TOTAL..column)
 end
