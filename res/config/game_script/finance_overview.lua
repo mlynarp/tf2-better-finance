@@ -5,6 +5,7 @@ local TRANSPORT_TYPE_TRAM = "tram"
 local TRANSPORT_TYPE_RAIL = "rail"
 local TRANSPORT_TYPE_WATER = "water"
 local TRANSPORT_TYPE_AIR = "air"
+local TRANSPORT_TYPE_ALL = "all"
 
 local CAT_INCOME = "income"
 
@@ -23,7 +24,7 @@ local COLUMN_YEAR = "year"
 local COLUMN_TOTAL = "total"
 
 
-local transportTypes = { TRANSPORT_TYPE_ROAD, TRANSPORT_TYPE_TRAM, TRANSPORT_TYPE_RAIL, TRANSPORT_TYPE_WATER, TRANSPORT_TYPE_AIR }
+local transportTypes = { TRANSPORT_TYPE_ROAD, TRANSPORT_TYPE_TRAM, TRANSPORT_TYPE_RAIL, TRANSPORT_TYPE_WATER, TRANSPORT_TYPE_AIR, TRANSPORT_TYPE_ALL }
 local level1Categories = { CAT_INCOME, CAT_MAINTENANCE, CAT_INVESTMENTS }
 local level2Categories = { [CAT_INCOME]={},
 						 [CAT_MAINTENANCE]={ CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE },
@@ -57,6 +58,49 @@ local state = {
 }
 
 function getValueFromJournal(journal, transportType, category)
+	--total transport
+	if transportType == TRANSPORT_TYPE_ALL then
+		if category == CAT_INCOME then
+			return journal.income._sum
+		--maintenance
+		elseif category == CAT_MAINTENANCE then
+			return journal.maintenance._sum
+		elseif category == CAT_MAINTENANCE_VEHICLES then
+			local result = 0
+			for i = 1, #transportTypes - 1 do
+				local vehicle = journal.maintenance[transportTypes[i]].vehicle
+				if vehicle then
+					result = result + vehicle
+				end
+			end
+			return result
+		elseif category == CAT_MAINTENANCE_INFRASTRUCTURE then
+			local result = 0
+			for i = 1, #transportTypes - 1 do
+				local infrastructure = journal.maintenance[transportTypes[i]].infrastructure
+				if infrastructure then
+					result = result + infrastructure
+				end
+			end
+			return result
+		--investment		
+		elseif category == CAT_INVESTMENTS then
+			return journal.construction._sum + journal.acquisition._sum - journal.construction.other._sum
+		elseif category == CAT_INVESTMENTS_VEHICLES then
+			return journal.acquisition._sum
+		elseif category == CAT_INVESTMENTS_INFRASTRUCTURE then
+			local result = 0
+			for i = 1, #transportTypes - 1 do
+				result = result + journal.construction[transportTypes[i]]._sum
+			end
+			return result
+		--total
+		elseif category == CAT_TOTAL then
+			return journal._sum - journal.construction.other._sum
+		end
+		return 0
+	end
+	--individual transport
 	if category == CAT_INCOME then
 		return journal.income[transportType]
 	--maintenance
@@ -275,17 +319,15 @@ function initFinanceTab()
 	financeTabWindow:setCurrentTab(0, true)
 	financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
 		if visible then
-			for i = getCurrentGameYear() - numberOfYearColumns + 1, getCurrentGameYear() do
-				local yearStartEnd = getYearStartEndTime(i)
-				local yearJournal = game.interface.getPlayerJournal(yearStartEnd[1], yearStartEnd[2], false)
-				for j = 1, #transportTypes do
-					refreshVehicleCategoryValues(transportTypes[j], yearJournal, getYearColumnIndex(i, numberOfYearColumns) )
+			
+			for i = 1, #transportTypes do
+				for j = getCurrentGameYear() - numberOfYearColumns + 1, getCurrentGameYear() do
+					local yearStartEnd = getYearStartEndTime(j)
+					local yearJournal = game.interface.getPlayerJournal(yearStartEnd[1], yearStartEnd[2], false)
+					refreshVehicleCategoryValues(transportTypes[i], yearJournal, getYearColumnIndex(j, numberOfYearColumns) )
 				end
+				refreshVehicleCategoryValues(transportTypes[i], game.interface.getPlayerJournal(0, game.interface.getGameTime().time * 1000, false), COLUMN_TOTAL )
 			end
-			for j = 1, #transportTypes do
-				refreshVehicleCategoryValues(transportTypes[j], game.interface.getPlayerJournal(0, game.interface.getGameTime().time * 1000, false), COLUMN_TOTAL )
-			end
-
 		end
 	end)
 end
