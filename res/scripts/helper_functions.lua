@@ -14,35 +14,50 @@ local function getDaysInMonth(month, year)
   end
 end
 
-function getYearStartEndTime(year)
-	local currentDate = game.interface.getGameTime().date
-  debugPrint(currentDate)
-  local currentTime = game.interface.getGameTime().time * 1000
-  debugPrint(currentTime)
-  local daysFromYearStart = currentDate.day
-  debugPrint(daysFromYearStart)
-  local millisPerDay = game.interface.getMillisPerDay()
-  debugPrint(millisPerDay)
-
-  for i = 1, currentDate.month - 1 do
-    daysFromYearStart = daysFromYearStart + getDaysInMonth(i, year)
-    debugPrint(daysFromYearStart)
-  end
-
-  local yearStart = currentTime - (daysFromYearStart * millisPerDay)
-  debugPrint(yearStart)
-  if year == currentDate.year then
-    return {yearStart, currentTime}
-  else
-    debugPrint(yearStart - (currentDate.year - year) * 365.25 * millisPerDay)
-    debugPrint(yearStart - (currentDate.year - 1 - year) * 365.25 * millisPerDay)
-    return {yearStart - (currentDate.year - year) * 365.25 * millisPerDay, yearStart - (currentDate.year - 1 - year) * 365.25 * millisPerDay}
-  end
-end
-
 function getCurrentGameYear()
 	return game.interface.getGameTime().date.year
 end
+
+function getYearTimeLength(year)
+  local millisPerDay = game.interface.getMillisPerDay()
+  if isLeapYear(year) then
+    return 366 * millisPerDay
+  else
+    return 365 * millisPerDay
+  end
+end
+
+function getYearStartTime(year)
+  local gameTime = game.interface.getGameTime()
+  local millisPerDay = game.interface.getMillisPerDay()
+
+  local currentDayStartTime = math.floor((gameTime.time * 1000) / millisPerDay) * millisPerDay
+  local daysFromYearStart = gameTime.date.day - 1
+
+  for i = 1, gameTime.date.month - 1 do
+    daysFromYearStart = daysFromYearStart + getDaysInMonth(i, gameTime.date.year)
+  end
+
+  local currentYearStartTime = currentDayStartTime - (daysFromYearStart * millisPerDay)
+  for i = year, getCurrentGameYear() - 1 do
+    currentYearStartTime = currentYearStartTime - getYearTimeLength(i)
+  end
+
+  if currentYearStartTime < 0 then
+    currentYearStartTime = 0
+  end
+  return currentYearStartTime
+end
+
+function getYearStartEndTime(year)
+  if year == getCurrentGameYear() then
+    return {getYearStartTime(year), game.interface.getGameTime().time * 1000}
+  else
+    return {getYearStartTime(year), getYearStartTime(year + 1)}
+  end
+end
+
+
 
 function getYearColumnIndex(year, numberOfColumns)
   return numberOfColumns - (getCurrentGameYear() - year)
