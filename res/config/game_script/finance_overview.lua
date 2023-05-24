@@ -24,8 +24,8 @@ local COLUMN_TOTAL = "total"
 
 
 local transportTypes = { TRANSPORT_TYPE_ROAD, TRANSPORT_TYPE_TRAM, TRANSPORT_TYPE_RAIL, TRANSPORT_TYPE_WATER, TRANSPORT_TYPE_AIR }
-local level1Elements = { CAT_INCOME, CAT_MAINTENANCE, CAT_INVESTMENTS }
-local level2Elements = { [CAT_INCOME]={},
+local level1Categories = { CAT_INCOME, CAT_MAINTENANCE, CAT_INVESTMENTS }
+local level2Categories = { [CAT_INCOME]={},
 						 [CAT_MAINTENANCE]={CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE},
 						 [CAT_INVESTMENTS]={CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_TRACKS, CAT_INVESTMENTS_INFRASTRUCTURE}
 					   }
@@ -187,7 +187,10 @@ function createTableLine(labelComponents, rowId, sLevel, level)
 end
 
 function isCategoryValidForTransportType(transportType, category)
-	
+	if category == CAT_INVESTMENTS_TRACKS then
+		return transportType == TRANSPORT_TYPE_RAIL or transportType == TRANSPORT_TYPE_ROAD
+	end
+	return true;
 end
 
 function addTableCategory(transportType)
@@ -196,20 +199,20 @@ function addTableCategory(transportType)
 	createTableLine({createExpandButton(0), labelView}, transportType, "sLevel0", 0)
 
 	-- level 1
-	for i = 1, #level1Elements do
-		local l1Element = level1Elements[i]
-		if ( #level2Elements[l1Element] == 0) then
-			labelView = createTextView(_(l1Element), {"sLevel1", "sLeft", "sLevelPadding"}, "")
-			createTableLine({labelView}, transportType..l1Element, "sLevel1", 1)
+	for i = 1, #level1Categories do
+		local level1Category = level1Categories[i]
+		if ( #level2Categories[level1Category] == 0) then
+			labelView = createTextView(_(level1Category), {"sLevel1", "sLeft", "sLevelPadding"}, "")
+			createTableLine({labelView}, transportType..level1Category, "sLevel1", 1)
 		else
-			labelView = createTextView(_(l1Element), {"sLevel1", "sLeft"}, "")
-			createTableLine({createExpandButton(1), labelView}, transportType..l1Element, "sLevel1", 1)
+			labelView = createTextView(_(level1Category), {"sLevel1", "sLeft"}, "")
+			createTableLine({createExpandButton(1), labelView}, transportType..level1Category, "sLevel1", 1)
 			
 			-- level 2
-			for j = 1, #level2Elements[l1Element] do
-				local l2Element = level2Elements[l1Element][j]
-				labelView = createTextView(_(l2Element), {"sLevel2", "sLeft", "sLevelPadding"}, "")
-				createTableLine({labelView}, transportType..l2Element, "sLevel2", 2)
+			for j = 1, #level2Categories[level1Category] do
+				local level2Category = level2Categories[level1Category][j]
+				labelView = createTextView(_(level2Category), {"sLevel2", "sLeft", "sLevelPadding"}, "")
+				createTableLine({labelView}, transportType..level2Category, "sLevel2", 2)
 			end
 		end
 	end
