@@ -1,10 +1,10 @@
 require "helper_functions"
 
-local TRANSPORT_CATEGORY_ROAD = "road"
-local TRANSPORT_CATEGORY_TRAM = "tram"
-local TRANSPORT_CATEGORY_RAIL = "rail"
-local TRANSPORT_CATEGORY_WATER = "water"
-local TRANSPORT_CATEGORY_AIR = "air"
+local TRANSPORT_TYPE_ROAD = "road"
+local TRANSPORT_TYPE_TRAM = "tram"
+local TRANSPORT_TYPE_RAIL = "rail"
+local TRANSPORT_TYPE_WATER = "water"
+local TRANSPORT_TYPE_AIR = "air"
 
 local CAT_INCOME = "income"
 
@@ -23,7 +23,7 @@ local COLUMN_YEAR = "year"
 local COLUMN_TOTAL = "total"
 
 
-local transportCategories = { TRANSPORT_CATEGORY_ROAD, TRANSPORT_CATEGORY_TRAM, TRANSPORT_CATEGORY_RAIL, TRANSPORT_CATEGORY_WATER, TRANSPORT_CATEGORY_AIR }
+local transportTypes = { TRANSPORT_TYPE_ROAD, TRANSPORT_TYPE_TRAM, TRANSPORT_TYPE_RAIL, TRANSPORT_TYPE_WATER, TRANSPORT_TYPE_AIR }
 local level1Elements = { CAT_INCOME, CAT_MAINTENANCE, CAT_INVESTMENTS }
 local level2Elements = { [CAT_INCOME]={},
 						 [CAT_MAINTENANCE]={CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE},
@@ -56,32 +56,32 @@ local state = {
 	currentYear = 0,
 }
 
-function getValueFromJournal(journal, transportCategory, category)
+function getValueFromJournal(journal, transportType, category)
 	if category == CAT_INCOME then
-		return journal.income[transportCategory]
+		return journal.income[transportType]
 	--maintenance
 	elseif category == CAT_MAINTENANCE then
-		return journal.maintenance[transportCategory]._sum
+		return journal.maintenance[transportType]._sum
 	elseif category == CAT_MAINTENANCE_VEHICLES then
-		return journal.maintenance[transportCategory].vehicle
+		return journal.maintenance[transportType].vehicle
 	elseif category == CAT_MAINTENANCE_INFRASTRUCTURE then
-		return journal.maintenance[transportCategory].infrastructure
+		return journal.maintenance[transportType].infrastructure
 	--investment		
 	elseif category == CAT_INVESTMENTS then
-		return journal.construction[transportCategory]._sum + journal.acquisition[transportCategory]
+		return journal.construction[transportType]._sum + journal.acquisition[transportType]
 	elseif category == CAT_INVESTMENTS_VEHICLES then
-		return journal.acquisition[transportCategory]
+		return journal.acquisition[transportType]
 	elseif category == CAT_INVESTMENTS_TRACKS then
-		if transportCategory == TRANSPORT_CATEGORY_RAIL then
-			return journal.construction[transportCategory].track
+		if transportType == TRANSPORT_TYPE_RAIL then
+			return journal.construction[transportType].track
 		else
-			return journal.construction[transportCategory].street
+			return journal.construction[transportType].street
 		end
 	elseif category == CAT_INVESTMENTS_INFRASTRUCTURE then
-		return journal.construction[transportCategory].station + journal.construction[transportCategory].depot + journal.construction[transportCategory].signal
+		return journal.construction[transportType].station + journal.construction[transportType].depot + journal.construction[transportType].signal
 	--total
 	elseif category == CAT_TOTAL then
-		return journal.construction[transportCategory]._sum + journal.acquisition[transportCategory] + journal.income[transportCategory] + journal.maintenance[transportCategory]._sum
+		return journal.construction[transportType]._sum + journal.acquisition[transportType] + journal.income[transportType] + journal.maintenance[transportType]._sum
 	end
 end
 
@@ -100,24 +100,24 @@ function updateValueCell(amount, textViewId)
 	textView:setText(api.util.formatMoney(amount))
 end
 
-function refreshVehicleCategoryValues(transportCategory, journal, column)
-	local income = getValueFromJournal(journal, transportCategory, CAT_INCOME)
-	local maintenance = getValueFromJournal(journal, transportCategory, CAT_MAINTENANCE)
+function refreshVehicleCategoryValues(transportType, journal, column)
+	local income = getValueFromJournal(journal, transportType, CAT_INCOME)
+	local maintenance = getValueFromJournal(journal, transportType, CAT_MAINTENANCE)
 	--cashflow
-	updateValueCell(income + maintenance, transportCategory..column)
+	updateValueCell(income + maintenance, transportType..column)
 	--income
-	updateValueCell(income, transportCategory..CAT_INCOME..column)
+	updateValueCell(income, transportType..CAT_INCOME..column)
 	--maintenance
-	updateValueCell(maintenance, transportCategory..CAT_MAINTENANCE..column)
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_MAINTENANCE_VEHICLES), transportCategory..CAT_MAINTENANCE_VEHICLES..column)
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_MAINTENANCE_INFRASTRUCTURE), transportCategory..CAT_MAINTENANCE_INFRASTRUCTURE..column)
+	updateValueCell(maintenance, transportType..CAT_MAINTENANCE..column)
+	updateValueCell(getValueFromJournal(journal, transportType, CAT_MAINTENANCE_VEHICLES), transportType..CAT_MAINTENANCE_VEHICLES..column)
+	updateValueCell(getValueFromJournal(journal, transportType, CAT_MAINTENANCE_INFRASTRUCTURE), transportType..CAT_MAINTENANCE_INFRASTRUCTURE..column)
 	--investment
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS), transportCategory..CAT_INVESTMENTS..column)
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS_VEHICLES), transportCategory..CAT_INVESTMENTS_VEHICLES..column)
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS_TRACKS), transportCategory..CAT_INVESTMENTS_TRACKS..column)
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_INVESTMENTS_INFRASTRUCTURE), transportCategory..CAT_INVESTMENTS_INFRASTRUCTURE..column)
+	updateValueCell(getValueFromJournal(journal, transportType, CAT_INVESTMENTS), transportType..CAT_INVESTMENTS..column)
+	updateValueCell(getValueFromJournal(journal, transportType, CAT_INVESTMENTS_VEHICLES), transportType..CAT_INVESTMENTS_VEHICLES..column)
+	updateValueCell(getValueFromJournal(journal, transportType, CAT_INVESTMENTS_TRACKS), transportType..CAT_INVESTMENTS_TRACKS..column)
+	updateValueCell(getValueFromJournal(journal, transportType, CAT_INVESTMENTS_INFRASTRUCTURE), transportType..CAT_INVESTMENTS_INFRASTRUCTURE..column)
 	--total
-	updateValueCell(getValueFromJournal(journal, transportCategory, CAT_TOTAL), transportCategory..CAT_TOTAL..column)
+	updateValueCell(getValueFromJournal(journal, transportType, CAT_TOTAL), transportType..CAT_TOTAL..column)
 end
 
 function createExpandButton(level)
@@ -186,32 +186,36 @@ function createTableLine(labelComponents, rowId, sLevel, level)
 	financeTable:addRow(row)
 end
 
-function addTableCategory(transportCategory)
+function isCategoryValidForTransportType(transportType, category)
+	
+end
+
+function addTableCategory(transportType)
 	-- level 0
-	local labelView = createTextView(_(transportCategory), {"sLevel0", "sLeft"}, "")
-	createTableLine({createExpandButton(0), labelView}, transportCategory, "sLevel0", 0)
+	local labelView = createTextView(_(transportType), {"sLevel0", "sLeft"}, "")
+	createTableLine({createExpandButton(0), labelView}, transportType, "sLevel0", 0)
 
 	-- level 1
 	for i = 1, #level1Elements do
 		local l1Element = level1Elements[i]
 		if ( #level2Elements[l1Element] == 0) then
 			labelView = createTextView(_(l1Element), {"sLevel1", "sLeft", "sLevelPadding"}, "")
-			createTableLine({labelView}, transportCategory..l1Element, "sLevel1", 1)
+			createTableLine({labelView}, transportType..l1Element, "sLevel1", 1)
 		else
 			labelView = createTextView(_(l1Element), {"sLevel1", "sLeft"}, "")
-			createTableLine({createExpandButton(1), labelView}, transportCategory..l1Element, "sLevel1", 1)
+			createTableLine({createExpandButton(1), labelView}, transportType..l1Element, "sLevel1", 1)
 			
 			-- level 2
 			for j = 1, #level2Elements[l1Element] do
 				local l2Element = level2Elements[l1Element][j]
 				labelView = createTextView(_(l2Element), {"sLevel2", "sLeft", "sLevelPadding"}, "")
-				createTableLine({labelView}, transportCategory..l2Element, "sLevel2", 2)
+				createTableLine({labelView}, transportType..l2Element, "sLevel2", 2)
 			end
 		end
 	end
 
 	labelView = createTextView(_("Total"), {"sLevel1", "sRight"}, "")
-	createTableLine({labelView}, transportCategory..CAT_TOTAL, "sLevel1", 0)
+	createTableLine({labelView}, transportType..CAT_TOTAL, "sLevel1", 0)
 end
 
 function addTableHeader()
@@ -233,8 +237,8 @@ function initFinanceTable()
 
 	addTableHeader()
 
-	for j = 1, #transportCategories do
-		addTableCategory(transportCategories[j])
+	for j = 1, #transportTypes do
+		addTableCategory(transportTypes[j])
 	end
 
 	local companyValueView = createTextView(_("CompanyValue"), {"sLevel0", "sLeft"}, "")
@@ -262,12 +266,12 @@ function initFinanceTab()
 			for i = getCurrentGameYear() - numberOfYearColumns + 1, getCurrentGameYear() do
 				local yearStartEnd = getYearStartEndTime(i)
 				local yearJournal = game.interface.getPlayerJournal(yearStartEnd[1], yearStartEnd[2], false)
-				for j = 1, #transportCategories do
-					refreshVehicleCategoryValues(transportCategories[j], yearJournal, getYearColumnIndex(i, numberOfYearColumns) )
+				for j = 1, #transportTypes do
+					refreshVehicleCategoryValues(transportTypes[j], yearJournal, getYearColumnIndex(i, numberOfYearColumns) )
 				end
 			end
-			for j = 1, #transportCategories do
-				refreshVehicleCategoryValues(transportCategories[j], game.interface.getPlayerJournal(0, game.interface.getGameTime().time * 1000, false), COLUMN_TOTAL )
+			for j = 1, #transportTypes do
+				refreshVehicleCategoryValues(transportTypes[j], game.interface.getPlayerJournal(0, game.interface.getGameTime().time * 1000, false), COLUMN_TOTAL )
 			end
 
 		end
