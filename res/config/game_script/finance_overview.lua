@@ -31,7 +31,10 @@ local level2Categories = { [CAT_INCOME]={},
 						 [CAT_INVESTMENTS]={ CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_INFRASTRUCTURE, CAT_INVESTMENTS_TRACKS }
 					   }
 local financeTable = nil
+local financeTabWindow = nil
 local numberOfYearColumns = 5
+local guiUpdate = false
+local lastBalance = 0
 
 
 local tooltips = {
@@ -314,21 +317,11 @@ function initFinanceTab()
 	myFinancesOverviewWindow:setLayout(verticalLayout)
 	myFinancesOverviewWindow:setId("myFinancesOverviewWindow")
 
-	local financeTabWindow = api.gui.util.getById("menu.finances.category")
+	financeTabWindow = api.gui.util.getById("menu.finances.category")
 	financeTabWindow:insertTab(api.gui.comp.TextView.new(_("FinanceTabOverviewLabel")), myFinancesOverviewWindow, 0)
 	financeTabWindow:setCurrentTab(0, true)
 	financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
-		if visible then
-			
-			for i = 1, #transportTypes do
-				for j = getCurrentGameYear() - numberOfYearColumns + 1, getCurrentGameYear() do
-					local yearStartEnd = getYearStartEndTime(j)
-					local yearJournal = game.interface.getPlayerJournal(yearStartEnd[1], yearStartEnd[2], false)
-					refreshVehicleCategoryValues(transportTypes[i], yearJournal, getYearColumnIndex(j, numberOfYearColumns) )
-				end
-				refreshVehicleCategoryValues(transportTypes[i], game.interface.getPlayerJournal(0, game.interface.getGameTime().time * 1000, false), COLUMN_TOTAL )
-			end
-		end
+		guiUpdate = visible
 	end)
 end
 
@@ -337,8 +330,26 @@ end
 -- ***************************
 function data()
 	return {
+		save = function()
+		end,
+		load = function()
+		end,
 		guiInit = function ()
 			initFinanceTab()
+		end,
+		guiUpdate = function()
+			local currentBalance = game.interface.getEntity(game.interface.getPlayer()).balance
+			if guiUpdate and financeTabWindow:getCurrentTab() == 0 and currentBalance ~= lastBalance then
+				lastBalance = currentBalance
+				for i = 1, #transportTypes do
+					for j = getCurrentGameYear() - numberOfYearColumns + 1, getCurrentGameYear() do
+						local yearStartEnd = getYearStartEndTime(j)
+						local yearJournal = game.interface.getPlayerJournal(yearStartEnd[1], yearStartEnd[2], false)
+						refreshVehicleCategoryValues(transportTypes[i], yearJournal, getYearColumnIndex(j, numberOfYearColumns) )
+					end
+					refreshVehicleCategoryValues(transportTypes[i], game.interface.getPlayerJournal(0, game.interface.getGameTime().time * 1000, false), COLUMN_TOTAL )
+				end
+			end
 		end,
 	}
 end
