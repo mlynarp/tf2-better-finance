@@ -332,6 +332,8 @@ function initFinanceTab()
     financeTabWindow = api.gui.util.getById("menu.finances.category")
     financeTabWindow:insertTab(api.gui.comp.TextView.new(_("FinanceTabOverviewLabel")), myFinancesOverviewWindow, 0)
     financeTabWindow:setCurrentTab(0, true)
+    local winSize = api.gui.util.Size.new(1100, 800)
+    financeTabWindow:getParent():getParent():setSize(winSize)
     financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
         guiUpdate = visible
     end)

@@ -1,7 +1,7 @@
 require "tableutil"
 
 local ssu = require "stylesheetutil"
-local rowHeight=30
+local rowHeight=25
 local levelPadding = 30
 local icon_size=15
 
@@ -14,9 +14,8 @@ function data()
 	-- *************
 	a("!sHeader",
 	{
-		color = ssu.makeColor(220,220,220,200),
-		backgroundColor = ssu.makeColor(255, 255, 255, 150),
 		gravity = {-1.0 ,-1.0},
+        fontSize = 15,
 	})
 
 	-- *************
@@ -24,7 +23,7 @@ function data()
 	-- *************
 	a("!sLevel0",
 	{
-		backgroundColor = ssu.makeColor(255, 255, 255, 50),
+		backgroundColor = ssu.makeColor(255, 255, 255, 25),
 		size={-1, rowHeight},
 		gravity = {-1.0 ,-1.0},
 	})
@@ -34,7 +33,7 @@ function data()
 	-- *************
 	a("!sLevel1",
 	{
-		backgroundColor = ssu.makeColor(255, 255, 255, 20),
+		backgroundColor = ssu.makeColor(255, 255, 255, 0),
 		size={-1, rowHeight},
 		gravity = {-1.0 ,-1.0},
 	})
@@ -54,7 +53,7 @@ function data()
 	-- *************
 	a("!sLevel2",
 	{
-		backgroundColor = ssu.makeColor(255, 255, 255, 10),
+		backgroundColor = ssu.makeColor(255, 255, 255, 0),
 		size={-1, rowHeight},
 		gravity = {-1.0 ,-1.0},
 	})
@@ -67,21 +66,6 @@ function data()
 	a("!sLevel2!sLevelPadding",
 	{
 		padding={0,0,0,levelPadding * 2 + icon_size + 10},
-	})
-	
-	-- *************
-	-- ** Level 3 **
-	-- *************
-	a("!sLevel3",
-	{
-		backgroundColor = ssu.makeColor(255, 255, 255, 0),
-		size={-1, rowHeight},
-		gravity = {-1.0 ,-1.0},
-	})
-
-	a("!sLevel3!sLevelPadding",
-	{
-		padding={0,0,0,levelPadding * 3 + icon_size + 10},
 	})
 
 	-- *************
