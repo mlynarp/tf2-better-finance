@@ -331,13 +331,13 @@ function initSummaryTable()
     summaryTable:setName("mySummaryTable")
     summaryTable:setStyleClassList({"mySummaryTable"})
 
-    local profitView = createTextView(_("Profit"), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local profitView = createTextView(_("profit"), { "mySummaryTableLineLabel", "sLeft" }, "")
     createSummaryLine({ profitView }, "profitCell", "mySummaryTableLine")
-    local loanView = createTextView(_("Loan"), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local loanView = createTextView(_("loan"), { "mySummaryTableLineLabel", "sLeft" }, "")
     createSummaryLine({ loanView }, "loanCell", "mySummaryTableLine")
-    local interestView = createTextView(_("Interest"), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local interestView = createTextView(_("interest"), { "mySummaryTableLineLabel", "sLeft" }, "")
     createSummaryLine({ interestView }, "interestCell", "mySummaryTableLine")
-    local totalView = createTextView(_("Total"), { "mySummaryTableLineTotalLabel", "sLeft" }, "")
+    local totalView = createTextView(_("balance"), { "mySummaryTableLineTotalLabel", "sLeft" }, "")
     createSummaryLine({ totalView }, "totalCell", "mySummaryTableLineTotal")
 end
 
