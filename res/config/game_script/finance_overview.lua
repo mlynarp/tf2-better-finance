@@ -316,6 +316,7 @@ end
 function initFinanceTable()
     financeTable = api.gui.comp.Table.new(numberOfYearColumns + 2, "NONE")
     financeTable:setId("myFinancesOverviewTable")
+    financeTable:setName("myFinancesOverviewTable")
 
     addTableHeader()
 
@@ -327,6 +328,7 @@ end
 function initSummaryTable()
     summaryTable = api.gui.comp.Table.new(2, "NONE")
     summaryTable:setId("mySummaryTable")
+    summaryTable:setName("mySummaryTable")
     summaryTable:setStyleClassList({"mySummaryTable"})
 
     local profitView = createTextView(_("Profit"), { "mySummaryTableLineLabel", "sLeft" }, "")
@@ -343,22 +345,20 @@ function initFinanceTab()
     initFinanceTable()
     initSummaryTable()
 
-    local verticalLayout = api.gui.layout.BoxLayout.new("VERTICAL")
-    verticalLayout:addItem(financeTable)
-    verticalLayout:addItem(summaryTable)
-
-    local myFinancesOverviewWindow = api.gui.comp.Component.new("myFinancesOverviewWindow")
-    myFinancesOverviewWindow:setLayout(verticalLayout)
-    myFinancesOverviewWindow:setId("myFinancesOverviewWindow")
-
     financeTabWindow = api.gui.util.getById("menu.finances.category")
-    financeTabWindow:insertTab(api.gui.comp.TextView.new(_("finance_tab_label")), myFinancesOverviewWindow, 0)
-    financeTabWindow:setCurrentTab(0, true)
-    local winSize = api.gui.util.Size.new(1100, 800)
-    financeTabWindow:getParent():getParent():setSize(winSize)
+    financeTabWindow:getParent():getParent():setSize(api.gui.util.Size.new(1100, 800))
     financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
         guiUpdate = visible
     end)
+
+    local financeTableLayout = financeTabWindow:getTab(0):getLayout()
+    --replace current finance table
+    financeTableLayout:removeItem(financeTableLayout:getItem(0))
+    financeTableLayout:insertItem(financeTable, 0)
+
+    --replace current summary table
+    financeTableLayout:removeItem(financeTableLayout:getItem(3))
+    financeTableLayout:insertItem(summaryTable, 3)
 end
 
 -- ***************************

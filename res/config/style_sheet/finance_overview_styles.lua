@@ -72,7 +72,7 @@ function data()
     a("!mySummaryTable",
 	{
 		padding = {0,0,3,0},
-        size={-1, 4*rowHeight + textPadding},
+        size={-1, 4*rowHeight},
 		gravity = {-1.0 ,-1.0},
 	})
 
