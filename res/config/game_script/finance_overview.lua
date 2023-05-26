@@ -7,18 +7,16 @@ local TRANSPORT_TYPE_WATER = "water"
 local TRANSPORT_TYPE_AIR = "air"
 local TRANSPORT_TYPE_ALL = "all"
 
+local CAT_TOTAL = "total"
 local CAT_INCOME = "income"
-
 local CAT_MAINTENANCE = "maintenance"
 local CAT_MAINTENANCE_VEHICLES = "maintenance_vehicles"
 local CAT_MAINTENANCE_INFRASTRUCTURE = "maintenance_infrastructure"
-
 local CAT_INVESTMENTS = "investments"
 local CAT_INVESTMENTS_VEHICLES = "investments_vehicles"
 local CAT_INVESTMENTS_TRACKS = "investments_tracks"
 local CAT_INVESTMENTS_INFRASTRUCTURE = "investments_infrastructure"
-
-local CAT_TOTAL = "Total"
+local CAT_CASHFLOW = "cashflow"
 
 local COLUMN_YEAR = "year"
 local COLUMN_TOTAL = "total"
@@ -166,8 +164,8 @@ end
 function refreshVehicleCategoryValues(transportType, journal, column)
     local income = getValueFromJournal(journal, transportType, CAT_INCOME)
     local maintenance = getValueFromJournal(journal, transportType, CAT_MAINTENANCE)
-    --cashflow
-    updateValueCell(income + maintenance, transportType .. column)
+    --total
+    updateValueCell(getValueFromJournal(journal, transportType, CAT_TOTAL), transportType .. CAT_TOTAL .. column)
     --income
     updateValueCell(income, transportType .. CAT_INCOME .. column)
     --maintenance
@@ -179,8 +177,9 @@ function refreshVehicleCategoryValues(transportType, journal, column)
     updateValueCell(getValueFromJournal(journal, transportType, CAT_INVESTMENTS_VEHICLES), transportType .. CAT_INVESTMENTS_VEHICLES .. column)
     updateValueCell(getValueFromJournal(journal, transportType, CAT_INVESTMENTS_TRACKS), transportType .. CAT_INVESTMENTS_TRACKS .. column)
     updateValueCell(getValueFromJournal(journal, transportType, CAT_INVESTMENTS_INFRASTRUCTURE), transportType .. CAT_INVESTMENTS_INFRASTRUCTURE .. column)
-    --total
-    updateValueCell(getValueFromJournal(journal, transportType, CAT_TOTAL), transportType .. CAT_TOTAL .. column)
+    --cashflow
+    updateValueCell(income + maintenance, transportType .. CAT_CASHFLOW .. column)
+    
 end
 
 function createExpandButton(level)
@@ -270,7 +269,7 @@ end
 function addTableCategory(transportType)
     -- level 0
     local labelView = createTextView(_(transportType), { "sLevel0", "sLeft" }, "")
-    createTableLine({ createExpandButton(0), labelView }, transportType, "sLevel0", 0)
+    createTableLine({ createExpandButton(0), labelView }, transportType .. CAT_TOTAL, "sLevel0", 0)
 
     -- level 1
     for i = 1, #level1Categories do
@@ -297,8 +296,8 @@ function addTableCategory(transportType)
         end
     end
 
-    labelView = createTextView(_("Total"), { "sLevel1", "sRight" }, "")
-    createTableLine({ labelView }, transportType .. CAT_TOTAL, "sLevel1", 0)
+    labelView = createTextView(_(CAT_CASHFLOW), { "sLevel1", "sRight" }, "")
+    createTableLine({ labelView }, transportType .. CAT_CASHFLOW, "sLevel1", 0)
 end
 
 function addTableHeader()
@@ -309,7 +308,7 @@ function addTableHeader()
     for i = 1, numberOfYearColumns do
         table.insert(row, createTextView(tostring(gameYear - numberOfYearColumns + i), { "sHeader", "sRight" }, COLUMN_YEAR .. i))
     end
-    table.insert(row, createTextView(_(CAT_TOTAL), { "sHeader", "sRight" }, COLUMN_TOTAL))
+    table.insert(row, createTextView(_(COLUMN_TOTAL), { "sHeader", "sRight" }, COLUMN_TOTAL))
 
     financeTable:addRow(row)
 end
@@ -353,7 +352,7 @@ function initFinanceTab()
     myFinancesOverviewWindow:setId("myFinancesOverviewWindow")
 
     financeTabWindow = api.gui.util.getById("menu.finances.category")
-    financeTabWindow:insertTab(api.gui.comp.TextView.new(_("FinanceTabOverviewLabel")), myFinancesOverviewWindow, 0)
+    financeTabWindow:insertTab(api.gui.comp.TextView.new(_("finance_tab_label")), myFinancesOverviewWindow, 0)
     financeTabWindow:setCurrentTab(0, true)
     local winSize = api.gui.util.Size.new(1100, 800)
     financeTabWindow:getParent():getParent():setSize(winSize)

@@ -22,8 +22,9 @@ function data()
 			["Parameter.Tooltip"] = ("Choose the number of years to be displayed in the financial overview table."),
 		},
 		cs_CZ = {
-			["FinanceTabOverviewLabel"] = ("Finance - Přehled"),
-			["road"] = ("Silniční doprava"),
+            ["finance_tab_label"] = ("Finance - Přehled"),
+            ["total"] = ("Celkem"),
+            ["road"] = ("Silniční doprava"),
 			["tram"] = ("Tramvajová doprava"),
 			["rail"] = ("Železniční doprava"),
 			["water"] = ("Lodní doprava"),
@@ -38,7 +39,7 @@ function data()
 			["investments_tracks"]=("Železnice"),
 			["investments_roads"]=("Silnice"),
 			["investments_infrastructure"]=("Infrastruktura"),
-			["Total"] = ("Celkem"),
+            ["cashflow"] = ("Provozní zisk "),
 			["Parameter.Label"] = ("Počet roků v přehledu"),
 			["Parameter.Tooltip"] = ("Vyberte počet roků, které se mají zobrazit v tabulce finančního přehledu."),
 		}
