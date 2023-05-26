@@ -31,8 +31,9 @@ local level2Categories = {
     [CAT_MAINTENANCE] = { CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE },
     [CAT_INVESTMENTS] = { CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_INFRASTRUCTURE, CAT_INVESTMENTS_TRACKS }
 }
-local financeTable = nil
 local financeTabWindow = nil
+local financeTable = nil
+local summaryTable = nil
 local numberOfYearColumns = 5
 local guiUpdate = false
 local lastBalance = 0
@@ -248,6 +249,17 @@ function createTableLine(labelComponents, rowId, sLevel, level)
     financeTable:addRow(row)
 end
 
+function createSummaryLine(labelComponents, id, sLevel)
+    local row = {}
+
+    table.insert(row, layoutComponentsHorizontally(labelComponents, { sLevel }, 0))
+    
+    local cellView = createTextView(api.util.formatMoney(0), { sLevel, "sRight" }, id)
+    table.insert(row, layoutComponentsHorizontally({ cellView }, { sLevel }, 0))
+
+    summaryTable:addRow(row)
+end
+
 function isCategoryValidForTransportType(transportType, category)
     if category == CAT_INVESTMENTS_TRACKS then
         return transportType == TRANSPORT_TYPE_RAIL or transportType == TRANSPORT_TYPE_ROAD
@@ -311,19 +323,30 @@ function initFinanceTable()
     for j = 1, #transportTypes do
         addTableCategory(transportTypes[j])
     end
+end
 
-    local companyValueView = createTextView(_("CompanyValue"), { "sLevel0", "sLeft" }, "")
-    createTableLine({ companyValueView }, "company", "sLevel0", 0)
+function initSummaryTable()
+    summaryTable = api.gui.comp.Table.new(2, "NONE")
+    summaryTable:setId("mySummaryTable")
+    summaryTable:setStyleClassList({"mySummaryTable"})
 
-    local scoreValueView = createTextView(_("ScoreValue"), { "sLevel0", "sLeft" }, "")
-    createTableLine({ scoreValueView }, "score", "sLevel0", 0)
+    local profitView = createTextView(_("Profit"), { "mySummaryTableLineLabel", "sLeft" }, "")
+    createSummaryLine({ profitView }, "profitCell", "mySummaryTableLine")
+    local loanView = createTextView(_("Loan"), { "mySummaryTableLineLabel", "sLeft" }, "")
+    createSummaryLine({ loanView }, "loanCell", "mySummaryTableLine")
+    local interestView = createTextView(_("Interest"), { "mySummaryTableLineLabel", "sLeft" }, "")
+    createSummaryLine({ interestView }, "interestCell", "mySummaryTableLine")
+    local totalView = createTextView(_("Total"), { "mySummaryTableLineTotalLabel", "sLeft" }, "")
+    createSummaryLine({ totalView }, "totalCell", "mySummaryTableLineTotal")
 end
 
 function initFinanceTab()
     initFinanceTable()
+    initSummaryTable()
 
     local verticalLayout = api.gui.layout.BoxLayout.new("VERTICAL")
     verticalLayout:addItem(financeTable)
+    verticalLayout:addItem(summaryTable)
 
     local myFinancesOverviewWindow = api.gui.comp.Component.new("myFinancesOverviewWindow")
     myFinancesOverviewWindow:setLayout(verticalLayout)
@@ -355,6 +378,7 @@ function data()
             local currentBalance = game.interface.getEntity(game.interface.getPlayer()).balance
             local currentYear = getCurrentGameYear()
             if guiUpdate and financeTabWindow:getCurrentTab() == 0 and (currentBalance ~= lastBalance or currentYear ~= lastYear) then
+                local overallJournal = getJournal(0)
                 for i = 1, #transportTypes do
                     if lastYear ~= currentYear then
                         for j = 1, numberOfYearColumns do
@@ -365,8 +389,13 @@ function data()
                     else
                         refreshVehicleCategoryValues(transportTypes[i], getJournal(lastYear), numberOfYearColumns)
                     end
-                    refreshVehicleCategoryValues(transportTypes[i], getJournal(0), COLUMN_TOTAL)
+                    refreshVehicleCategoryValues(transportTypes[i], overallJournal, COLUMN_TOTAL)
                 end
+                updateValueCell(getValueFromJournal(overallJournal, TRANSPORT_TYPE_ALL, CAT_TOTAL), "profitCell")
+                updateValueCell(overallJournal.loan, "loanCell")
+                updateValueCell(overallJournal.interest, "interestCell")
+                updateValueCell(overallJournal._sum, "totalCell")
+              
                 lastYear = currentYear
                 lastBalance = currentBalance
             end

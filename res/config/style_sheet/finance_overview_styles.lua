@@ -4,6 +4,7 @@ local ssu = require "stylesheetutil"
 local rowHeight=25
 local levelPadding = 30
 local icon_size=15
+local textPadding = 10
 
 function data()
 	local result = { }
@@ -24,7 +25,7 @@ function data()
 	a("!sLevel0",
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 25),
-		size={-1, rowHeight},
+		size={-1, rowHeight + 5},
 		gravity = {-1.0 ,-1.0},
 	})
 
@@ -45,7 +46,7 @@ function data()
 
 	a("!sLevel1!sLevelPadding",
 	{
-		padding={0,0,0,levelPadding + icon_size + 10},
+		padding={0,0,0,levelPadding + icon_size + textPadding},
 	})
 
 	-- *************
@@ -65,8 +66,44 @@ function data()
 
 	a("!sLevel2!sLevelPadding",
 	{
-		padding={0,0,0,levelPadding * 2 + icon_size + 10},
+		padding={0,0,0,levelPadding * 2 + icon_size + textPadding},
 	})
+
+    a("!mySummaryTable",
+	{
+		padding = {0,0,3,0},
+        size={-1, 4*rowHeight + textPadding},
+		gravity = {-1.0 ,-1.0},
+	})
+
+    a("!mySummaryTableLine",
+    {
+        backgroundColor = ssu.makeColor(255, 255, 255, 5),
+		size={-1, rowHeight},
+		gravity = {-1.0 ,0.5},
+    })
+    a("!mySummaryTableLineLabel",
+    {
+        backgroundColor = ssu.makeColor(255, 255, 255, 5),
+        padding = { 0, 0, 0, icon_size + textPadding},
+		size={-1, rowHeight},
+		gravity = {-1.0 ,0.5},
+    })
+
+    a("!mySummaryTableLineTotal",
+    {
+        backgroundColor = ssu.makeColor(255, 255, 255, 30),
+		size={-1, rowHeight},
+		gravity = {-1.0 ,0.5},
+    })
+
+    a("!mySummaryTableLineTotalLabel",
+    {
+        backgroundColor = ssu.makeColor(255, 255, 255, 30),
+        padding = { 0, 0, 0, icon_size + textPadding},
+		size={-1, rowHeight},
+		gravity = {-1.0 ,0.5},
+    })
 
 	-- *************
 	-- ** Other **
