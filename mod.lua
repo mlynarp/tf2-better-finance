@@ -1,6 +1,12 @@
 ﻿local vMajor = 1
 local vMinor = 0
 
+-- old API
+-- http://transportfever.com/wiki/script-doc/index.html
+
+-- new API
+-- https://transportfever2.com/wiki/api/index.html
+
 function data()
 	return {
 		info = {
