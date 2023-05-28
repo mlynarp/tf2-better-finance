@@ -1,12 +1,6 @@
 require "pm_finance_constants"
 require "pm_finance_functions"
 
-local level1Categories = { CAT_INCOME, CAT_MAINTENANCE, CAT_INVESTMENTS }
-local level2Categories = {
-    [CAT_INCOME] = {},
-    [CAT_MAINTENANCE] = { CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE },
-    [CAT_INVESTMENTS] = { CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_INFRASTRUCTURE, CAT_INVESTMENTS_TRACKS, CAT_INVESTMENTS_ROADS }
-}
 local financeTabWindow = nil
 local financeTable = nil
 local summaryTable = nil
@@ -172,9 +166,8 @@ function addTableCategory(transportType)
     createTableLine({ createExpandButton(0), labelView }, transportType .. CAT_TOTAL, "sLevel0", 0)
 
     -- level 1
-    for i = 1, #level1Categories do
-        local level1Category = level1Categories[i]
-        if (#level2Categories[level1Category] == 0) then
+    for i, level1Category in ipairs(TRANSPORT_CATEGORIES_LEVEL1) do
+        if (#TRANSPORT_CATEGORIES_LEVEL2[level1Category] == 0) then
             labelView = createTextView(_(level1Category), { "sLevel1", "sLeft", "sLevelPadding" }, "")
             createTableLine({ labelView }, transportType .. level1Category, "sLevel1", 1)
         else
@@ -182,8 +175,7 @@ function addTableCategory(transportType)
             createTableLine({ createExpandButton(1), labelView }, transportType .. level1Category, "sLevel1", 1)
 
             -- level 2
-            for j = 1, #level2Categories[level1Category] do
-                local level2Category = level2Categories[level1Category][j]
+            for j, level2Category in ipairs(TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
                 if IsCategoryAllowedForTransportType(transportType, level2Category) then
                     labelView = createTextView(_(level2Category), { "sLevel2", "sLeft", "sLevelPadding" }, "")
                     createTableLine({ labelView }, transportType .. level2Category, "sLevel2", 2)
