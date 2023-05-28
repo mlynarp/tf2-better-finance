@@ -224,6 +224,8 @@ function InitSummaryTable()
     AddSummaryLineToTable({ loanView }, "loanCell", "mySummaryTableLine")
     local interestView = CreateTextView(_(CAT_INTERESTS), { "mySummaryTableLineLabel", "sLeft" }, "")
     AddSummaryLineToTable({ interestView }, "interestCell", "mySummaryTableLine")
+    local othersView = CreateTextView(_(CAT_OTHERS), { "mySummaryTableLineLabel", "sLeft" }, "")
+    AddSummaryLineToTable({ othersView }, "othersCell", "mySummaryTableLine")
     local totalView = CreateTextView(_(CAT_BALANCE), { "mySummaryTableLineTotalLabel", "sLeft" }, "")
     AddSummaryLineToTable({ totalView }, "totalCell", "mySummaryTableLineTotal")
 end
@@ -277,10 +279,13 @@ function data()
                     end
                     RefreshVehicleCategoryValues(TRANSPORT_TYPES[i], overallJournal, COLUMN_TOTAL)
                 end
-                UpdateValueCell(GetValueFromJournal(overallJournal, TRANSPORT_TYPE_ALL, CAT_TOTAL), "profitCell")
+                local profit = GetValueFromJournal(overallJournal, TRANSPORT_TYPE_ALL, CAT_TOTAL)
+                local balance = GetCurrentBalance()
+                UpdateValueCell(profit, "profitCell")
                 UpdateValueCell(overallJournal.loan, "loanCell")
                 UpdateValueCell(overallJournal.interest, "interestCell")
-                UpdateValueCell(overallJournal._sum, "totalCell")
+                UpdateValueCell(balance - (profit + overallJournal.loan + overallJournal.interest), "othersCell")
+                UpdateValueCell(balance, "totalCell")
               
                 lastYear = currentYear
                 lastBalance = currentBalance

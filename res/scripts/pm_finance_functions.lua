@@ -137,3 +137,7 @@ function GetValueFromJournal(journal, transportType, category)
                 GetValueFromJournal(journal, transportType, CAT_MAINTENANCE)
     end
 end
+
+function GetCurrentBalance()
+    return game.interface.getEntity(game.interface.getPlayer()).balance
+end

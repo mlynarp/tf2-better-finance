@@ -19,6 +19,7 @@ CAT_CASHFLOW = "Cashflow"
 CAT_PROFIT = "profit"
 CAT_LOAN = "loan"
 CAT_INTERESTS = "interest"
+CAT_OTHERS = "Others"
 CAT_BALANCE = "balance"
 
 COLUMN_YEAR = "year"
