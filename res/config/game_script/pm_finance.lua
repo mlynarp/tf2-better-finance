@@ -4,7 +4,6 @@ require "pm_finance_functions"
 local financeTabWindow = nil
 local financeTable = nil
 local summaryTable = nil
-local numberOfYearColumns = 5
 local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
@@ -139,7 +138,7 @@ function createTableLine(labelComponents, rowId, sLevel, level)
     local row = {}
 
     table.insert(row, layoutComponentsHorizontally(labelComponents, { sLevel }, level))
-    for i = 1, numberOfYearColumns do
+    for i = 1, NUMBER_OF_YEARS_COLUMNS do
         local yearCellView = createTextView(api.util.formatMoney(0), { sLevel, "sRight" }, rowId .. i)
         table.insert(row, layoutComponentsHorizontally({ yearCellView }, { sLevel }, level))
     end
@@ -193,8 +192,8 @@ function addTableHeader()
     local gameYear = GetCurrentGameYear()
 
     table.insert(row, createTextView("", { "sHeader", "sRight" }, ""))
-    for i = 1, numberOfYearColumns do
-        table.insert(row, createTextView(tostring(gameYear - numberOfYearColumns + i), { "sHeader", "sRight" }, COLUMN_YEAR .. i))
+    for i = 1, NUMBER_OF_YEARS_COLUMNS do
+        table.insert(row, createTextView(tostring(gameYear - NUMBER_OF_YEARS_COLUMNS + i), { "sHeader", "sRight" }, COLUMN_YEAR .. i))
     end
     table.insert(row, createTextView(_(COLUMN_TOTAL), { "sHeader", "sRight" }, COLUMN_TOTAL))
 
@@ -202,7 +201,7 @@ function addTableHeader()
 end
 
 function initFinanceTable()
-    financeTable = api.gui.comp.Table.new(numberOfYearColumns + 2, "NONE")
+    financeTable = api.gui.comp.Table.new(NUMBER_OF_YEARS_COLUMNS + 2, "NONE")
     financeTable:setId("myFinancesOverviewTable")
     financeTable:setName("myFinancesOverviewTable")
 
@@ -268,13 +267,13 @@ function data()
                 local overallJournal = GetJournal(0)
                 for i = 1, #TRANSPORT_TYPES do
                     if lastYear ~= currentYear then
-                        for j = 1, numberOfYearColumns do
-                            local year = currentYear - numberOfYearColumns + j
+                        for j = 1, NUMBER_OF_YEARS_COLUMNS do
+                            local year = currentYear - NUMBER_OF_YEARS_COLUMNS + j
                             refreshVehicleCategoryValues(TRANSPORT_TYPES[i], GetJournal(year), j)
                             api.gui.util.getById(COLUMN_YEAR .. j):setText(tostring(year))
                         end
                     else
-                        refreshVehicleCategoryValues(TRANSPORT_TYPES[i], GetJournal(lastYear), numberOfYearColumns)
+                        refreshVehicleCategoryValues(TRANSPORT_TYPES[i], GetJournal(lastYear), NUMBER_OF_YEARS_COLUMNS)
                     end
                     refreshVehicleCategoryValues(TRANSPORT_TYPES[i], overallJournal, COLUMN_TOTAL)
                 end

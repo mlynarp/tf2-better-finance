@@ -1,4 +1,6 @@
-﻿local vMajor = 1
+﻿require "pm_finance_constants"
+
+local vMajor = 1
 local vMinor = 0
 
 -- old API
@@ -31,13 +33,16 @@ function data()
 				  key = "numberOfColumns",
 				  name = _("Parameter.Label"),
 				  uiType = "SLIDER",
-				  values = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" },
+				  values = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" },
 				  tooltip = _("Parameter.Tooltip"),
-				  defaultIndex = 5,
+				  defaultIndex = 4,
 				}
 			},
 			tags = { "Script Mod" },
 		},
+        runFn = function(settings, modParams)
+            NUMBER_OF_YEARS_COLUMNS = modParams[getCurrentModId()].numberOfColumns
+        end,
 	}
 end
 

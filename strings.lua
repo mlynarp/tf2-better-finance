@@ -24,6 +24,9 @@ function data()
             [CAT_LOAN] = ("Loan"),
             [CAT_INTERESTS] = ("Interests"),
             [CAT_BALANCE] = ("Balance"),
+            ["Parameter.Label"] = ("Number of years in overview"),
+            ["Parameter.Tooltip"] = ("Choose the number of years to be displayed in the financial overview table."),
+            
             ["#Tooltip.Details.Income"] = ("Your Income"),
 			["#Tooltip.Details.Maintenance"] = ("Total Maintenance incl. buildings and vehicles"),
 			["#Tooltip.Details.Vehicles"] = ("Acquisition of new vehicles"),
@@ -31,7 +34,6 @@ function data()
 			["#Tooltip.Details.Taxes.Income"] = ("Taxes or Subsidies on Income"),
 			["#Tooltip.Details.Taxes.Vehicles"] = ("Taxes on Vehicle acquisitions"),
 			["#Tooltip.Details.Taxes.Infrastructure"]=("Taxes on new constructions"),
-			["Parameter.Tooltip"] = ("Choose the number of years to be displayed in the financial overview table."),
 		},
 		cs_CZ = {
             [TRANSPORT_TYPE_ROAD] = ("Silniční doprava"),
