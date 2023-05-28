@@ -1,26 +1,5 @@
+require "pm_finance_constants"
 require "pm_finance_functions"
-
-local TRANSPORT_TYPE_ROAD = "road"
-local TRANSPORT_TYPE_TRAM = "tram"
-local TRANSPORT_TYPE_RAIL = "rail"
-local TRANSPORT_TYPE_WATER = "water"
-local TRANSPORT_TYPE_AIR = "air"
-local TRANSPORT_TYPE_ALL = "all"
-
-local CAT_TOTAL = "total"
-local CAT_INCOME = "income"
-local CAT_MAINTENANCE = "maintenance"
-local CAT_MAINTENANCE_VEHICLES = "maintenance_vehicles"
-local CAT_MAINTENANCE_INFRASTRUCTURE = "maintenance_infrastructure"
-local CAT_INVESTMENTS = "investments"
-local CAT_INVESTMENTS_VEHICLES = "investments_vehicles"
-local CAT_INVESTMENTS_TRACKS = "investments_tracks"
-local CAT_INVESTMENTS_INFRASTRUCTURE = "investments_infrastructure"
-local CAT_CASHFLOW = "cashflow"
-
-local COLUMN_YEAR = "year"
-local COLUMN_TOTAL = "total"
-
 
 local transportTypes = { TRANSPORT_TYPE_ROAD, TRANSPORT_TYPE_TRAM, TRANSPORT_TYPE_RAIL, TRANSPORT_TYPE_WATER, TRANSPORT_TYPE_AIR, TRANSPORT_TYPE_ALL }
 local level1Categories = { CAT_INCOME, CAT_MAINTENANCE, CAT_INVESTMENTS }
@@ -287,7 +266,7 @@ function addTableCategory(transportType)
                 if isCategoryValidForTransportType(transportType, level2Category) then
                     local title = level2Category
                     if level2Category == CAT_INVESTMENTS_TRACKS and transportType == TRANSPORT_TYPE_ROAD then
-                        title = "investments_roads"
+                        title = CAT_INVESTMENTS_ROADS
                     end
                     labelView = createTextView(_(title), { "sLevel2", "sLeft", "sLevelPadding" }, "")
                     createTableLine({ labelView }, transportType .. level2Category, "sLevel2", 2)
@@ -331,13 +310,13 @@ function initSummaryTable()
     summaryTable:setName("mySummaryTable")
     summaryTable:setStyleClassList({"mySummaryTable"})
 
-    local profitView = createTextView(_("profit"), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local profitView = createTextView(_(CAT_PROFIT), { "mySummaryTableLineLabel", "sLeft" }, "")
     createSummaryLine({ profitView }, "profitCell", "mySummaryTableLine")
-    local loanView = createTextView(_("loan"), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local loanView = createTextView(_(CAT_LOAN), { "mySummaryTableLineLabel", "sLeft" }, "")
     createSummaryLine({ loanView }, "loanCell", "mySummaryTableLine")
-    local interestView = createTextView(_("interest"), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local interestView = createTextView(_(CAT_INTERESTS), { "mySummaryTableLineLabel", "sLeft" }, "")
     createSummaryLine({ interestView }, "interestCell", "mySummaryTableLine")
-    local totalView = createTextView(_("balance"), { "mySummaryTableLineTotalLabel", "sLeft" }, "")
+    local totalView = createTextView(_(CAT_BALANCE), { "mySummaryTableLineTotalLabel", "sLeft" }, "")
     createSummaryLine({ totalView }, "totalCell", "mySummaryTableLineTotal")
 end
 
