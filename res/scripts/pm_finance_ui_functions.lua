@@ -37,3 +37,32 @@ function LayoutComponentsHorizontally(components, styleList, componentName)
     component:setLayout(layout)
     return component
 end
+
+function CreateExpandButton(table, level)
+    local iconExpandPath = "ui/design/components/slim_arrow_right@2x.tga"
+    local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
+    local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
+    local button = api.gui.comp.Button.new(imageView, false)
+    button:setStyleClassList({ "sLevel" .. level, "sButton" })
+    local myRowIndex = table:getNumRows()
+    button:onClick(function()
+        local startRowIndex = myRowIndex + 1
+        local lastRowIndex = myRowIndex + 1
+        local setToVisible = not table:getItem(startRowIndex, 0):isVisible()
+        for row = startRowIndex, table:getNumRows() - 1 do
+            if tonumber(table:getItem(row, 0):getName()) <= level then
+                lastRowIndex = row - 1
+                break
+            end
+        end
+        for row = startRowIndex, lastRowIndex do
+            SetRowVisibilityInTable(table, row, setToVisible)
+            if setToVisible then
+                imageView:setImage(iconCollapsePath, false)
+            else
+                imageView:setImage(iconExpandPath, false)
+            end
+        end
+    end)
+    return button
+end

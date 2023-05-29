@@ -56,35 +56,6 @@ function RefreshTransportCategoryValues(transportType, journal, column)
     
 end
 
-function CreateExpandButton(level)
-    local iconExpandPath = "ui/design/components/slim_arrow_right@2x.tga"
-    local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
-    local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
-    local button = api.gui.comp.Button.new(imageView, false)
-    button:setStyleClassList({ "sLevel" .. level, "sButton" })
-    local myRowIndex = financeTable:getNumRows()
-    button:onClick(function()
-        local startRowIndex = myRowIndex + 1
-        local lastRowIndex = myRowIndex + 1
-        local setToVisible = not financeTable:getItem(startRowIndex, 0):isVisible()
-        for row = startRowIndex, financeTable:getNumRows() - 1 do
-            if tonumber(financeTable:getItem(row, 0):getName()) <= level then
-                lastRowIndex = row - 1
-                break
-            end
-        end
-        for row = startRowIndex, lastRowIndex do
-            SetRowVisibilityInTable(financeTable, row, setToVisible)
-            if setToVisible then
-                imageView:setImage(iconCollapsePath, false)
-            else
-                imageView:setImage(iconExpandPath, false)
-            end
-        end
-    end)
-    return button
-end
-
 function CreateTextView(text, styleList, id)
     local textView = api.gui.comp.TextView.new(text)
     textView:setStyleClassList(styleList)
@@ -120,7 +91,7 @@ end
 function AddTransportCategoriesToFinanceTable(transportType)
     -- level 0
     local labelView = CreateTextView(_(transportType), { "sLevel0", "sLeft" }, "")
-    AddTransportCategoryLineToFinanceTable({ CreateExpandButton(0), labelView }, transportType .. CAT_TOTAL, "sLevel0", 0)
+    AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 0), labelView }, transportType .. CAT_TOTAL, "sLevel0", 0)
 
     -- level 1
     for i, level1Category in ipairs(TRANSPORT_CATEGORIES_LEVEL1) do
@@ -129,7 +100,7 @@ function AddTransportCategoriesToFinanceTable(transportType)
             AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. level1Category, "sLevel1", 1)
         else
             labelView = CreateTextView(_(level1Category), { "sLevel1", "sLeft" }, "")
-            AddTransportCategoryLineToFinanceTable({ CreateExpandButton(1), labelView }, transportType .. level1Category, "sLevel1", 1)
+            AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 1), labelView }, transportType .. level1Category, "sLevel1", 1)
 
             -- level 2
             for j, level2Category in ipairs(TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
