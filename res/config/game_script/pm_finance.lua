@@ -33,15 +33,6 @@ local state = {
     currentYear = 0,
 }
 
-function IsCategoryAllowedForTransportType(transportType, category)
-     if category == CAT_INVESTMENTS_TRACKS and transportType ~= TRANSPORT_TYPE_RAIL then
-        return false
-     elseif category == CAT_INVESTMENTS_ROADS and transportType ~= TRANSPORT_TYPE_ROAD then
-        return false
-     end
-     return true
-end
-
 function RefreshVehicleCategoryValues(transportType, journal, column)
     --total
     UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_TOTAL), transportType .. CAT_TOTAL .. column)

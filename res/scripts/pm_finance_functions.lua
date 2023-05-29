@@ -141,3 +141,12 @@ end
 function GetCurrentBalance()
     return game.interface.getEntity(game.interface.getPlayer()).balance
 end
+
+function IsCategoryAllowedForTransportType(transportType, category)
+    if category == CAT_INVESTMENTS_TRACKS and transportType ~= TRANSPORT_TYPE_RAIL then
+        return false
+    elseif category == CAT_INVESTMENTS_ROADS and transportType ~= TRANSPORT_TYPE_ROAD then
+        return false
+    end
+    return true
+end
