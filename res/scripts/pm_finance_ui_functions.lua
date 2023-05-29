@@ -25,3 +25,15 @@ function SetRowVisibilityInTable(table, row, visible)
         element:setVisible(visible, false)
     end
 end
+
+function LayoutComponentsHorizontally(components, styleList, componentName)
+    local component = api.gui.comp.Component.new(componentName)
+    local layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
+    layout:setName(componentName..".Layout")
+    component:setStyleClassList(styleList)
+    for i, component in ipairs(components) do
+        layout:addItem(component)
+    end
+    component:setLayout(layout)
+    return component
+end

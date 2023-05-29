@@ -92,28 +92,16 @@ function CreateTextView(text, styleList, id)
     return textView
 end
 
-function LayoutComponentsHorizontally(components, styleList, level)
-    local component = api.gui.comp.Component.new(tostring(level))
-    local layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-    layout:setName(tostring(level))
-    component:setStyleClassList(styleList)
-    for i = 1, #components do
-        layout:addItem(components[i])
-    end
-    component:setLayout(layout)
-    return component
-end
-
 function AddTransportCategoryLineToFinanceTable(labelComponents, rowId, sLevel, level)
     local row = {}
 
-    table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel }, level))
+    table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel }, tostring(level)))
     for i = 1, NUMBER_OF_YEARS_COLUMNS do
         local yearCellView = CreateTextView(api.util.formatMoney(0), { sLevel, "sRight" }, rowId .. i)
-        table.insert(row, LayoutComponentsHorizontally({ yearCellView }, { sLevel }, level))
+        table.insert(row, LayoutComponentsHorizontally({ yearCellView }, { sLevel }, tostring(level)))
     end
     local totalCellView = CreateTextView(api.util.formatMoney(0), { sLevel, "sRight" }, rowId .. COLUMN_TOTAL)
-    table.insert(row, LayoutComponentsHorizontally({ totalCellView }, { sLevel }, level))
+    table.insert(row, LayoutComponentsHorizontally({ totalCellView }, { sLevel }, tostring(level)))
 
     financeTable:addRow(row)
 end
@@ -121,10 +109,10 @@ end
 function AddSummaryLineToTable(labelComponents, id, sLevel)
     local row = {}
 
-    table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel }, 0))
+    table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel }, "0"))
     
     local cellView = CreateTextView(api.util.formatMoney(0), { sLevel, "sRight" }, id)
-    table.insert(row, LayoutComponentsHorizontally({ cellView }, { sLevel }, 0))
+    table.insert(row, LayoutComponentsHorizontally({ cellView }, { sLevel }, "0"))
 
     summaryTable:addRow(row)
 end
