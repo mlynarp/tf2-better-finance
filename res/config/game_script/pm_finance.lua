@@ -33,7 +33,7 @@ local state = {
     currentYear = 0,
 }
 
-function RefreshVehicleCategoryValues(transportType, journal, column)
+function RefreshTransportCategoryValues(transportType, journal, column)
     --total
     UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_TOTAL), transportType .. CAT_TOTAL .. column)
     --income
@@ -104,7 +104,7 @@ function LayoutComponentsHorizontally(components, styleList, level)
     return component
 end
 
-function AddTransportCategoryLineToTable(labelComponents, rowId, sLevel, level)
+function AddTransportCategoryLineToFinanceTable(labelComponents, rowId, sLevel, level)
     local row = {}
 
     table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel }, level))
@@ -129,41 +129,40 @@ function AddSummaryLineToTable(labelComponents, id, sLevel)
     summaryTable:addRow(row)
 end
 
-function AddTransportCategoriesToTable(transportType)
+function AddTransportCategoriesToFinanceTable(transportType)
     -- level 0
     local labelView = CreateTextView(_(transportType), { "sLevel0", "sLeft" }, "")
-    AddTransportCategoryLineToTable({ CreateExpandButton(0), labelView }, transportType .. CAT_TOTAL, "sLevel0", 0)
+    AddTransportCategoryLineToFinanceTable({ CreateExpandButton(0), labelView }, transportType .. CAT_TOTAL, "sLevel0", 0)
 
     -- level 1
     for i, level1Category in ipairs(TRANSPORT_CATEGORIES_LEVEL1) do
         if (#TRANSPORT_CATEGORIES_LEVEL2[level1Category] == 0) then
             labelView = CreateTextView(_(level1Category), { "sLevel1", "sLeft", "sLevelPadding" }, "")
-            AddTransportCategoryLineToTable({ labelView }, transportType .. level1Category, "sLevel1", 1)
+            AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. level1Category, "sLevel1", 1)
         else
             labelView = CreateTextView(_(level1Category), { "sLevel1", "sLeft" }, "")
-            AddTransportCategoryLineToTable({ CreateExpandButton(1), labelView }, transportType .. level1Category, "sLevel1", 1)
+            AddTransportCategoryLineToFinanceTable({ CreateExpandButton(1), labelView }, transportType .. level1Category, "sLevel1", 1)
 
             -- level 2
             for j, level2Category in ipairs(TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
                 if IsCategoryAllowedForTransportType(transportType, level2Category) then
                     labelView = CreateTextView(_(level2Category), { "sLevel2", "sLeft", "sLevelPadding" }, "")
-                    AddTransportCategoryLineToTable({ labelView }, transportType .. level2Category, "sLevel2", 2)
+                    AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. level2Category, "sLevel2", 2)
                 end
             end
         end
     end
 
     labelView = CreateTextView(_(CAT_CASHFLOW), { "sLevel1", "sRight" }, "")
-    AddTransportCategoryLineToTable({ labelView }, transportType .. CAT_CASHFLOW, "sLevel1", 0)
+    AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. CAT_CASHFLOW, "sLevel1", 0)
 end
 
-function AddTransportTableHeaders()
+function AddFinanceTableHeaders()
     local row = {}
-    local gameYear = GetCurrentGameYear()
 
     table.insert(row, CreateTextView("", { "sHeader", "sRight" }, ""))
     for i = 1, NUMBER_OF_YEARS_COLUMNS do
-        table.insert(row, CreateTextView(tostring(gameYear - NUMBER_OF_YEARS_COLUMNS + i), { "sHeader", "sRight" }, COLUMN_YEAR .. i))
+        table.insert(row, CreateTextView(tostring(GetYearFromYearIndex(i)), { "sHeader", "sRight" }, COLUMN_YEAR .. i))
     end
     table.insert(row, CreateTextView(_(COLUMN_TOTAL), { "sHeader", "sRight" }, COLUMN_TOTAL))
 
@@ -172,13 +171,13 @@ end
 
 function InitFinanceTable()
     financeTable = api.gui.comp.Table.new(NUMBER_OF_YEARS_COLUMNS + 2, "NONE")
-    financeTable:setId("myFinancesOverviewTable")
-    financeTable:setName("myFinancesOverviewTable")
+    financeTable:setId("myFinanceTable")
+    financeTable:setName("myFinanceTable")
 
-    AddTransportTableHeaders()
+    AddFinanceTableHeaders()
 
     for j = 1, #TRANSPORT_TYPES do
-        AddTransportCategoriesToTable(TRANSPORT_TYPES[j])
+        AddTransportCategoriesToFinanceTable(TRANSPORT_TYPES[j])
     end
 end
 
@@ -206,7 +205,7 @@ function InitFinanceTab()
     financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
         guiUpdate = visible
     end)
-    
+
     InitFinanceTable()
     InitSummaryTable()
 
@@ -223,15 +222,15 @@ end
 function UpdateFinanceTable(currentYearOnly)
     for i, transportType in ipairs(TRANSPORT_TYPES) do
         if currentYearOnly then
-            RefreshVehicleCategoryValues(transportType, GetJournal(GetCurrentGameYear()), NUMBER_OF_YEARS_COLUMNS)
+            RefreshTransportCategoryValues(transportType, GetJournal(GetCurrentGameYear()), NUMBER_OF_YEARS_COLUMNS)
         else
             for j = 1, NUMBER_OF_YEARS_COLUMNS do
                 local year = GetYearFromYearIndex(j)
-                RefreshVehicleCategoryValues(transportType, GetJournal(year), j)
+                RefreshTransportCategoryValues(transportType, GetJournal(year), j)
                 api.gui.util.getById(COLUMN_YEAR .. j):setText(tostring(year))
             end
         end
-        RefreshVehicleCategoryValues(transportType, GetJournal(0), COLUMN_TOTAL)
+        RefreshTransportCategoryValues(transportType, GetJournal(0), COLUMN_TOTAL)
     end
 end
 
@@ -259,7 +258,7 @@ function data()
             InitFinanceTab()
         end,
         guiUpdate = function()
-            local currentBalance = game.interface.getEntity(game.interface.getPlayer()).balance
+            local currentBalance = GetCurrentBalance()
             local currentYear = GetCurrentGameYear()
             if guiUpdate and financeTabWindow:getCurrentTab() == 0 and (currentBalance ~= lastBalance or currentYear ~= lastYear) then
                 UpdateFinanceTable(currentYear == lastYear)
