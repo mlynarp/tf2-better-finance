@@ -1,5 +1,6 @@
 require "pm_finance_constants"
 require "pm_finance_functions"
+require "pm_finance_ui_functions"
 
 local financeTabWindow = nil
 local financeTable = nil
@@ -32,24 +33,6 @@ local state = {
     currentYear = 0,
 }
 
-function UpdateValueCell(amount, textViewId)
-    local textView = api.gui.util.getById(textViewId)
-    if not textView then
-        return
-    end
-    textView:removeStyleClass("negative")
-    textView:removeStyleClass("positive")
-    if not amount then
-        amount = 0
-    end
-    if amount > 0 then
-        textView:addStyleClass("positive")
-    elseif amount < 0 then
-        textView:addStyleClass("negative")
-    end
-    textView:setText(api.util.formatMoney(amount))
-end
-
 function IsCategoryAllowedForTransportType(transportType, category)
      if category == CAT_INVESTMENTS_TRACKS and transportType ~= TRANSPORT_TYPE_RAIL then
         return false
@@ -61,24 +44,24 @@ end
 
 function RefreshVehicleCategoryValues(transportType, journal, column)
     --total
-    UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_TOTAL), transportType .. CAT_TOTAL .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_TOTAL), transportType .. CAT_TOTAL .. column)
     --income
-    UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_INCOME), transportType .. CAT_INCOME .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INCOME), transportType .. CAT_INCOME .. column)
     --maintenance
-    UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE), transportType .. CAT_MAINTENANCE .. column)
-    UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE_VEHICLES), transportType .. CAT_MAINTENANCE_VEHICLES .. column)
-    UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE_INFRASTRUCTURE), transportType .. CAT_MAINTENANCE_INFRASTRUCTURE .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE), transportType .. CAT_MAINTENANCE .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE_VEHICLES), transportType .. CAT_MAINTENANCE_VEHICLES .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE_INFRASTRUCTURE), transportType .. CAT_MAINTENANCE_INFRASTRUCTURE .. column)
     --investment
-    UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS), transportType .. CAT_INVESTMENTS .. column)
-    UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_VEHICLES), transportType .. CAT_INVESTMENTS_VEHICLES .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS), transportType .. CAT_INVESTMENTS .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_VEHICLES), transportType .. CAT_INVESTMENTS_VEHICLES .. column)
     if IsCategoryAllowedForTransportType(transportType, CAT_INVESTMENTS_TRACKS) then
-        UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_TRACKS), transportType .. CAT_INVESTMENTS_TRACKS .. column)
+        UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_TRACKS), transportType .. CAT_INVESTMENTS_TRACKS .. column)
     elseif IsCategoryAllowedForTransportType(transportType, CAT_INVESTMENTS_ROADS) then
-        UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_ROADS), transportType .. CAT_INVESTMENTS_ROADS .. column)
+        UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_ROADS), transportType .. CAT_INVESTMENTS_ROADS .. column)
     end
-    UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_INFRASTRUCTURE), transportType .. CAT_INVESTMENTS_INFRASTRUCTURE .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_INFRASTRUCTURE), transportType .. CAT_INVESTMENTS_INFRASTRUCTURE .. column)
     --cashflow
-    UpdateValueCell(GetValueFromJournal(journal, transportType, CAT_CASHFLOW), transportType .. CAT_CASHFLOW .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_CASHFLOW), transportType .. CAT_CASHFLOW .. column)
     
 end
 
@@ -281,11 +264,11 @@ function data()
                 end
                 local profit = GetValueFromJournal(overallJournal, TRANSPORT_TYPE_ALL, CAT_TOTAL)
                 local balance = GetCurrentBalance()
-                UpdateValueCell(profit, "profitCell")
-                UpdateValueCell(overallJournal.loan, "loanCell")
-                UpdateValueCell(overallJournal.interest, "interestCell")
-                UpdateValueCell(balance - (profit + overallJournal.loan + overallJournal.interest), "othersCell")
-                UpdateValueCell(balance, "totalCell")
+                UpdateCellValue(profit, "profitCell")
+                UpdateCellValue(overallJournal.loan, "loanCell")
+                UpdateCellValue(overallJournal.interest, "interestCell")
+                UpdateCellValue(balance - (profit + overallJournal.loan + overallJournal.interest), "othersCell")
+                UpdateCellValue(balance, "totalCell")
               
                 lastYear = currentYear
                 lastBalance = currentBalance
