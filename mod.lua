@@ -30,7 +30,7 @@ function data()
 			params =
 			{
 				{
-				  key = "numberOfColumns",
+				  key = "NumberOfColumns",
 				  name = _("Parameter.Label"),
 				  uiType = "SLIDER",
 				  values = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" },
@@ -41,7 +41,7 @@ function data()
 			tags = { "Script Mod" },
 		},
         runFn = function(settings, modParams)
-            NUMBER_OF_YEARS_COLUMNS = modParams[getCurrentModId()].numberOfColumns
+            NUMBER_OF_YEARS_COLUMNS = modParams[getCurrentModId()].NumberOfColumns
         end,
 	}
 end

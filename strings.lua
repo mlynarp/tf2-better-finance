@@ -25,6 +25,7 @@ function data()
             [CAT_INTERESTS] = ("Interests"),
             [CAT_OTHERS] = ("Others"),
             [CAT_BALANCE] = ("Balance"),
+            [COLUMN_TOTAL] = ("Total"),
             ["Parameter.Label"] = ("Number of years in overview"),
             ["Parameter.Tooltip"] = ("Choose the number of years to be displayed in the financial overview table."),
             
@@ -59,6 +60,7 @@ function data()
             [CAT_INTERESTS] = ("Úroky"),
             [CAT_OTHERS] = ("Ostatní"),
             [CAT_BALANCE] = ("Zůstatek"),
+            [COLUMN_TOTAL] = ("Celkem"),
 			["Parameter.Label"] = ("Počet roků v přehledu"),
 			["Parameter.Tooltip"] = ("Vyberte počet roků, které se mají zobrazit v tabulce finančního přehledu."),
 		}
