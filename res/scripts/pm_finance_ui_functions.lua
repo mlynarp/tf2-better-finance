@@ -43,7 +43,7 @@ function CreateExpandButton(table, level)
     local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
     local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
     local button = api.gui.comp.Button.new(imageView, false)
-    button:setStyleClassList({ "sLevel" .. level, "sButton" })
+    button:setStyleClassList({ "sLevel" .. level, STYLE_BUTTON })
     local myRowIndex = table:getNumRows()
     button:onClick(function()
         local startRowIndex = myRowIndex + 1

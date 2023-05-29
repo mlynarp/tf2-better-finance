@@ -1,4 +1,17 @@
-require "tableutil"
+function ScriptPath()
+    local str = debug.getinfo(2, "S").source:sub(2)
+    return str:match("(.*/)")
+end
+
+function FormatClassNames(classes)
+    local result = ""
+    for i, className in ipairs(classes) do
+        result = result .. "!" .. className
+    end
+    return result
+end
+
+dofile(ScriptPath() .. "../../scripts/pm_finance_constants.lua")
 
 local ssu = require "stylesheetutil"
 local rowHeight=25
@@ -13,7 +26,7 @@ function data()
 	-- *************
 	-- ** Header **
 	-- *************
-	a("!sHeader",
+    a(FormatClassNames({ "sHeader" }),
 	{
 		gravity = {-1.0 ,-1.0},
         fontSize = 15,
@@ -22,7 +35,7 @@ function data()
 	-- *************
 	-- ** Level 0 **
 	-- *************
-	a("!sLevel0",
+	a(FormatClassNames({ "sLevel0" }),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 25),
 		size={-1, rowHeight + 5},
@@ -32,19 +45,19 @@ function data()
 	-- *************
 	-- ** Level 1 **
 	-- *************
-	a("!sLevel1",
+    a(FormatClassNames({"sLevel1"}),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 0),
 		size={-1, rowHeight},
 		gravity = {-1.0 ,-1.0},
 	})
 
-	a("!sLevel1!sButton",
+    a(FormatClassNames({ "sLevel1", STYLE_BUTTON }),
 	{
 		padding={0,0,0,levelPadding},
 	})
 
-	a("!sLevel1!sLevelPadding",
+	a(FormatClassNames({ "sLevel1", "sLevelPadding" }),
 	{
 		padding={0,0,0,levelPadding + icon_size + textPadding},
 	})
@@ -52,37 +65,38 @@ function data()
 	-- *************
 	-- ** Level 2 **
 	-- *************
-	a("!sLevel2",
+	a(FormatClassNames({"sLevel2"}),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 0),
 		size={-1, rowHeight},
 		gravity = {-1.0 ,-1.0},
 	})
 
-	a("!sLevel2!sButton",
+    a(FormatClassNames({ "sLevel2", STYLE_BUTTON }),
 	{
 		padding={0,0,0,levelPadding * 2},
 	})
 
-	a("!sLevel2!sLevelPadding",
+	a(FormatClassNames({ "sLevel2", "sLevelPadding" }),
 	{
 		padding={0,0,0,levelPadding * 2 + icon_size + textPadding},
 	})
 
-    a("!mySummaryTable",
+    a(FormatClassNames({"mySummaryTable"}),
 	{
 		padding = {0,0,3,0},
         size={-1, 5*rowHeight},
 		gravity = {-1.0 ,-1.0},
 	})
 
-    a("!mySummaryTableLine",
+    a(FormatClassNames({"mySummaryTableLine"}),
     {
         backgroundColor = ssu.makeColor(255, 255, 255, 5),
 		size={-1, rowHeight},
 		gravity = {-1.0 ,0.5},
     })
-    a("!mySummaryTableLineLabel",
+    
+    a(FormatClassNames({"mySummaryTableLineLabel"}),
     {
         backgroundColor = ssu.makeColor(255, 255, 255, 5),
         padding = { 0, 0, 0, icon_size + textPadding},
@@ -90,14 +104,14 @@ function data()
 		gravity = {-1.0 ,0.5},
     })
 
-    a("!mySummaryTableLineTotal",
+    a(FormatClassNames({"mySummaryTableLineTotal"}),
     {
         backgroundColor = ssu.makeColor(255, 255, 255, 30),
 		size={-1, rowHeight},
 		gravity = {-1.0 ,0.5},
     })
 
-    a("!mySummaryTableLineTotalLabel",
+    a(FormatClassNames({"mySummaryTableLineTotalLabel"}),
     {
         backgroundColor = ssu.makeColor(255, 255, 255, 30),
         padding = { 0, 0, 0, icon_size + textPadding},
@@ -108,17 +122,17 @@ function data()
 	-- *************
 	-- ** Other **
 	-- *************
-	a("!sLeft",
+	a(FormatClassNames({"sLeft"}),
 	{
 		textAlignment = {0, 0.5}
 	})
 
-	a("!sRight",
+	a(FormatClassNames({"sRight"}),
 	{
 		textAlignment = {1.0, 0.5}
 	})
 
-	a("!sButton",
+    a(FormatClassNames({ STYLE_BUTTON }),
 	{
 		padding={(rowHeight-icon_size)/2,0,(rowHeight-icon_size)/2,0},
 		size={icon_size,rowHeight},
