@@ -67,9 +67,9 @@ function CreateExpandButton(level)
         local startRowIndex = myRowIndex + 1
         local lastRowIndex = myRowIndex + 1
         local setToVisible = not financeTable:getItem(startRowIndex, 0):isVisible()
-        for i = 1, 11 do
-            if tonumber(financeTable:getItem(startRowIndex + i - 1, 0):getName()) <= level then
-                lastRowIndex = myRowIndex + i - 1
+        for row = startRowIndex, financeTable:getNumRows() - 1 do
+            if tonumber(financeTable:getItem(row, 0):getName()) <= level then
+                lastRowIndex = row - 1
                 break
             end
         end
