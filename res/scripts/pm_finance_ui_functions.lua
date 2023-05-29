@@ -15,3 +15,13 @@ function UpdateCellValue(amount, textViewId)
     end
     textView:setText(api.util.formatMoney(amount))
 end
+
+function SetRowVisibilityInTable(table, row, visible)
+    if row >= table:getNumRows() then
+        return
+    end
+    for column = 0, table:getNumCols() - 1 do
+        local element = table:getItem(row, column)
+        element:setVisible(visible, false)
+    end
+end

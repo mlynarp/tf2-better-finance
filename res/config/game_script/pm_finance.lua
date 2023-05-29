@@ -73,16 +73,12 @@ function CreateExpandButton(level)
                 break
             end
         end
-
-        for c = 0, financeTable:getNumCols() - 1 do
-            for r = startRowIndex, lastRowIndex do
-                local element = financeTable:getItem(r, c)
-                element:setVisible(setToVisible, false)
-                if setToVisible then
-                    imageView:setImage(iconCollapsePath, false)
-                else
-                    imageView:setImage(iconExpandPath, false)
-                end
+        for row = startRowIndex, lastRowIndex do
+            SetRowVisibilityInTable(financeTable, row, setToVisible)
+            if setToVisible then
+                imageView:setImage(iconCollapsePath, false)
+            else
+                imageView:setImage(iconExpandPath, false)
             end
         end
     end)
