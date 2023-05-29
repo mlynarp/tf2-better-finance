@@ -201,14 +201,14 @@ function InitSummaryTable()
 end
 
 function InitFinanceTab()
-    InitFinanceTable()
-    InitSummaryTable()
-
     financeTabWindow = api.gui.util.getById("menu.finances.category")
     financeTabWindow:getParent():getParent():setSize(api.gui.util.Size.new(1100, 800))
     financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
         guiUpdate = visible
     end)
+    
+    InitFinanceTable()
+    InitSummaryTable()
 
     local financeTableLayout = financeTabWindow:getTab(0):getLayout()
     --replace current finance table
@@ -218,6 +218,32 @@ function InitFinanceTab()
     --replace current summary table
     financeTableLayout:removeItem(financeTableLayout:getItem(3))
     financeTableLayout:insertItem(summaryTable, 3)
+end
+
+function UpdateFinanceTable(currentYearOnly)
+    for i, transportType in ipairs(TRANSPORT_TYPES) do
+        if currentYearOnly then
+            RefreshVehicleCategoryValues(transportType, GetJournal(GetCurrentGameYear()), NUMBER_OF_YEARS_COLUMNS)
+        else
+            for j = 1, NUMBER_OF_YEARS_COLUMNS do
+                local year = GetYearFromYearIndex(j)
+                RefreshVehicleCategoryValues(transportType, GetJournal(year), j)
+                api.gui.util.getById(COLUMN_YEAR .. j):setText(tostring(year))
+            end
+        end
+        RefreshVehicleCategoryValues(transportType, GetJournal(0), COLUMN_TOTAL)
+    end
+end
+
+function UpdateSummaryTable()
+    local overallJournal = GetJournal(0)
+    local profit = GetValueFromJournal(overallJournal, TRANSPORT_TYPE_ALL, CAT_TOTAL)
+    local balance = GetCurrentBalance()
+    UpdateCellValue(profit, "profitCell")
+    UpdateCellValue(overallJournal.loan, "loanCell")
+    UpdateCellValue(overallJournal.interest, "interestCell")
+    UpdateCellValue(balance - (profit + overallJournal.loan + overallJournal.interest), "othersCell")
+    UpdateCellValue(balance, "totalCell")
 end
 
 -- ***************************
@@ -236,27 +262,8 @@ function data()
             local currentBalance = game.interface.getEntity(game.interface.getPlayer()).balance
             local currentYear = GetCurrentGameYear()
             if guiUpdate and financeTabWindow:getCurrentTab() == 0 and (currentBalance ~= lastBalance or currentYear ~= lastYear) then
-                local overallJournal = GetJournal(0)
-                for i = 1, #TRANSPORT_TYPES do
-                    if lastYear ~= currentYear then
-                        for j = 1, NUMBER_OF_YEARS_COLUMNS do
-                            local year = currentYear - NUMBER_OF_YEARS_COLUMNS + j
-                            RefreshVehicleCategoryValues(TRANSPORT_TYPES[i], GetJournal(year), j)
-                            api.gui.util.getById(COLUMN_YEAR .. j):setText(tostring(year))
-                        end
-                    else
-                        RefreshVehicleCategoryValues(TRANSPORT_TYPES[i], GetJournal(lastYear), NUMBER_OF_YEARS_COLUMNS)
-                    end
-                    RefreshVehicleCategoryValues(TRANSPORT_TYPES[i], overallJournal, COLUMN_TOTAL)
-                end
-                local profit = GetValueFromJournal(overallJournal, TRANSPORT_TYPE_ALL, CAT_TOTAL)
-                local balance = GetCurrentBalance()
-                UpdateCellValue(profit, "profitCell")
-                UpdateCellValue(overallJournal.loan, "loanCell")
-                UpdateCellValue(overallJournal.interest, "interestCell")
-                UpdateCellValue(balance - (profit + overallJournal.loan + overallJournal.interest), "othersCell")
-                UpdateCellValue(balance, "totalCell")
-              
+                UpdateFinanceTable(currentYear == lastYear)
+                UpdateSummaryTable()
                 lastYear = currentYear
                 lastBalance = currentBalance
             end

@@ -1,3 +1,5 @@
+require "pm_finance_constants"
+
 function IsLeapYear(year)
     return year % 4 == 0 and (year % 100 ~= 0 or year % 400 == 0)
 end
@@ -149,4 +151,8 @@ function IsCategoryAllowedForTransportType(transportType, category)
         return false
     end
     return true
+end
+
+function GetYearFromYearIndex(yearIndex)
+    return GetCurrentGameYear() - NUMBER_OF_YEARS_COLUMNS + yearIndex
 end
