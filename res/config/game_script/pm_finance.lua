@@ -68,10 +68,10 @@ function AddTransportCategoryLineToFinanceTable(labelComponents, rowId, sLevel, 
 
     table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel }, tostring(level)))
     for i = 1, NUMBER_OF_YEARS_COLUMNS do
-        local yearCellView = CreateTextView(api.util.formatMoney(0), { sLevel, "sRight" }, rowId .. i)
+        local yearCellView = CreateTextView(api.util.formatMoney(0), { sLevel, STYLE_TEXT_RIGHT }, rowId .. i)
         table.insert(row, LayoutComponentsHorizontally({ yearCellView }, { sLevel }, tostring(level)))
     end
-    local totalCellView = CreateTextView(api.util.formatMoney(0), { sLevel, "sRight" }, rowId .. COLUMN_TOTAL)
+    local totalCellView = CreateTextView(api.util.formatMoney(0), { sLevel, STYLE_TEXT_RIGHT }, rowId .. COLUMN_TOTAL)
     table.insert(row, LayoutComponentsHorizontally({ totalCellView }, { sLevel }, tostring(level)))
 
     financeTable:addRow(row)
@@ -82,7 +82,7 @@ function AddSummaryLineToTable(labelComponents, id, sLevel)
 
     table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel }, "0"))
     
-    local cellView = CreateTextView(api.util.formatMoney(0), { sLevel, "sRight" }, id)
+    local cellView = CreateTextView(api.util.formatMoney(0), { sLevel, STYLE_TEXT_RIGHT }, id)
     table.insert(row, LayoutComponentsHorizontally({ cellView }, { sLevel }, "0"))
 
     summaryTable:addRow(row)
@@ -90,40 +90,40 @@ end
 
 function AddTransportCategoriesToFinanceTable(transportType)
     -- level 0
-    local labelView = CreateTextView(_(transportType), { "sLevel0", "sLeft" }, "")
-    AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 0), labelView }, transportType .. CAT_TOTAL, "sLevel0", 0)
+    local labelView = CreateTextView(_(transportType), { STYLE_LEVEL_0, STYLE_TEXT_LEFT }, "")
+    AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 0), labelView }, transportType .. CAT_TOTAL, STYLE_LEVEL_0, 0)
 
     -- level 1
     for i, level1Category in ipairs(TRANSPORT_CATEGORIES_LEVEL1) do
         if (#TRANSPORT_CATEGORIES_LEVEL2[level1Category] == 0) then
-            labelView = CreateTextView(_(level1Category), { "sLevel1", "sLeft", "sLevelPadding" }, "")
-            AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. level1Category, "sLevel1", 1)
+            labelView = CreateTextView(_(level1Category), { STYLE_LEVEL_1, STYLE_TEXT_LEFT, STYLE_LEVEL_PADDING }, "")
+            AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. level1Category, STYLE_LEVEL_1, 1)
         else
-            labelView = CreateTextView(_(level1Category), { "sLevel1", "sLeft" }, "")
-            AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 1), labelView }, transportType .. level1Category, "sLevel1", 1)
+            labelView = CreateTextView(_(level1Category), { STYLE_LEVEL_1, STYLE_TEXT_LEFT }, "")
+            AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 1), labelView }, transportType .. level1Category, STYLE_LEVEL_1, 1)
 
             -- level 2
             for j, level2Category in ipairs(TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
                 if IsCategoryAllowedForTransportType(transportType, level2Category) then
-                    labelView = CreateTextView(_(level2Category), { "sLevel2", "sLeft", "sLevelPadding" }, "")
-                    AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. level2Category, "sLevel2", 2)
+                    labelView = CreateTextView(_(level2Category), { STYLE_LEVEL_2, STYLE_TEXT_LEFT, STYLE_LEVEL_PADDING }, "")
+                    AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. level2Category, STYLE_LEVEL_2, 2)
                 end
             end
         end
     end
 
-    labelView = CreateTextView(_(CAT_CASHFLOW), { "sLevel1", "sRight" }, "")
-    AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. CAT_CASHFLOW, "sLevel1", 0)
+    labelView = CreateTextView(_(CAT_CASHFLOW), { STYLE_LEVEL_1, STYLE_TEXT_RIGHT }, "")
+    AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. CAT_CASHFLOW, STYLE_LEVEL_1, 0)
 end
 
 function AddFinanceTableHeaders()
     local row = {}
 
-    table.insert(row, CreateTextView("", { "sHeader", "sRight" }, ""))
+    table.insert(row, CreateTextView("", { STYLE_TEXT_HEADER, STYLE_TEXT_RIGHT }, ""))
     for i = 1, NUMBER_OF_YEARS_COLUMNS do
-        table.insert(row, CreateTextView(tostring(GetYearFromYearIndex(i)), { "sHeader", "sRight" }, COLUMN_YEAR .. i))
+        table.insert(row, CreateTextView(tostring(GetYearFromYearIndex(i)), { STYLE_TEXT_HEADER, STYLE_TEXT_RIGHT }, COLUMN_YEAR .. i))
     end
-    table.insert(row, CreateTextView(_(COLUMN_TOTAL), { "sHeader", "sRight" }, COLUMN_TOTAL))
+    table.insert(row, CreateTextView(_(COLUMN_TOTAL), { STYLE_TEXT_HEADER, STYLE_TEXT_RIGHT }, COLUMN_TOTAL))
 
     financeTable:addRow(row)
 end
@@ -146,15 +146,15 @@ function InitSummaryTable()
     summaryTable:setName("mySummaryTable")
     summaryTable:setStyleClassList({"mySummaryTable"})
 
-    local profitView = CreateTextView(_(CAT_PROFIT), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local profitView = CreateTextView(_(CAT_PROFIT), { "mySummaryTableLineLabel", STYLE_TEXT_LEFT }, "")
     AddSummaryLineToTable({ profitView }, "profitCell", "mySummaryTableLine")
-    local loanView = CreateTextView(_(CAT_LOAN), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local loanView = CreateTextView(_(CAT_LOAN), { "mySummaryTableLineLabel", STYLE_TEXT_LEFT }, "")
     AddSummaryLineToTable({ loanView }, "loanCell", "mySummaryTableLine")
-    local interestView = CreateTextView(_(CAT_INTERESTS), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local interestView = CreateTextView(_(CAT_INTERESTS), { "mySummaryTableLineLabel", STYLE_TEXT_LEFT }, "")
     AddSummaryLineToTable({ interestView }, "interestCell", "mySummaryTableLine")
-    local othersView = CreateTextView(_(CAT_OTHERS), { "mySummaryTableLineLabel", "sLeft" }, "")
+    local othersView = CreateTextView(_(CAT_OTHERS), { "mySummaryTableLineLabel", STYLE_TEXT_LEFT }, "")
     AddSummaryLineToTable({ othersView }, "othersCell", "mySummaryTableLine")
-    local totalView = CreateTextView(_(CAT_BALANCE), { "mySummaryTableLineTotalLabel", "sLeft" }, "")
+    local totalView = CreateTextView(_(CAT_BALANCE), { "mySummaryTableLineTotalLabel", STYLE_TEXT_LEFT }, "")
     AddSummaryLineToTable({ totalView }, "totalCell", "mySummaryTableLineTotal")
 end
 

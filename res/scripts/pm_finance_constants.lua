@@ -52,3 +52,10 @@ TRANSPORT_CATEGORIES_LEVEL2 =
 NUMBER_OF_YEARS_COLUMNS = 5
 
 STYLE_BUTTON = "style-button"
+STYLE_TEXT_LEFT = "style-text-left"
+STYLE_TEXT_RIGHT = "style-text-right"
+STYLE_TEXT_HEADER = "style-text-header"
+STYLE_LEVEL_0 = "style-level-0"
+STYLE_LEVEL_1 = "style-level-1"
+STYLE_LEVEL_2 = "style-level-2"
+STYLE_LEVEL_PADDING = "style-level-padding"

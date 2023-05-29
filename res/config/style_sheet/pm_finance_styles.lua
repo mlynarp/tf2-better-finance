@@ -26,7 +26,7 @@ function data()
 	-- *************
 	-- ** Header **
 	-- *************
-    a(FormatClassNames({ "sHeader" }),
+    a(FormatClassNames({ STYLE_TEXT_HEADER }),
 	{
 		gravity = {-1.0 ,-1.0},
         fontSize = 15,
@@ -35,7 +35,7 @@ function data()
 	-- *************
 	-- ** Level 0 **
 	-- *************
-	a(FormatClassNames({ "sLevel0" }),
+	a(FormatClassNames({ STYLE_LEVEL_0 }),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 25),
 		size={-1, rowHeight + 5},
@@ -45,19 +45,19 @@ function data()
 	-- *************
 	-- ** Level 1 **
 	-- *************
-    a(FormatClassNames({"sLevel1"}),
+    a(FormatClassNames({STYLE_LEVEL_1}),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 0),
 		size={-1, rowHeight},
 		gravity = {-1.0 ,-1.0},
 	})
 
-    a(FormatClassNames({ "sLevel1", STYLE_BUTTON }),
+    a(FormatClassNames({ STYLE_LEVEL_1, STYLE_BUTTON }),
 	{
 		padding={0,0,0,levelPadding},
 	})
 
-	a(FormatClassNames({ "sLevel1", "sLevelPadding" }),
+	a(FormatClassNames({ STYLE_LEVEL_1, STYLE_LEVEL_PADDING }),
 	{
 		padding={0,0,0,levelPadding + icon_size + textPadding},
 	})
@@ -65,19 +65,19 @@ function data()
 	-- *************
 	-- ** Level 2 **
 	-- *************
-	a(FormatClassNames({"sLevel2"}),
+	a(FormatClassNames({STYLE_LEVEL_2}),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 0),
 		size={-1, rowHeight},
 		gravity = {-1.0 ,-1.0},
 	})
 
-    a(FormatClassNames({ "sLevel2", STYLE_BUTTON }),
+    a(FormatClassNames({ STYLE_LEVEL_2, STYLE_BUTTON }),
 	{
 		padding={0,0,0,levelPadding * 2},
 	})
 
-	a(FormatClassNames({ "sLevel2", "sLevelPadding" }),
+	a(FormatClassNames({ STYLE_LEVEL_2, STYLE_LEVEL_PADDING }),
 	{
 		padding={0,0,0,levelPadding * 2 + icon_size + textPadding},
 	})
@@ -122,12 +122,12 @@ function data()
 	-- *************
 	-- ** Other **
 	-- *************
-	a(FormatClassNames({"sLeft"}),
+	a(FormatClassNames({STYLE_TEXT_LEFT}),
 	{
 		textAlignment = {0, 0.5}
 	})
 
-	a(FormatClassNames({"sRight"}),
+	a(FormatClassNames({STYLE_TEXT_RIGHT}),
 	{
 		textAlignment = {1.0, 0.5}
 	})

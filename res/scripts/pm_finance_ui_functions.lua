@@ -1,3 +1,5 @@
+require "pm_finance_constants"
+
 function UpdateCellValue(amount, textViewId)
     local textView = api.gui.util.getById(textViewId)
     if not textView then
@@ -38,12 +40,22 @@ function LayoutComponentsHorizontally(components, styleList, componentName)
     return component
 end
 
+function GetStyleForTableLineLevel(level)
+    if level == 0 then
+        return STYLE_LEVEL_0
+    elseif level == 1 then
+        return STYLE_LEVEL_1
+    else
+        return STYLE_LEVEL_2
+    end
+end
+
 function CreateExpandButton(table, level)
     local iconExpandPath = "ui/design/components/slim_arrow_right@2x.tga"
     local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
     local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
     local button = api.gui.comp.Button.new(imageView, false)
-    button:setStyleClassList({ "sLevel" .. level, STYLE_BUTTON })
+    button:setStyleClassList({ GetStyleForTableLineLevel(level), STYLE_BUTTON })
     local myRowIndex = table:getNumRows()
     button:onClick(function()
         local startRowIndex = myRowIndex + 1
