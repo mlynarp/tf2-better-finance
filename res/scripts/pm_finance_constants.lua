@@ -65,3 +65,4 @@ STYLE_LEVEL_2 = "style-level-2"
 STYLE_LEVEL_PADDING = "style-level-padding"
 
 STYLE_SUMMARY_LABEL = "style-summary-label"
+STYLE_SUMMARY_TABLE = "style-summary-table"

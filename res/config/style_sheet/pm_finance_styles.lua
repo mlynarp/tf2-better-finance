@@ -74,7 +74,7 @@ function data()
 		padding={0,0,0,LEVEL_PADDING * 2 + ICON_SIZE + TEXT_PADDING},
 	})
 
-    a(FormatClassNames({"mySummaryTable"}),
+    a(FormatClassNames({ STYLE_SUMMARY_TABLE }),
 	{
 		padding = {0,0,3,0},
         size={-1, 5*ROW_HEIGHT + 5},

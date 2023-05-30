@@ -56,15 +56,31 @@ function RefreshTransportCategoryValues(transportType, journal, column)
     
 end
 
-function AddTransportCategoryLineToFinanceTable(labelComponents, transportType, category, sLevel, level)
+function AddTransportCategoryLineToFinanceTable(isExpandable, transportType, category, sLevel, level)
     local row = {}
 
-    table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
+    local components = {}
+    local labelTranslationKey = category
+    if category == CAT_TOTAL then
+        labelTranslationKey = transportType
+    end
+    local labelView = CreateTextView(_(labelTranslationKey), { sLevel, STYLE_TABLE_CELL, STYLE_TEXT_LEFT }, GetTableControlId(COLUMN_LABEL, category, transportType))
+    if isExpandable then
+        table.insert(components, CreateExpandButton(financeTable, level))
+    elseif level > 0 then
+        labelView:addStyleClass(STYLE_LEVEL_PADDING)
+    else
+        labelView:removeStyleClass(STYLE_TEXT_LEFT)
+        labelView:addStyleClass(STYLE_TEXT_RIGHT)
+    end
+    table.insert(components, labelView)
+    table.insert(row, LayoutComponentsHorizontally(components, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
+
     for i = 1, NUMBER_OF_YEARS_COLUMNS do
         local yearCellView = CreateTextView("", { sLevel, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_YEAR..i, category, transportType))
         table.insert(row, LayoutComponentsHorizontally({ yearCellView }, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
     end
-    local totalCellView = CreateTextView(api.util.formatMoney(0), { sLevel, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_TOTAL, category, transportType))
+    local totalCellView = CreateTextView("", { sLevel, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_TOTAL, category, transportType))
     table.insert(row, LayoutComponentsHorizontally({ totalCellView }, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
 
     financeTable:addRow(row)
@@ -84,33 +100,24 @@ end
 
 function AddTransportCategoriesToFinanceTable(transportType)
     -- level 0
-    local labelView = CreateTextView(_(transportType), { STYLE_LEVEL_0, STYLE_TABLE_CELL, STYLE_TEXT_LEFT }, GetTableControlId(COLUMN_LABEL, CAT_TOTAL, transportType))
-    AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 0), labelView }, transportType, CAT_TOTAL, STYLE_LEVEL_0, 0)
+    AddTransportCategoryLineToFinanceTable(true, transportType, CAT_TOTAL, STYLE_LEVEL_0, 0)
 
     -- level 1
     for i, level1Category in ipairs(TRANSPORT_CATEGORIES_LEVEL1) do
         if (#TRANSPORT_CATEGORIES_LEVEL2[level1Category] == 0) then
-            labelView = CreateTextView(_(level1Category), { STYLE_LEVEL_1, STYLE_TABLE_CELL, STYLE_TEXT_LEFT, STYLE_LEVEL_PADDING },
-                                       GetTableControlId(COLUMN_LABEL, level1Category, transportType))
-            AddTransportCategoryLineToFinanceTable({ labelView }, transportType, level1Category, STYLE_LEVEL_1, 1)
+            AddTransportCategoryLineToFinanceTable(false, transportType, level1Category, STYLE_LEVEL_1, 1)
         else
-            labelView = CreateTextView(_(level1Category), { STYLE_LEVEL_1, STYLE_TABLE_CELL, STYLE_TEXT_LEFT },
-                                       GetTableControlId(COLUMN_LABEL, level1Category, transportType))
-            AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 1), labelView }, transportType, level1Category, STYLE_LEVEL_1, 1)
-
+            AddTransportCategoryLineToFinanceTable(true, transportType, level1Category, STYLE_LEVEL_1, 1)
             -- level 2
             for j, level2Category in ipairs(TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
                 if IsCategoryAllowedForTransportType(transportType, level2Category) then
-                    labelView = CreateTextView(_(level2Category), { STYLE_LEVEL_2, STYLE_TABLE_CELL, STYLE_TEXT_LEFT, STYLE_LEVEL_PADDING },
-                                               GetTableControlId(COLUMN_LABEL, level2Category, transportType))
-                    AddTransportCategoryLineToFinanceTable({ labelView }, transportType, level2Category, STYLE_LEVEL_2, 2)
+                    AddTransportCategoryLineToFinanceTable(false, transportType, level2Category, STYLE_LEVEL_2, 2)
                 end
             end
         end
     end
 
-    labelView = CreateTextView(_(CAT_CASHFLOW), { STYLE_LEVEL_1, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, "")
-    AddTransportCategoryLineToFinanceTable({ labelView }, transportType, CAT_CASHFLOW, STYLE_LEVEL_1, 0)
+    AddTransportCategoryLineToFinanceTable(false, transportType, CAT_CASHFLOW, STYLE_LEVEL_1, 0)
 end
 
 function AddFinanceTableHeaders()
@@ -141,7 +148,7 @@ function InitSummaryTable()
     summaryTable = api.gui.comp.Table.new(2, "NONE")
     summaryTable:setId("mySummaryTable")
     summaryTable:setName("mySummaryTable")
-    summaryTable:setStyleClassList({"mySummaryTable"})
+    summaryTable:setStyleClassList({ STYLE_SUMMARY_TABLE })
 
     AddSummaryLineToTable(CAT_PROFIT, STYLE_LEVEL_1)
     AddSummaryLineToTable(CAT_LOAN, STYLE_LEVEL_1)
