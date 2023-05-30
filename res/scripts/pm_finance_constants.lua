@@ -22,8 +22,9 @@ CAT_INTERESTS = "Cat.Interests"
 CAT_OTHERS = "Cat.Others"
 CAT_BALANCE = "Cat.Balance"
 
-COLUMN_YEAR = "Col.Year"
-COLUMN_TOTAL = "Col.Total"
+COLUMN_LABEL = "Column.Label"
+COLUMN_YEAR = "Column.Year"
+COLUMN_TOTAL = "Column.Total"
 
 TRANSPORT_TYPES =
 { 
@@ -52,11 +53,15 @@ TRANSPORT_CATEGORIES_LEVEL2 =
 NUMBER_OF_YEARS_COLUMNS = 5
 
 STYLE_BUTTON = "style-button"
+STYLE_TABLE_CELL = "style-table-cell"
 STYLE_TABLE_HEADER = "style-table-header"
 
 STYLE_TEXT_LEFT = "style-text-left"
 STYLE_TEXT_RIGHT = "style-text-right"
+
 STYLE_LEVEL_0 = "style-level-0"
 STYLE_LEVEL_1 = "style-level-1"
 STYLE_LEVEL_2 = "style-level-2"
 STYLE_LEVEL_PADDING = "style-level-padding"
+
+STYLE_SUMMARY_LABEL = "style-summary-label"

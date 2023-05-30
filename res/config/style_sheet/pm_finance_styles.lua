@@ -29,18 +29,22 @@ function data()
         fontSize = 15,
 	})
 
+    a(FormatClassNames({ STYLE_TABLE_CELL }),
+	{
+		gravity = {-1.0 ,-1.0},
+        size = { -1, ROW_HEIGHT },
+        textAlignment = { 0.5, 0.5 }
+	})
+
     a(FormatClassNames({ STYLE_LEVEL_0 }),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 25),
 		size={-1, ROW_HEIGHT + 5},
-        gravity = {-1.0 ,-1.0},
 	})
 
     a(FormatClassNames({STYLE_LEVEL_1}),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 0),
-		size={-1, ROW_HEIGHT},
-		gravity = {-1.0 ,-1.0},
 	})
 
     a(FormatClassNames({ STYLE_LEVEL_1, STYLE_BUTTON }),
@@ -73,38 +77,13 @@ function data()
     a(FormatClassNames({"mySummaryTable"}),
 	{
 		padding = {0,0,3,0},
-        size={-1, 5*ROW_HEIGHT},
+        size={-1, 5*ROW_HEIGHT + 5},
 		gravity = {-1.0 ,-1.0},
 	})
 
-    a(FormatClassNames({"mySummaryTableLine"}),
+    a(FormatClassNames({ STYLE_SUMMARY_LABEL }),
     {
-        backgroundColor = ssu.makeColor(255, 255, 255, 5),
-		size={-1, ROW_HEIGHT},
-		gravity = {-1.0 ,0.5},
-    })
-    
-    a(FormatClassNames({"mySummaryTableLineLabel"}),
-    {
-        backgroundColor = ssu.makeColor(255, 255, 255, 5),
         padding = { 0, 0, 0, ICON_SIZE + TEXT_PADDING},
-		size={-1, ROW_HEIGHT},
-		gravity = {-1.0 ,0.5},
-    })
-
-    a(FormatClassNames({"mySummaryTableLineTotal"}),
-    {
-        backgroundColor = ssu.makeColor(255, 255, 255, 30),
-		size={-1, ROW_HEIGHT},
-		gravity = {-1.0 ,0.5},
-    })
-
-    a(FormatClassNames({"mySummaryTableLineTotalLabel"}),
-    {
-        backgroundColor = ssu.makeColor(255, 255, 255, 30),
-        padding = { 0, 0, 0, ICON_SIZE + TEXT_PADDING},
-		size={-1, ROW_HEIGHT},
-		gravity = {-1.0 ,0.5},
     })
 
 	a(FormatClassNames({STYLE_TEXT_LEFT}),

@@ -78,3 +78,20 @@ function CreateExpandButton(table, level)
     end)
     return button
 end
+
+function CreateTextView(text, styleList, id)
+    local textView = api.gui.comp.TextView.new(text)
+    textView:setStyleClassList(styleList)
+    textView:setId(id)
+    return textView
+end
+
+function GetTableControlId(column, category, transportType)
+    if not transportType then
+        if not category then
+            return column
+        end
+        return category .. "." .. column
+    end
+    return transportType .. "." .. category .. "." .. column
+end

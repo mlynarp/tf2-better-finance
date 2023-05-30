@@ -35,95 +35,92 @@ local state = {
 
 function RefreshTransportCategoryValues(transportType, journal, column)
     --total
-    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_TOTAL), transportType .. CAT_TOTAL .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_TOTAL), GetTableControlId(column, CAT_TOTAL, transportType))
     --income
-    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INCOME), transportType .. CAT_INCOME .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INCOME), GetTableControlId(column, CAT_INCOME, transportType))
     --maintenance
-    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE), transportType .. CAT_MAINTENANCE .. column)
-    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE_VEHICLES), transportType .. CAT_MAINTENANCE_VEHICLES .. column)
-    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE_INFRASTRUCTURE), transportType .. CAT_MAINTENANCE_INFRASTRUCTURE .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE), GetTableControlId(column, CAT_MAINTENANCE, transportType))
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE_VEHICLES), GetTableControlId(column, CAT_MAINTENANCE_VEHICLES, transportType))
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_MAINTENANCE_INFRASTRUCTURE), GetTableControlId(column, CAT_MAINTENANCE_INFRASTRUCTURE, transportType))
     --investment
-    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS), transportType .. CAT_INVESTMENTS .. column)
-    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_VEHICLES), transportType .. CAT_INVESTMENTS_VEHICLES .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS), GetTableControlId(column, CAT_INVESTMENTS, transportType))
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_VEHICLES), GetTableControlId(column, CAT_INVESTMENTS_VEHICLES, transportType))
     if IsCategoryAllowedForTransportType(transportType, CAT_INVESTMENTS_TRACKS) then
-        UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_TRACKS), transportType .. CAT_INVESTMENTS_TRACKS .. column)
+        UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_TRACKS), GetTableControlId(column, CAT_INVESTMENTS_TRACKS, transportType))
     elseif IsCategoryAllowedForTransportType(transportType, CAT_INVESTMENTS_ROADS) then
-        UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_ROADS), transportType .. CAT_INVESTMENTS_ROADS .. column)
+        UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_ROADS), GetTableControlId(column, CAT_INVESTMENTS_ROADS, transportType))
     end
-    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_INFRASTRUCTURE), transportType .. CAT_INVESTMENTS_INFRASTRUCTURE .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_INVESTMENTS_INFRASTRUCTURE), GetTableControlId(column, CAT_INVESTMENTS_INFRASTRUCTURE, transportType))
     --cashflow
-    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_CASHFLOW), transportType .. CAT_CASHFLOW .. column)
+    UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_CASHFLOW), GetTableControlId(column, CAT_CASHFLOW, transportType))
     
 end
 
-function CreateTextView(text, styleList, id)
-    local textView = api.gui.comp.TextView.new(text)
-    textView:setStyleClassList(styleList)
-    textView:setId(id)
-    return textView
-end
-
-function AddTransportCategoryLineToFinanceTable(labelComponents, rowId, sLevel, level)
+function AddTransportCategoryLineToFinanceTable(labelComponents, transportType, category, sLevel, level)
     local row = {}
 
-    table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel }, tostring(level)))
+    table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
     for i = 1, NUMBER_OF_YEARS_COLUMNS do
-        local yearCellView = CreateTextView(api.util.formatMoney(0), { sLevel, STYLE_TEXT_RIGHT }, rowId .. i)
-        table.insert(row, LayoutComponentsHorizontally({ yearCellView }, { sLevel }, tostring(level)))
+        local yearCellView = CreateTextView("", { sLevel, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_YEAR..i, category, transportType))
+        table.insert(row, LayoutComponentsHorizontally({ yearCellView }, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
     end
-    local totalCellView = CreateTextView(api.util.formatMoney(0), { sLevel, STYLE_TEXT_RIGHT }, rowId .. COLUMN_TOTAL)
-    table.insert(row, LayoutComponentsHorizontally({ totalCellView }, { sLevel }, tostring(level)))
+    local totalCellView = CreateTextView(api.util.formatMoney(0), { sLevel, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_TOTAL, category, transportType))
+    table.insert(row, LayoutComponentsHorizontally({ totalCellView }, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
 
     financeTable:addRow(row)
 end
 
-function AddSummaryLineToTable(labelComponents, id, sLevel)
+function AddSummaryLineToTable(category, styleLevel)
     local row = {}
 
-    table.insert(row, LayoutComponentsHorizontally(labelComponents, { sLevel }, "0"))
+    local labelView = CreateTextView(_(category), { styleLevel, STYLE_SUMMARY_LABEL, STYLE_TABLE_CELL, STYLE_TEXT_LEFT }, GetTableControlId(COLUMN_LABEL, category))
+    local valueView = CreateTextView("", { styleLevel, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_TOTAL, category))
     
-    local cellView = CreateTextView(api.util.formatMoney(0), { sLevel, STYLE_TEXT_RIGHT }, id)
-    table.insert(row, LayoutComponentsHorizontally({ cellView }, { sLevel }, "0"))
+    table.insert(row, LayoutComponentsHorizontally({ labelView }, { styleLevel, STYLE_TABLE_CELL }, "0"))
+    table.insert(row, LayoutComponentsHorizontally({ valueView }, { styleLevel, STYLE_TABLE_CELL }, "0"))
 
     summaryTable:addRow(row)
 end
 
 function AddTransportCategoriesToFinanceTable(transportType)
     -- level 0
-    local labelView = CreateTextView(_(transportType), { STYLE_LEVEL_0, STYLE_TEXT_LEFT }, "")
-    AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 0), labelView }, transportType .. CAT_TOTAL, STYLE_LEVEL_0, 0)
+    local labelView = CreateTextView(_(transportType), { STYLE_LEVEL_0, STYLE_TABLE_CELL, STYLE_TEXT_LEFT }, GetTableControlId(COLUMN_LABEL, CAT_TOTAL, transportType))
+    AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 0), labelView }, transportType, CAT_TOTAL, STYLE_LEVEL_0, 0)
 
     -- level 1
     for i, level1Category in ipairs(TRANSPORT_CATEGORIES_LEVEL1) do
         if (#TRANSPORT_CATEGORIES_LEVEL2[level1Category] == 0) then
-            labelView = CreateTextView(_(level1Category), { STYLE_LEVEL_1, STYLE_TEXT_LEFT, STYLE_LEVEL_PADDING }, "")
-            AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. level1Category, STYLE_LEVEL_1, 1)
+            labelView = CreateTextView(_(level1Category), { STYLE_LEVEL_1, STYLE_TABLE_CELL, STYLE_TEXT_LEFT, STYLE_LEVEL_PADDING },
+                                       GetTableControlId(COLUMN_LABEL, level1Category, transportType))
+            AddTransportCategoryLineToFinanceTable({ labelView }, transportType, level1Category, STYLE_LEVEL_1, 1)
         else
-            labelView = CreateTextView(_(level1Category), { STYLE_LEVEL_1, STYLE_TEXT_LEFT }, "")
-            AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 1), labelView }, transportType .. level1Category, STYLE_LEVEL_1, 1)
+            labelView = CreateTextView(_(level1Category), { STYLE_LEVEL_1, STYLE_TABLE_CELL, STYLE_TEXT_LEFT },
+                                       GetTableControlId(COLUMN_LABEL, level1Category, transportType))
+            AddTransportCategoryLineToFinanceTable({ CreateExpandButton(financeTable, 1), labelView }, transportType, level1Category, STYLE_LEVEL_1, 1)
 
             -- level 2
             for j, level2Category in ipairs(TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
                 if IsCategoryAllowedForTransportType(transportType, level2Category) then
-                    labelView = CreateTextView(_(level2Category), { STYLE_LEVEL_2, STYLE_TEXT_LEFT, STYLE_LEVEL_PADDING }, "")
-                    AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. level2Category, STYLE_LEVEL_2, 2)
+                    labelView = CreateTextView(_(level2Category), { STYLE_LEVEL_2, STYLE_TABLE_CELL, STYLE_TEXT_LEFT, STYLE_LEVEL_PADDING },
+                                               GetTableControlId(COLUMN_LABEL, level2Category, transportType))
+                    AddTransportCategoryLineToFinanceTable({ labelView }, transportType, level2Category, STYLE_LEVEL_2, 2)
                 end
             end
         end
     end
 
-    labelView = CreateTextView(_(CAT_CASHFLOW), { STYLE_LEVEL_1, STYLE_TEXT_RIGHT }, "")
-    AddTransportCategoryLineToFinanceTable({ labelView }, transportType .. CAT_CASHFLOW, STYLE_LEVEL_1, 0)
+    labelView = CreateTextView(_(CAT_CASHFLOW), { STYLE_LEVEL_1, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, "")
+    AddTransportCategoryLineToFinanceTable({ labelView }, transportType, CAT_CASHFLOW, STYLE_LEVEL_1, 0)
 end
 
 function AddFinanceTableHeaders()
     local row = {}
 
-    table.insert(row, CreateTextView("", { STYLE_TABLE_HEADER, STYLE_TEXT_RIGHT }, ""))
+    table.insert(row, CreateTextView("", { STYLE_TABLE_HEADER, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_LABEL)))
     for i = 1, NUMBER_OF_YEARS_COLUMNS do
-        table.insert(row, CreateTextView(tostring(GetYearFromYearIndex(i)), { STYLE_TABLE_HEADER, STYLE_TEXT_RIGHT }, COLUMN_YEAR .. i))
+        table.insert(row, CreateTextView(tostring(GetYearFromYearIndex(i)), { STYLE_TABLE_HEADER, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_YEAR .. i)))
     end
-    table.insert(row, CreateTextView(_(COLUMN_TOTAL), { STYLE_TABLE_HEADER, STYLE_TEXT_RIGHT }, COLUMN_TOTAL))
+    table.insert(row, CreateTextView(_(COLUMN_TOTAL), { STYLE_TABLE_HEADER, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_TOTAL)))
 
     financeTable:addRow(row)
 end
@@ -146,16 +143,11 @@ function InitSummaryTable()
     summaryTable:setName("mySummaryTable")
     summaryTable:setStyleClassList({"mySummaryTable"})
 
-    local profitView = CreateTextView(_(CAT_PROFIT), { "mySummaryTableLineLabel", STYLE_TEXT_LEFT }, "")
-    AddSummaryLineToTable({ profitView }, "profitCell", "mySummaryTableLine")
-    local loanView = CreateTextView(_(CAT_LOAN), { "mySummaryTableLineLabel", STYLE_TEXT_LEFT }, "")
-    AddSummaryLineToTable({ loanView }, "loanCell", "mySummaryTableLine")
-    local interestView = CreateTextView(_(CAT_INTERESTS), { "mySummaryTableLineLabel", STYLE_TEXT_LEFT }, "")
-    AddSummaryLineToTable({ interestView }, "interestCell", "mySummaryTableLine")
-    local othersView = CreateTextView(_(CAT_OTHERS), { "mySummaryTableLineLabel", STYLE_TEXT_LEFT }, "")
-    AddSummaryLineToTable({ othersView }, "othersCell", "mySummaryTableLine")
-    local totalView = CreateTextView(_(CAT_BALANCE), { "mySummaryTableLineTotalLabel", STYLE_TEXT_LEFT }, "")
-    AddSummaryLineToTable({ totalView }, "totalCell", "mySummaryTableLineTotal")
+    AddSummaryLineToTable(CAT_PROFIT, STYLE_LEVEL_1)
+    AddSummaryLineToTable(CAT_LOAN, STYLE_LEVEL_1)
+    AddSummaryLineToTable(CAT_INTERESTS, STYLE_LEVEL_1)
+    AddSummaryLineToTable(CAT_OTHERS, STYLE_LEVEL_1)
+    AddSummaryLineToTable(CAT_BALANCE, STYLE_LEVEL_0)
 end
 
 function InitFinanceTab()
@@ -181,12 +173,12 @@ end
 function UpdateFinanceTable(currentYearOnly)
     for i, transportType in ipairs(TRANSPORT_TYPES) do
         if currentYearOnly then
-            RefreshTransportCategoryValues(transportType, GetJournal(GetCurrentGameYear()), NUMBER_OF_YEARS_COLUMNS)
+            RefreshTransportCategoryValues(transportType, GetJournal(GetCurrentGameYear()), COLUMN_YEAR .. NUMBER_OF_YEARS_COLUMNS)
         else
             for j = 1, NUMBER_OF_YEARS_COLUMNS do
                 local year = GetYearFromYearIndex(j)
-                RefreshTransportCategoryValues(transportType, GetJournal(year), j)
-                api.gui.util.getById(COLUMN_YEAR .. j):setText(tostring(year))
+                RefreshTransportCategoryValues(transportType, GetJournal(year), COLUMN_YEAR .. j)
+                api.gui.util.getById(GetTableControlId(COLUMN_YEAR .. j)):setText(tostring(year))
             end
         end
         RefreshTransportCategoryValues(transportType, GetJournal(0), COLUMN_TOTAL)
@@ -197,11 +189,11 @@ function UpdateSummaryTable()
     local overallJournal = GetJournal(0)
     local profit = GetValueFromJournal(overallJournal, TRANSPORT_TYPE_ALL, CAT_TOTAL)
     local balance = GetCurrentBalance()
-    UpdateCellValue(profit, "profitCell")
-    UpdateCellValue(overallJournal.loan, "loanCell")
-    UpdateCellValue(overallJournal.interest, "interestCell")
-    UpdateCellValue(balance - (profit + overallJournal.loan + overallJournal.interest), "othersCell")
-    UpdateCellValue(balance, "totalCell")
+    UpdateCellValue(profit, GetTableControlId(COLUMN_TOTAL, CAT_PROFIT))
+    UpdateCellValue(overallJournal.loan, GetTableControlId(COLUMN_TOTAL, CAT_LOAN))
+    UpdateCellValue(overallJournal.interest, GetTableControlId(COLUMN_TOTAL, CAT_INTERESTS))
+    UpdateCellValue(balance - (profit + overallJournal.loan + overallJournal.interest), GetTableControlId(COLUMN_TOTAL, CAT_OTHERS))
+    UpdateCellValue(balance, GetTableControlId(COLUMN_TOTAL, CAT_BALANCE))
 end
 
 -- ***************************
