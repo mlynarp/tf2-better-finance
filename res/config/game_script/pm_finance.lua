@@ -73,14 +73,17 @@ function AddTransportCategoryLineToFinanceTable(isExpandable, transportType, cat
         labelView:removeStyleClass(STYLE_TEXT_LEFT)
         labelView:addStyleClass(STYLE_TEXT_RIGHT)
     end
+    SetTooltipByCategory(labelView, category)
     table.insert(components, labelView)
     table.insert(row, LayoutComponentsHorizontally(components, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
 
     for i = 1, NUMBER_OF_YEARS_COLUMNS do
         local yearCellView = CreateTextView("", { sLevel, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_YEAR..i, category, transportType))
+        SetTooltipByCategory(yearCellView, category)
         table.insert(row, LayoutComponentsHorizontally({ yearCellView }, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
     end
     local totalCellView = CreateTextView("", { sLevel, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_TOTAL, category, transportType))
+    SetTooltipByCategory(totalCellView, category)
     table.insert(row, LayoutComponentsHorizontally({ totalCellView }, { sLevel, STYLE_TABLE_CELL }, tostring(level)))
 
     financeTable:addRow(row)
@@ -90,7 +93,9 @@ function AddSummaryLineToTable(category, styleLevel)
     local row = {}
 
     local labelView = CreateTextView(_(category), { styleLevel, STYLE_SUMMARY_LABEL, STYLE_TABLE_CELL, STYLE_TEXT_LEFT }, GetTableControlId(COLUMN_LABEL, category))
+    SetTooltipByCategory(labelView, category)
     local valueView = CreateTextView("", { styleLevel, STYLE_TABLE_CELL, STYLE_TEXT_RIGHT }, GetTableControlId(COLUMN_TOTAL, category))
+    SetTooltipByCategory(valueView, category)
     
     table.insert(row, LayoutComponentsHorizontally({ labelView }, { styleLevel, STYLE_TABLE_CELL }, "0"))
     table.insert(row, LayoutComponentsHorizontally({ valueView }, { styleLevel, STYLE_TABLE_CELL }, "0"))
@@ -152,8 +157,8 @@ function InitSummaryTable()
 
     AddSummaryLineToTable(CAT_PROFIT, STYLE_LEVEL_1)
     AddSummaryLineToTable(CAT_LOAN, STYLE_LEVEL_1)
-    AddSummaryLineToTable(CAT_INTERESTS, STYLE_LEVEL_1)
-    AddSummaryLineToTable(CAT_OTHERS, STYLE_LEVEL_1)
+    AddSummaryLineToTable(CAT_INTEREST, STYLE_LEVEL_1)
+    AddSummaryLineToTable(CAT_OTHER, STYLE_LEVEL_1)
     AddSummaryLineToTable(CAT_BALANCE, STYLE_LEVEL_0)
 end
 
@@ -198,8 +203,8 @@ function UpdateSummaryTable()
     local balance = GetCurrentBalance()
     UpdateCellValue(profit, GetTableControlId(COLUMN_TOTAL, CAT_PROFIT))
     UpdateCellValue(overallJournal.loan, GetTableControlId(COLUMN_TOTAL, CAT_LOAN))
-    UpdateCellValue(overallJournal.interest, GetTableControlId(COLUMN_TOTAL, CAT_INTERESTS))
-    UpdateCellValue(balance - (profit + overallJournal.loan + overallJournal.interest), GetTableControlId(COLUMN_TOTAL, CAT_OTHERS))
+    UpdateCellValue(overallJournal.interest, GetTableControlId(COLUMN_TOTAL, CAT_INTEREST))
+    UpdateCellValue(balance - (profit + overallJournal.loan + overallJournal.interest), GetTableControlId(COLUMN_TOTAL, CAT_OTHER))
     UpdateCellValue(balance, GetTableControlId(COLUMN_TOTAL, CAT_BALANCE))
 end
 

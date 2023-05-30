@@ -18,8 +18,8 @@ CAT_INVESTMENTS_INFRASTRUCTURE = "Cat.Investments.Infrastructure"
 CAT_CASHFLOW = "Cat.Cashflow"
 CAT_PROFIT = "Cat.Profit"
 CAT_LOAN = "Cat.Loan"
-CAT_INTERESTS = "Cat.Interests"
-CAT_OTHERS = "Cat.Others"
+CAT_INTEREST = "Cat.Interest"
+CAT_OTHER = "Cat.Other"
 CAT_BALANCE = "Cat.Balance"
 
 COLUMN_LABEL = "Column.Label"
@@ -66,3 +66,5 @@ STYLE_LEVEL_PADDING = "style-level-padding"
 
 STYLE_SUMMARY_LABEL = "style-summary-label"
 STYLE_SUMMARY_TABLE = "style-summary-table"
+
+TOOLTIP = "Tooltip"

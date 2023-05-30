@@ -95,3 +95,7 @@ function GetTableControlId(column, category, transportType)
     end
     return transportType .. "." .. category .. "." .. column
 end
+
+function SetTooltipByCategory(component, category)
+    component:setTooltip(_(TOOLTIP .. category))
+end
