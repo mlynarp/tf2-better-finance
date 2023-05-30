@@ -13,115 +13,100 @@ end
 
 dofile(ScriptPath() .. "../../scripts/pm_finance_constants.lua")
 
-local ssu = require "stylesheetutil"
-local rowHeight=25
-local levelPadding = 30
-local icon_size=15
-local textPadding = 10
+local ROW_HEIGHT = 25
+local LEVEL_PADDING = 30
+local ICON_SIZE = 15
+local TEXT_PADDING = 10
 
+local ssu = require "stylesheetutil"
 function data()
 	local result = { }
 	local a = ssu.makeAdder(result)
 
-	-- *************
-	-- ** Header **
-	-- *************
-    a(FormatClassNames({ STYLE_TEXT_HEADER }),
+    a(FormatClassNames({ STYLE_TABLE_HEADER }),
 	{
 		gravity = {-1.0 ,-1.0},
         fontSize = 15,
 	})
 
-	-- *************
-	-- ** Level 0 **
-	-- *************
-	a(FormatClassNames({ STYLE_LEVEL_0 }),
+    a(FormatClassNames({ STYLE_LEVEL_0 }),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 25),
-		size={-1, rowHeight + 5},
-		gravity = {-1.0 ,-1.0},
+		size={-1, ROW_HEIGHT + 5},
+        gravity = {-1.0 ,-1.0},
 	})
 
-	-- *************
-	-- ** Level 1 **
-	-- *************
     a(FormatClassNames({STYLE_LEVEL_1}),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 0),
-		size={-1, rowHeight},
+		size={-1, ROW_HEIGHT},
 		gravity = {-1.0 ,-1.0},
 	})
 
     a(FormatClassNames({ STYLE_LEVEL_1, STYLE_BUTTON }),
 	{
-		padding={0,0,0,levelPadding},
+		padding={0,0,0,LEVEL_PADDING},
 	})
 
 	a(FormatClassNames({ STYLE_LEVEL_1, STYLE_LEVEL_PADDING }),
 	{
-		padding={0,0,0,levelPadding + icon_size + textPadding},
+		padding={0,0,0,LEVEL_PADDING + ICON_SIZE + TEXT_PADDING},
 	})
 
-	-- *************
-	-- ** Level 2 **
-	-- *************
 	a(FormatClassNames({STYLE_LEVEL_2}),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 0),
-		size={-1, rowHeight},
+		size={-1, ROW_HEIGHT},
 		gravity = {-1.0 ,-1.0},
 	})
 
     a(FormatClassNames({ STYLE_LEVEL_2, STYLE_BUTTON }),
 	{
-		padding={0,0,0,levelPadding * 2},
+		padding={0,0,0,LEVEL_PADDING * 2},
 	})
 
 	a(FormatClassNames({ STYLE_LEVEL_2, STYLE_LEVEL_PADDING }),
 	{
-		padding={0,0,0,levelPadding * 2 + icon_size + textPadding},
+		padding={0,0,0,LEVEL_PADDING * 2 + ICON_SIZE + TEXT_PADDING},
 	})
 
     a(FormatClassNames({"mySummaryTable"}),
 	{
 		padding = {0,0,3,0},
-        size={-1, 5*rowHeight},
+        size={-1, 5*ROW_HEIGHT},
 		gravity = {-1.0 ,-1.0},
 	})
 
     a(FormatClassNames({"mySummaryTableLine"}),
     {
         backgroundColor = ssu.makeColor(255, 255, 255, 5),
-		size={-1, rowHeight},
+		size={-1, ROW_HEIGHT},
 		gravity = {-1.0 ,0.5},
     })
     
     a(FormatClassNames({"mySummaryTableLineLabel"}),
     {
         backgroundColor = ssu.makeColor(255, 255, 255, 5),
-        padding = { 0, 0, 0, icon_size + textPadding},
-		size={-1, rowHeight},
+        padding = { 0, 0, 0, ICON_SIZE + TEXT_PADDING},
+		size={-1, ROW_HEIGHT},
 		gravity = {-1.0 ,0.5},
     })
 
     a(FormatClassNames({"mySummaryTableLineTotal"}),
     {
         backgroundColor = ssu.makeColor(255, 255, 255, 30),
-		size={-1, rowHeight},
+		size={-1, ROW_HEIGHT},
 		gravity = {-1.0 ,0.5},
     })
 
     a(FormatClassNames({"mySummaryTableLineTotalLabel"}),
     {
         backgroundColor = ssu.makeColor(255, 255, 255, 30),
-        padding = { 0, 0, 0, icon_size + textPadding},
-		size={-1, rowHeight},
+        padding = { 0, 0, 0, ICON_SIZE + TEXT_PADDING},
+		size={-1, ROW_HEIGHT},
 		gravity = {-1.0 ,0.5},
     })
 
-	-- *************
-	-- ** Other **
-	-- *************
 	a(FormatClassNames({STYLE_TEXT_LEFT}),
 	{
 		textAlignment = {0, 0.5}
@@ -134,8 +119,8 @@ function data()
 
     a(FormatClassNames({ STYLE_BUTTON }),
 	{
-		padding={(rowHeight-icon_size)/2,0,(rowHeight-icon_size)/2,0},
-		size={icon_size,rowHeight},
+		padding={(ROW_HEIGHT-ICON_SIZE)/2,0,(ROW_HEIGHT-ICON_SIZE)/2,0},
+		size={ICON_SIZE,ROW_HEIGHT},
 		margin={0,0,0,0},
 	})
 

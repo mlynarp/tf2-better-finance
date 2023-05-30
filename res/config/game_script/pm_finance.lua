@@ -119,11 +119,11 @@ end
 function AddFinanceTableHeaders()
     local row = {}
 
-    table.insert(row, CreateTextView("", { STYLE_TEXT_HEADER, STYLE_TEXT_RIGHT }, ""))
+    table.insert(row, CreateTextView("", { STYLE_TABLE_HEADER, STYLE_TEXT_RIGHT }, ""))
     for i = 1, NUMBER_OF_YEARS_COLUMNS do
-        table.insert(row, CreateTextView(tostring(GetYearFromYearIndex(i)), { STYLE_TEXT_HEADER, STYLE_TEXT_RIGHT }, COLUMN_YEAR .. i))
+        table.insert(row, CreateTextView(tostring(GetYearFromYearIndex(i)), { STYLE_TABLE_HEADER, STYLE_TEXT_RIGHT }, COLUMN_YEAR .. i))
     end
-    table.insert(row, CreateTextView(_(COLUMN_TOTAL), { STYLE_TEXT_HEADER, STYLE_TEXT_RIGHT }, COLUMN_TOTAL))
+    table.insert(row, CreateTextView(_(COLUMN_TOTAL), { STYLE_TABLE_HEADER, STYLE_TEXT_RIGHT }, COLUMN_TOTAL))
 
     financeTable:addRow(row)
 end
