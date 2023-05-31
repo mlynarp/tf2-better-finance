@@ -68,3 +68,4 @@ STYLE_SUMMARY_LABEL = "style-summary-label"
 STYLE_SUMMARY_TABLE = "style-summary-table"
 
 TOOLTIP = "Tooltip"
+TOOLTIP_GAMEINFO = "Tooltip.GameInfo"

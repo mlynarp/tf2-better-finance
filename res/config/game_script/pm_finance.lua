@@ -9,26 +9,6 @@ local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
 
-
-local tooltips = {
-    settings = {
-        Income = _("#Tooltip.Settings.Income"),
-        Vehicles = _("#Tooltip.Settings.Vehicles"),
-        Infrastructure = _("#Tooltip.Settings.Infrastructure"),
-    },
-    Details = {
-        Income = _("#Tooltip.Details.Income"),
-        Maintenance = _("#Tooltip.Details.Maintenance"),
-        Vehicles = _("#Tooltip.Details.Vehicles"),
-        Infrastructure = _("#Tooltip.Details.Infrastructure")
-    },
-    Menu =
-    {
-        Button = _("#Tooltip.Menu.Button"),
-        gameInfo = _("#Tooltip.GameYear"),
-    }
-}
-
 local state = {
     currentYear = 0,
 }

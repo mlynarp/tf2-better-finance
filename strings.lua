@@ -38,12 +38,13 @@ function data()
             [TOOLTIP .. CAT_INVESTMENTS_INFRASTRUCTURE] = ("Construction of new buildings."),
             [TOOLTIP .. CAT_INVESTMENTS_ROADS] = ("Construction of new roads."),
             [TOOLTIP .. CAT_INVESTMENTS_TRACKS] = ("Construction of new tracks."),
-            [TOOLTIP .. CAT_CASHFLOW] = ("Operation profit as sum of income deducted by maintenance."),
+            [TOOLTIP .. CAT_CASHFLOW] = ("Operating profit as sum of income deducted by maintenance."),
             [TOOLTIP .. CAT_PROFIT] = ("Overall profit as sum of income deducted by maintenance and investments from all transports."),
             [TOOLTIP .. CAT_LOAN] = ("Amount of money borrowed from the bank."),
             [TOOLTIP .. CAT_INTEREST] = ("Interest paid on borrowed money."),
             [TOOLTIP .. CAT_OTHER] = ("Other expenditure without a specific category, e.g. landscaping."),
             [TOOLTIP .. CAT_BALANCE] = ("Current bank balance."),
+            [TOOLTIP_GAMEINFO] = ("Operating profit as sum of income deducted by maintenance since the beginning of the year."),
 		},
 		cs_CZ = {
             [TRANSPORT_TYPE_ROAD] = ("Silniční doprava"),
@@ -87,6 +88,7 @@ function data()
             [TOOLTIP .. CAT_INTEREST] = ("Úroky zaplacené z vypůjčených peněz."),
             [TOOLTIP .. CAT_OTHER] = ("Ostatní výdaje bez konkrétní kategorie, např. terénní úpravy."),
             [TOOLTIP .. CAT_BALANCE] = ("Aktuální zůstatek na účtu."),
+            [TOOLTIP_GAMEINFO] = ("Provozní zisk jako součet příjmů snížený o údržbu od začátku roku."),
 		}
 	}
 end
