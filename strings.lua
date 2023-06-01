@@ -45,6 +45,22 @@ function data()
             [TOOLTIP .. CAT_OTHER] = ("Other expenditure without a specific category, e.g. landscaping."),
             [TOOLTIP .. CAT_BALANCE] = ("Current bank balance."),
             [TOOLTIP_GAMEINFO] = ("Operating profit as sum of income deducted by maintenance since the beginning of the year."),
+            ["DESCRIPTION"] = ( "Do you want to see finance better organized?\n"..
+                                "Do you want to see totals for each transport category or just operating profit?\n"..
+                                "Do you want to have yearly based accounting independent of game calendar speed?\n"..
+                                "Do you want to see current year cashflow instead of earnings in buttom status bar?\n\n"..
+                            
+                                "This mod shows finances organized per transport type or all transport category. It always shows accounting on yearly base.\n"..
+
+                                "Version 1.0 release notes:\n"..
+                                "    - each transport has its own category in finance overview including trams (original table is replaced)\n"..
+                                "    - every transport category show data per configurable number of years backwar and totals\n"..
+                                "    - summary table with the overall profit, loan, interest, other and bank account\n"..
+                                "    - every cell in table has a proper tooltip\n"..
+                                "    - earnings field in status bar was replaced by cashflow field to show current year progress\n"..
+                                "    - english, czech translation\n"..
+                                
+                                "Any feedback is highly appreciated.")
 		},
 		cs_CZ = {
             [TRANSPORT_TYPE_ROAD] = ("Silniční doprava"),

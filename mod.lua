@@ -16,10 +16,8 @@ function data()
 			minorVersion = vMinor,
 			severityAdd = "NONE",
 			severityRemove = "NONE",
-			name = "Better Financial Overview",
-			description = ("This mod adds a new tab to the financial menu that displays the journal in different format.\n"..
-							"It focuses on cashflow and totals for the transport categories.\n"..
-							"The journal is annual regardless of the speed of the game calendar. It also shows more years history."),
+			name = "Better Finance Overview",
+			description = _("DESCRIPTION"),
 			authors =
 			{
 				{
@@ -38,7 +36,7 @@ function data()
 				  defaultIndex = 4,
 				}
 			},
-			tags = { "Script Mod" },
+			tags = { "Misc", "Script Mod" },
 		},
         runFn = function(settings, modParams)
             NUMBER_OF_YEARS_COLUMNS = modParams[getCurrentModId()].NumberOfColumns
