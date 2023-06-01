@@ -9,10 +9,6 @@ local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
 
-local state = {
-    currentYear = 0,
-}
-
 function RefreshTransportCategoryValues(transportType, journal, column)
     --total
     UpdateCellValue(GetValueFromJournal(journal, transportType, CAT_TOTAL), GetTableControlId(column, CAT_TOTAL, transportType))
@@ -194,8 +190,27 @@ end
 function data()
     return {
         save = function()
+            return GameState
         end,
-        load = function()
+        load = function(data)
+            if not data then
+                local currentYear = GetCurrentGameYear()
+                for j = 1, NUMBER_OF_YEARS_COLUMNS do
+                    GameState[tostring(currentYear)] = GetYearStartTime(currentYear)
+                    currentYear = currentYear - 1
+                end
+            else
+                GameState = data
+            end
+        end,
+        update = function()
+            local currentYear = GetCurrentGameYear()
+            if currentYear ~= lastYear then
+                lastYear = currentYear
+                if GameState[tostring(currentYear)] == nil then
+                    GameState[tostring(currentYear)] = GetYearStartTime(currentYear)
+                end
+            end
         end,
         guiInit = function()
             InitFinanceTab()

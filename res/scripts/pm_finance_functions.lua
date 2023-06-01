@@ -1,5 +1,7 @@
 require "pm_finance_constants"
 
+GameState = {}
+
 function IsLeapYear(year)
     return year % 4 == 0 and (year % 100 ~= 0 or year % 400 == 0)
 end
@@ -27,6 +29,10 @@ function GetYearTimeLength(year)
 end
 
 function GetYearStartTime(year)
+    if GameState and GameState[tostring(year)] ~= nil then
+        print("Pouzili jsme state")
+        return GameState[tostring(year)]
+    end
     local gameTime = game.interface.getGameTime()
     local millisPerDay = game.interface.getMillisPerDay()
 
