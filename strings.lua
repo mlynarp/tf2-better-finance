@@ -52,6 +52,10 @@ function data()
                             
                                 "This mod shows finances organized per transport type or all transport category. It always shows accounting on yearly base.\n"..
 
+                                "Version 1.1 release notes:\n"..
+                                "    - avoid using the global variables to avoid conflict with other mods\n"..
+                                "    - add tracks and roads to all transport overview\n"..
+                                
                                 "Version 1.0 release notes:\n"..
                                 "    - each transport has its own category in finance overview including trams (original table is replaced)\n"..
                                 "    - every transport category show data per configurable number of years backwar and totals\n"..
