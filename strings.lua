@@ -1,4 +1,4 @@
-require "pm_finance_constants"
+require "pm_finance/constants"
 
 function data()
 	return {

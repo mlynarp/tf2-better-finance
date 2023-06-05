@@ -11,7 +11,7 @@ function FormatClassNames(classes)
     return result
 end
 
-dofile(ScriptPath() .. "../../scripts/pm_finance_constants.lua")
+dofile(ScriptPath() .. "../../scripts/pm_finance/constants.lua")
 
 local ROW_HEIGHT = 25
 local LEVEL_PADDING = 30

@@ -1,6 +1,6 @@
-require "pm_finance_constants"
-require "pm_finance_functions"
-require "pm_finance_ui_functions"
+require "pm_finance/constants"
+require "pm_finance/functions"
+require "pm_finance/ui_functions"
 
 local financeTabWindow = nil
 local financeTable = nil

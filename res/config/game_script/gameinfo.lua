@@ -1,6 +1,6 @@
---copy of system scipr name to override earnings field in the status bar
-require "pm_finance_constants"
-require "pm_finance_functions"
+--copy of system script name to override earnings field in the status bar
+require "pm_finance/constants"
+require "pm_finance/functions"
 
 local arrivaltracker = require "mission.arrivaltracker"
 
