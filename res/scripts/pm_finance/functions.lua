@@ -2,7 +2,21 @@ local constants = require "pm_finance/constants"
 
 local functions = {}
 
-GameState = {}
+function functions.SetGameState(state)
+    game.config.pm_finance_state = state
+end
+
+function functions.GetGameState()
+    return game.config.pm_finance_state
+end    
+
+function functions.GetGameStatePerYear(year)
+    local gameState = functions.GetGameState()
+    if gameState then
+        return gameState[tostring(year)]
+    end
+    return nil
+end
 
 function functions.IsLeapYear(year)
     return year % 4 == 0 and (year % 100 ~= 0 or year % 400 == 0)
@@ -31,8 +45,9 @@ function functions.GetYearTimeLength(year)
 end
 
 function functions.GetYearStartTime(year)
-    if GameState and GameState[tostring(year)] ~= nil then
-        return GameState[tostring(year)]
+    local storedTime = functions.GetGameStatePerYear(year)
+    if storedTime then
+        return storedTime
     end
     local gameTime = game.interface.getGameTime()
     local millisPerDay = game.interface.getMillisPerDay()

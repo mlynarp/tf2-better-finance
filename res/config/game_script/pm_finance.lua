@@ -213,25 +213,28 @@ end
 function data()
     return {
         save = function()
-            return GameState
+            return functions.GetGameState()
         end,
         load = function(data)
             if not data then
+                local gameState = {}
                 local currentYear = functions.GetCurrentGameYear()
                 for j = 1, constants.NUMBER_OF_YEARS_COLUMNS do
-                    GameState[tostring(currentYear)] = functions.GetYearStartTime(currentYear)
+                    gameState[tostring(currentYear)] = functions.GetYearStartTime(currentYear)
                     currentYear = currentYear - 1
                 end
+                functions.SetGameState(gameState)
             else
-                GameState = data
+                functions.SetGameState(data)
             end
         end,
         update = function()
             local currentYear = functions.GetCurrentGameYear()
             if currentYear ~= lastYear then
                 lastYear = currentYear
-                if GameState[tostring(currentYear)] == nil then
-                    GameState[tostring(currentYear)] = functions.GetYearStartTime(currentYear)
+                local currentYearState = functions.GetGameStatePerYear(currentYear)
+                if currentYearState == nil then
+                    functions.GetGameState()[tostring(currentYear)] = functions.GetYearStartTime(currentYear)
                 end
             end
         end,
