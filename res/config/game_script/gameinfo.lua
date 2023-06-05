@@ -1,6 +1,7 @@
 --copy of system script name to override earnings field in the status bar
-require "pm_finance/constants"
-require "pm_finance/functions"
+local constants = require "pm_finance/constants"
+local functions = require "pm_finance/functions"
+local ui_functions = require "pm_finance/ui_functions"
 
 local arrivaltracker = require "mission.arrivaltracker"
 
@@ -22,7 +23,7 @@ return {
 		trackerinit()
 	end,
 	guiInit = function()
-		local earningsText = gui.textView_create("gameInfo.earningsComp.earningsText", _(CAT_CASHFLOW))
+		local earningsText = gui.textView_create("gameInfo.earningsComp.earningsText", _(constants.CAT_CASHFLOW))
 		state.earnings = gui.textView_create("gameInfo.earningsComp.earnings", "")
 		
 		local earningsLayout = gui.boxLayout_create("gameInfo.earningsComp.layout", "HORIZONTAL")
@@ -79,12 +80,12 @@ return {
 		state.numPassenger:setText(ug.formatNumber(data["passengersTransported"]))
 		state.numCargo:setText(ug.formatNumber(data["cargoTransported"]))
 		
-		local journal = GetJournal(GetCurrentGameYear())
+		local journal = functions.GetJournal(functions.GetCurrentGameYear())
 		
-		UpdateCellValue(GetValueFromJournal(journal, TRANSPORT_TYPE_ALL, CAT_CASHFLOW), "gameInfo.earningsComp.earnings")
-        local breakdownTooltip = _(TOOLTIP_GAMEINFO) .. "\n"
-        .. "      " .. _(CAT_INCOME) .. ": " .. api.util.formatMoney(GetValueFromJournal(journal, TRANSPORT_TYPE_ALL, CAT_INCOME)) .. "\n"
-        .. "      " .. _(CAT_MAINTENANCE) .. ": " .. api.util.formatMoney(GetValueFromJournal(journal, TRANSPORT_TYPE_ALL, CAT_MAINTENANCE))
+		ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, constants.TRANSPORT_TYPE_ALL, constants.CAT_CASHFLOW), "gameInfo.earningsComp.earnings")
+        local breakdownTooltip = _(constants.TOOLTIP_GAMEINFO) .. "\n"
+        .. "      " .. _(constants.CAT_INCOME) .. ": " .. api.util.formatMoney(functions.GetValueFromJournal(journal, constants.TRANSPORT_TYPE_ALL, constants.CAT_INCOME)) .. "\n"
+        .. "      " .. _(constants.CAT_MAINTENANCE) .. ": " .. api.util.formatMoney(functions.GetValueFromJournal(journal, constants.TRANSPORT_TYPE_ALL, constants.CAT_MAINTENANCE))
 
         state.earningsPanel:setToolTip(breakdownTooltip)
 	end,

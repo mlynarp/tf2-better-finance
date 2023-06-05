@@ -1,71 +1,75 @@
-TRANSPORT_TYPE_ROAD = "Transport.Road"
-TRANSPORT_TYPE_TRAM = "Transport.Tram"
-TRANSPORT_TYPE_RAIL = "Transport.Rail"
-TRANSPORT_TYPE_WATER = "Transport.Water"
-TRANSPORT_TYPE_AIR = "Transport.Air"
-TRANSPORT_TYPE_ALL = "Transport.All"
+local constants = {}
 
-CAT_TOTAL = "Cat.Total"
-CAT_INCOME = "Cat.Income"
-CAT_MAINTENANCE = "Cat.Maintenance"
-CAT_MAINTENANCE_VEHICLES = "Cat.Maintenance.Vehicles"
-CAT_MAINTENANCE_INFRASTRUCTURE = "Cat.Maintenance.Infrastructure"
-CAT_INVESTMENTS = "Cat.Investments"
-CAT_INVESTMENTS_VEHICLES = "Cat.Investments.Vehicles"
-CAT_INVESTMENTS_TRACKS = "Cat.Investments.Tracks"
-CAT_INVESTMENTS_ROADS = "Cat.Investments.Roads"
-CAT_INVESTMENTS_INFRASTRUCTURE = "Cat.Investments.Infrastructure"
-CAT_CASHFLOW = "Cat.Cashflow"
-CAT_PROFIT = "Cat.Profit"
-CAT_LOAN = "Cat.Loan"
-CAT_INTEREST = "Cat.Interest"
-CAT_OTHER = "Cat.Other"
-CAT_BALANCE = "Cat.Balance"
+constants.TRANSPORT_TYPE_ROAD = "Transport.Road"
+constants.TRANSPORT_TYPE_TRAM = "Transport.Tram"
+constants.TRANSPORT_TYPE_RAIL = "Transport.Rail"
+constants.TRANSPORT_TYPE_WATER = "Transport.Water"
+constants.TRANSPORT_TYPE_AIR = "Transport.Air"
+constants.TRANSPORT_TYPE_ALL = "Transport.All"
 
-COLUMN_LABEL = "Column.Label"
-COLUMN_YEAR = "Column.Year"
-COLUMN_TOTAL = "Column.Total"
+constants.CAT_TOTAL = "Cat.Total"
+constants.CAT_INCOME = "Cat.Income"
+constants.CAT_MAINTENANCE = "Cat.Maintenance"
+constants.CAT_MAINTENANCE_VEHICLES = "Cat.Maintenance.Vehicles"
+constants.CAT_MAINTENANCE_INFRASTRUCTURE = "Cat.Maintenance.Infrastructure"
+constants.CAT_INVESTMENTS = "Cat.Investments"
+constants.CAT_INVESTMENTS_VEHICLES = "Cat.Investments.Vehicles"
+constants.CAT_INVESTMENTS_TRACKS = "Cat.Investments.Tracks"
+constants.CAT_INVESTMENTS_ROADS = "Cat.Investments.Roads"
+constants.CAT_INVESTMENTS_INFRASTRUCTURE = "Cat.Investments.Infrastructure"
+constants.CAT_CASHFLOW = "Cat.Cashflow"
+constants.CAT_PROFIT = "Cat.Profit"
+constants.CAT_LOAN = "Cat.Loan"
+constants.CAT_INTEREST = "Cat.Interest"
+constants.CAT_OTHER = "Cat.Other"
+constants.CAT_BALANCE = "Cat.Balance"
 
-TRANSPORT_TYPES =
+constants.COLUMN_LABEL = "Column.Label"
+constants.COLUMN_YEAR = "Column.Year"
+constants.COLUMN_TOTAL = "Column.Total"
+
+constants.TRANSPORT_TYPES =
 { 
-    TRANSPORT_TYPE_ROAD,
-    TRANSPORT_TYPE_TRAM,
-    TRANSPORT_TYPE_RAIL,
-    TRANSPORT_TYPE_WATER,
-    TRANSPORT_TYPE_AIR,
-    TRANSPORT_TYPE_ALL
+    constants.TRANSPORT_TYPE_ROAD,
+    constants.TRANSPORT_TYPE_TRAM,
+    constants.TRANSPORT_TYPE_RAIL,
+    constants.TRANSPORT_TYPE_WATER,
+    constants.TRANSPORT_TYPE_AIR,
+    constants.TRANSPORT_TYPE_ALL
 }
 
-TRANSPORT_CATEGORIES_LEVEL1 =
+constants.TRANSPORT_CATEGORIES_LEVEL1 =
 {
-    CAT_INCOME,
-    CAT_MAINTENANCE,
-    CAT_INVESTMENTS
+    constants.CAT_INCOME,
+    constants.CAT_MAINTENANCE,
+    constants.CAT_INVESTMENTS
 }
 
-TRANSPORT_CATEGORIES_LEVEL2 =
+constants.TRANSPORT_CATEGORIES_LEVEL2 =
 {
-    [CAT_INCOME] = {},
-    [CAT_MAINTENANCE] = { CAT_MAINTENANCE_VEHICLES, CAT_MAINTENANCE_INFRASTRUCTURE },
-    [CAT_INVESTMENTS] = { CAT_INVESTMENTS_VEHICLES, CAT_INVESTMENTS_INFRASTRUCTURE, CAT_INVESTMENTS_TRACKS, CAT_INVESTMENTS_ROADS }
+    [constants.CAT_INCOME] = {},
+    [constants.CAT_MAINTENANCE] = { constants.CAT_MAINTENANCE_VEHICLES, constants.CAT_MAINTENANCE_INFRASTRUCTURE },
+    [constants.CAT_INVESTMENTS] = { constants.CAT_INVESTMENTS_VEHICLES, constants.CAT_INVESTMENTS_INFRASTRUCTURE, constants.CAT_INVESTMENTS_TRACKS, constants.CAT_INVESTMENTS_ROADS }
 }
 
-NUMBER_OF_YEARS_COLUMNS = 5
+constants.NUMBER_OF_YEARS_COLUMNS = 5
 
-STYLE_BUTTON = "style-button"
-STYLE_TABLE_CELL = "style-table-cell"
-STYLE_TABLE_HEADER = "style-table-header"
+constants.STYLE_BUTTON = "style-button"
+constants.STYLE_TABLE_CELL = "style-table-cell"
+constants.STYLE_TABLE_HEADER = "style-table-header"
 
-STYLE_TEXT_LEFT = "style-text-left"
-STYLE_TEXT_RIGHT = "style-text-right"
+constants.STYLE_TEXT_LEFT = "style-text-left"
+constants.STYLE_TEXT_RIGHT = "style-text-right"
 
-STYLE_LEVEL_0 = "style-level-0"
-STYLE_LEVEL_1 = "style-level-1"
-STYLE_LEVEL_2 = "style-level-2"
-STYLE_LEVEL_PADDING = "style-level-padding"
+constants.STYLE_LEVEL_0 = "style-level-0"
+constants.STYLE_LEVEL_1 = "style-level-1"
+constants.STYLE_LEVEL_2 = "style-level-2"
+constants.STYLE_LEVEL_PADDING = "style-level-padding"
 
-STYLE_SUMMARY_LABEL = "style-summary-label"
-STYLE_SUMMARY_TABLE = "style-summary-table"
+constants.STYLE_SUMMARY_LABEL = "style-summary-label"
+constants.STYLE_SUMMARY_TABLE = "style-summary-table"
 
-TOOLTIP = "Tooltip"
-TOOLTIP_GAMEINFO = "Tooltip.GameInfo"
+constants.TOOLTIP = "Tooltip"
+constants.TOOLTIP_GAMEINFO = "Tooltip.GameInfo"
+
+return constants

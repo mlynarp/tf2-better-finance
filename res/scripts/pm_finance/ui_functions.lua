@@ -1,6 +1,8 @@
-require "pm_finance/constants"
+local constants = require "pm_finance/constants"
 
-function UpdateCellValue(amount, textViewId)
+local ui_functions = {}
+
+function ui_functions.UpdateCellValue(amount, textViewId)
     local textView = api.gui.util.getById(textViewId)
     if not textView then
         return
@@ -18,7 +20,7 @@ function UpdateCellValue(amount, textViewId)
     textView:setText(api.util.formatMoney(amount))
 end
 
-function SetRowVisibilityInTable(table, row, visible)
+function ui_functions.SetRowVisibilityInTable(table, row, visible)
     if row >= table:getNumRows() then
         return
     end
@@ -28,7 +30,7 @@ function SetRowVisibilityInTable(table, row, visible)
     end
 end
 
-function LayoutComponentsHorizontally(components, styleList, componentName)
+function ui_functions.LayoutComponentsHorizontally(components, styleList, componentName)
     local component = api.gui.comp.Component.new(componentName)
     local layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
     layout:setName(componentName..".Layout")
@@ -40,22 +42,22 @@ function LayoutComponentsHorizontally(components, styleList, componentName)
     return component
 end
 
-function GetStyleForTableLineLevel(level)
+function ui_functions.GetStyleForTableLineLevel(level)
     if level == 0 then
-        return STYLE_LEVEL_0
+        return constants.STYLE_LEVEL_0
     elseif level == 1 then
-        return STYLE_LEVEL_1
+        return constants.STYLE_LEVEL_1
     else
-        return STYLE_LEVEL_2
+        return constants.STYLE_LEVEL_2
     end
 end
 
-function CreateExpandButton(table, level)
+function ui_functions.CreateExpandButton(table, level)
     local iconExpandPath = "ui/design/components/slim_arrow_right@2x.tga"
     local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
     local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
     local button = api.gui.comp.Button.new(imageView, false)
-    button:setStyleClassList({ GetStyleForTableLineLevel(level), STYLE_BUTTON })
+    button:setStyleClassList({ ui_functions.GetStyleForTableLineLevel(level), constants.STYLE_BUTTON })
     local myRowIndex = table:getNumRows()
     button:onClick(function()
         local startRowIndex = myRowIndex + 1
@@ -68,7 +70,7 @@ function CreateExpandButton(table, level)
             end
         end
         for row = startRowIndex, lastRowIndex do
-            SetRowVisibilityInTable(table, row, setToVisible)
+            ui_functions.SetRowVisibilityInTable(table, row, setToVisible)
             if setToVisible then
                 imageView:setImage(iconCollapsePath, false)
             else
@@ -79,14 +81,14 @@ function CreateExpandButton(table, level)
     return button
 end
 
-function CreateTextView(text, styleList, id)
+function ui_functions.CreateTextView(text, styleList, id)
     local textView = api.gui.comp.TextView.new(text)
     textView:setStyleClassList(styleList)
     textView:setId(id)
     return textView
 end
 
-function GetTableControlId(column, category, transportType)
+function ui_functions.GetTableControlId(column, category, transportType)
     if not transportType then
         if not category then
             return column
@@ -96,6 +98,8 @@ function GetTableControlId(column, category, transportType)
     return transportType .. "." .. category .. "." .. column
 end
 
-function SetTooltipByCategory(component, category)
-    component:setTooltip(_(TOOLTIP .. category))
+function ui_functions.SetTooltipByCategory(component, category)
+    component:setTooltip(_(constants.TOOLTIP .. category))
 end
+
+return ui_functions

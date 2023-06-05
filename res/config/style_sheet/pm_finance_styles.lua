@@ -11,7 +11,7 @@ function FormatClassNames(classes)
     return result
 end
 
-dofile(ScriptPath() .. "../../scripts/pm_finance/constants.lua")
+local constants = dofile(ScriptPath() .. "../../scripts/pm_finance/constants.lua")
 
 local ROW_HEIGHT = 25
 local LEVEL_PADDING = 30
@@ -23,80 +23,80 @@ function data()
 	local result = { }
 	local a = ssu.makeAdder(result)
 
-    a(FormatClassNames({ STYLE_TABLE_HEADER }),
+    a(FormatClassNames({ constants.STYLE_TABLE_HEADER }),
 	{
 		gravity = {-1.0 ,-1.0},
         fontSize = 15,
 	})
 
-    a(FormatClassNames({ STYLE_TABLE_CELL }),
+    a(FormatClassNames({ constants.STYLE_TABLE_CELL }),
 	{
 		gravity = {-1.0 ,-1.0},
         size = { -1, ROW_HEIGHT },
         textAlignment = { 0.5, 0.5 }
 	})
 
-    a(FormatClassNames({ STYLE_LEVEL_0 }),
+    a(FormatClassNames({ constants.STYLE_LEVEL_0 }),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 25),
 		size={-1, ROW_HEIGHT + 5},
 	})
 
-    a(FormatClassNames({STYLE_LEVEL_1}),
+    a(FormatClassNames({constants.STYLE_LEVEL_1}),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 0),
 	})
 
-    a(FormatClassNames({ STYLE_LEVEL_1, STYLE_BUTTON }),
+    a(FormatClassNames({ constants.STYLE_LEVEL_1, constants.STYLE_BUTTON }),
 	{
 		padding={0,0,0,LEVEL_PADDING},
 	})
 
-	a(FormatClassNames({ STYLE_LEVEL_1, STYLE_LEVEL_PADDING }),
+	a(FormatClassNames({ constants.STYLE_LEVEL_1, constants.STYLE_LEVEL_PADDING }),
 	{
 		padding={0,0,0,LEVEL_PADDING + ICON_SIZE + TEXT_PADDING},
 	})
 
-	a(FormatClassNames({STYLE_LEVEL_2}),
+	a(FormatClassNames({constants.STYLE_LEVEL_2}),
 	{
 		backgroundColor = ssu.makeColor(255, 255, 255, 0),
 		size={-1, ROW_HEIGHT},
 		gravity = {-1.0 ,-1.0},
 	})
 
-    a(FormatClassNames({ STYLE_LEVEL_2, STYLE_BUTTON }),
+    a(FormatClassNames({ constants.STYLE_LEVEL_2, constants.STYLE_BUTTON }),
 	{
 		padding={0,0,0,LEVEL_PADDING * 2},
 	})
 
-	a(FormatClassNames({ STYLE_LEVEL_2, STYLE_LEVEL_PADDING }),
+	a(FormatClassNames({ constants.STYLE_LEVEL_2, constants.STYLE_LEVEL_PADDING }),
 	{
 		padding={0,0,0,LEVEL_PADDING * 2 + ICON_SIZE + TEXT_PADDING},
 	})
 
-    a(FormatClassNames({ STYLE_SUMMARY_TABLE }),
+    a(FormatClassNames({ constants.STYLE_SUMMARY_TABLE }),
 	{
 		padding = {0,0,3,0},
         size={-1, 5*ROW_HEIGHT + 5},
 		gravity = {-1.0 ,-1.0},
 	})
 
-    a(FormatClassNames({ STYLE_SUMMARY_LABEL }),
+    a(FormatClassNames({ constants.STYLE_SUMMARY_LABEL }),
     {
         padding = { 0, 0, 0, ICON_SIZE + TEXT_PADDING},
     })
 
-	a(FormatClassNames({STYLE_TEXT_LEFT}),
+	a(FormatClassNames({constants.STYLE_TEXT_LEFT}),
 	{
 		textAlignment = {0, 0.5}
 	})
 
-	a(FormatClassNames({STYLE_TEXT_RIGHT}),
+	a(FormatClassNames({constants.STYLE_TEXT_RIGHT}),
 	{
 		textAlignment = {1.0, 0.5}
 	})
 
-    a(FormatClassNames({ STYLE_BUTTON }),
+    a(FormatClassNames({ constants.STYLE_BUTTON }),
 	{
 		padding={(ROW_HEIGHT-ICON_SIZE)/2,0,(ROW_HEIGHT-ICON_SIZE)/2,0},
 		size={ICON_SIZE,ROW_HEIGHT},
