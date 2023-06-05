@@ -167,6 +167,9 @@ function functions.GetCurrentBalance()
 end
 
 function functions.IsCategoryAllowedForTransportType(transportType, category)
+    if transportType == constants.TRANSPORT_TYPE_ALL then
+        return true
+    end
     if category == constants.CAT_INVESTMENTS_TRACKS and transportType ~= constants.TRANSPORT_TYPE_RAIL then
         return false
     elseif category == constants.CAT_INVESTMENTS_ROADS and transportType ~= constants.TRANSPORT_TYPE_ROAD then

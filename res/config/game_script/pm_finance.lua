@@ -31,7 +31,8 @@ function RefreshTransportCategoryValues(transportType, journal, column)
     if functions.IsCategoryAllowedForTransportType(transportType, constants.CAT_INVESTMENTS_TRACKS) then
         ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_TRACKS), 
                                     ui_functions.GetTableControlId(column, constants.CAT_INVESTMENTS_TRACKS, transportType))
-    elseif functions.IsCategoryAllowedForTransportType(transportType, constants.CAT_INVESTMENTS_ROADS) then
+    end
+    if functions.IsCategoryAllowedForTransportType(transportType, constants.CAT_INVESTMENTS_ROADS) then
         ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_ROADS), 
                                     ui_functions.GetTableControlId(column, constants.CAT_INVESTMENTS_ROADS, transportType))
     end
