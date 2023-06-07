@@ -91,11 +91,11 @@ end
 function ui_functions.GetTableControlId(column, category, transportType)
     if not transportType then
         if not category then
-            return column
+            return "pm-" .. column
         end
-        return category .. "." .. column
+        return "pm-" .. category .. "." .. column
     end
-    return transportType .. "." .. category .. "." .. column
+    return "pm-" .. transportType .. "." .. category .. "." .. column
 end
 
 function ui_functions.SetTooltipByCategory(component, category)

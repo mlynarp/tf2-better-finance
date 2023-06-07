@@ -54,22 +54,22 @@ constants.TRANSPORT_CATEGORIES_LEVEL2 =
 
 constants.NUMBER_OF_YEARS_COLUMNS = 5
 
-constants.STYLE_BUTTON = "style-button"
-constants.STYLE_TABLE_CELL = "style-table-cell"
-constants.STYLE_TABLE_HEADER = "style-table-header"
+constants.STYLE_BUTTON = "pm-style-button"
+constants.STYLE_TABLE_CELL = "pm-style-table-cell"
+constants.STYLE_TABLE_HEADER = "pm-style-table-header"
 
-constants.STYLE_TEXT_LEFT = "style-text-left"
-constants.STYLE_TEXT_RIGHT = "style-text-right"
+constants.STYLE_TEXT_LEFT = "pm-style-text-left"
+constants.STYLE_TEXT_RIGHT = "pm-style-text-right"
 
-constants.STYLE_LEVEL_0 = "style-level-0"
-constants.STYLE_LEVEL_1 = "style-level-1"
-constants.STYLE_LEVEL_2 = "style-level-2"
-constants.STYLE_LEVEL_PADDING = "style-level-padding"
+constants.STYLE_LEVEL_0 = "pm-style-level-0"
+constants.STYLE_LEVEL_1 = "pm-style-level-1"
+constants.STYLE_LEVEL_2 = "pm-style-level-2"
+constants.STYLE_LEVEL_PADDING = "pm-style-level-padding"
 
-constants.STYLE_SUMMARY_LABEL = "style-summary-label"
-constants.STYLE_SUMMARY_TABLE = "style-summary-table"
+constants.STYLE_SUMMARY_LABEL = "pm-style-summary-label"
+constants.STYLE_SUMMARY_TABLE = "pm-style-summary-table"
 
-constants.TOOLTIP = "Tooltip"
-constants.TOOLTIP_GAMEINFO = "Tooltip.GameInfo"
+constants.TOOLTIP = "pm-Tooltip"
+constants.TOOLTIP_GAMEINFO = "pm-Tooltip.GameInfo"
 
 return constants

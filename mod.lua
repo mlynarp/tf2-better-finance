@@ -1,7 +1,7 @@
 ﻿local constants = require "pm_finance/constants"
 
 local vMajor = 1
-local vMinor = 1
+local vMinor = 2
 
 -- old API
 -- http://transportfever.com/wiki/script-doc/index.html
@@ -17,7 +17,7 @@ function data()
 			severityAdd = "NONE",
 			severityRemove = "NONE",
 			name = "Better Finance Overview",
-			description = _("DESCRIPTION"),
+			description = _("pm-DESCRIPTION"),
 			authors =
 			{
 				{
@@ -29,10 +29,10 @@ function data()
 			{
 				{
 				  key = "NumberOfColumns",
-				  name = _("Parameter.Label"),
+				  name = _("pm-Parameter.Label"),
 				  uiType = "SLIDER",
 				  values = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" },
-				  tooltip = _("Parameter.Tooltip"),
+				  tooltip = _("pm-Parameter.Tooltip"),
 				  defaultIndex = 4,
 				}
 			},

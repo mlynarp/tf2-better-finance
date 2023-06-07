@@ -26,8 +26,8 @@ function data()
             [constants.CAT_OTHER] = ("Others"),
             [constants.CAT_BALANCE] = ("Balance"),
             [constants.COLUMN_TOTAL] = ("Total"),
-            ["Parameter.Label"] = ("Number of years in overview"),
-            ["Parameter.Tooltip"] = ("Choose the number of years to be displayed in the financial overview table."),
+            ["pm-Parameter.Label"] = ("Number of years in overview"),
+            ["pm-Parameter.Tooltip"] = ("Choose the number of years to be displayed in the financial overview table."),
             [constants.TOOLTIP .. constants.CAT_TOTAL] = ("Overall profit as sum of income deducted by maintenance and investments"),
             [constants.TOOLTIP .. constants.CAT_INCOME] = ("Revenue from tickets."),
             [constants.TOOLTIP .. constants.CAT_MAINTENANCE] = ("Total maintenance incl. vehicles and infrastructure."),
@@ -45,7 +45,7 @@ function data()
             [constants.TOOLTIP .. constants.CAT_OTHER] = ("Other expenditure without a specific category, e.g. landscaping."),
             [constants.TOOLTIP .. constants.CAT_BALANCE] = ("Current bank balance."),
             [constants.TOOLTIP_GAMEINFO] = ("Operating profit as sum of income deducted by maintenance since the beginning of the year."),
-            ["DESCRIPTION"] = ( "Do you want to see finance better organized?\n"..
+            ["pm-DESCRIPTION"] = ( "Do you want to see finance better organized?\n"..
                                 "Do you want to see totals for each transport category or just operating profit?\n"..
                                 "Do you want to have yearly based accounting independent of game calendar speed?\n"..
                                 "Do you want to see current year cashflow instead of earnings in buttom status bar?\n\n"..
@@ -90,8 +90,8 @@ function data()
             [constants.CAT_OTHER] = ("Ostatní"),
             [constants.CAT_BALANCE] = ("Zůstatek"),
             [constants.COLUMN_TOTAL] = ("Celkem"),
-			["Parameter.Label"] = ("Počet roků v přehledu"),
-			["Parameter.Tooltip"] = ("Vyberte počet roků, které se mají zobrazit v tabulce finančního přehledu."),
+			["pm-Parameter.Label"] = ("Počet roků v přehledu"),
+			["pm-Parameter.Tooltip"] = ("Vyberte počet roků, které se mají zobrazit v tabulce finančního přehledu."),
             [constants.TOOLTIP .. constants.CAT_TOTAL] = ("Celkový zisk jako součet příjmů snížený o údržbu a investice."),
             [constants.TOOLTIP .. constants.CAT_INCOME] = ("Příjem z jízdenek."),
             [constants.TOOLTIP .. constants.CAT_MAINTENANCE] = ("Celková údržba včetně vozidel a infrastruktury."),

@@ -139,8 +139,8 @@ end
 
 function InitFinanceTable()
     financeTable = api.gui.comp.Table.new(constants.NUMBER_OF_YEARS_COLUMNS + 2, "NONE")
-    financeTable:setId("myFinanceTable")
-    financeTable:setName("myFinanceTable")
+    financeTable:setId("pm-myFinanceTable")
+    financeTable:setName("pm-myFinanceTable")
 
     AddFinanceTableHeaders()
 
@@ -151,8 +151,8 @@ end
 
 function InitSummaryTable()
     summaryTable = api.gui.comp.Table.new(2, "NONE")
-    summaryTable:setId("mySummaryTable")
-    summaryTable:setName("mySummaryTable")
+    summaryTable:setId("pm-mySummaryTable")
+    summaryTable:setName("pm-mySummaryTable")
     summaryTable:setStyleClassList({ constants.STYLE_SUMMARY_TABLE })
 
     AddSummaryLineToTable(constants.CAT_PROFIT, constants.STYLE_LEVEL_1)
