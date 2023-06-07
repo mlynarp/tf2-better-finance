@@ -52,6 +52,10 @@ function data()
                             
                                 "This mod shows finances organized per transport type or all transport category. It always shows accounting on yearly base.\n\n"..
 
+                                "Version 1.2 release notes:\n"..
+                                "    - avoid using ui IDs that might be in collision with other mods\n"..
+                                "    - always show table header when scrolling down\n\n"..
+                                
                                 "Version 1.1 release notes:\n"..
                                 "    - avoid using the global variables to avoid conflict with other mods\n"..
                                 "    - add tracks and roads to all transport overview\n\n"..
