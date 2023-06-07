@@ -50,11 +50,11 @@ function data()
                                 "Do you want to have yearly based accounting independent of game calendar speed?\n"..
                                 "Do you want to see current year cashflow instead of earnings in buttom status bar?\n\n"..
                             
-                                "This mod shows finances organized per transport type or all transport category. It always shows accounting on yearly base.\n"..
+                                "This mod shows finances organized per transport type or all transport category. It always shows accounting on yearly base.\n\n"..
 
                                 "Version 1.1 release notes:\n"..
                                 "    - avoid using the global variables to avoid conflict with other mods\n"..
-                                "    - add tracks and roads to all transport overview\n"..
+                                "    - add tracks and roads to all transport overview\n\n"..
                                 
                                 "Version 1.0 release notes:\n"..
                                 "    - each transport has its own category in finance overview including trams (original table is replaced)\n"..

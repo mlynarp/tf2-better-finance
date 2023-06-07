@@ -25,7 +25,6 @@ function data()
 
     a(FormatClassNames({ constants.STYLE_TABLE_HEADER }),
 	{
-		gravity = {-1.0 ,-1.0},
         fontSize = 15,
 	})
 

@@ -134,7 +134,7 @@ function AddFinanceTableHeaders()
                                                 { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT }, 
                                                 ui_functions.GetTableControlId(constants.COLUMN_TOTAL)))
 
-    financeTable:addRow(row)
+    financeTable:setHeader(row)
 end
 
 function InitFinanceTable()
