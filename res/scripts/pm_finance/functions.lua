@@ -1,14 +1,16 @@
 local constants = require "pm_finance/constants"
 
-local functions = {}
+local functions = {
+    gameState = {}
+}
 
 function functions.SetGameState(state)
-    game.config.pm_finance_state = state
+    functions.gameState = state
 end
 
 function functions.GetGameState()
-    return game.config.pm_finance_state
-end    
+    return functions.gameState
+end
 
 function functions.GetGameStatePerYear(year)
     local gameState = functions.GetGameState()
