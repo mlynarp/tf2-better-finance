@@ -52,7 +52,7 @@ constants.TRANSPORT_CATEGORIES_LEVEL2 =
     [constants.CAT_INVESTMENTS] = { constants.CAT_INVESTMENTS_VEHICLES, constants.CAT_INVESTMENTS_INFRASTRUCTURE, constants.CAT_INVESTMENTS_TRACKS, constants.CAT_INVESTMENTS_ROADS }
 }
 
-constants.NUMBER_OF_YEARS_COLUMNS = 5
+constants.NUMBER_OF_YEARS_COLUMNS = 4
 
 constants.STYLE_BUTTON = "pm-style-button"
 constants.STYLE_TABLE_CELL = "pm-style-table-cell"

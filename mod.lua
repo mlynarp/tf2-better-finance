@@ -1,7 +1,7 @@
 ﻿local constants = require "pm_finance/constants"
 
 local vMajor = 1
-local vMinor = 2
+local vMinor = 3
 
 -- old API
 -- http://transportfever.com/wiki/script-doc/index.html

@@ -4,18 +4,9 @@ local functions = {
     gameState = {}
 }
 
-function functions.SetGameState(state)
-    functions.gameState = state
-end
-
-function functions.GetGameState()
-    return functions.gameState
-end
-
 function functions.GetGameStatePerYear(year)
-    local gameState = functions.GetGameState()
-    if gameState then
-        return gameState[tostring(year)]
+    if functions.gameState then
+        return functions.gameState[tostring(year)]
     end
     return nil
 end
@@ -53,7 +44,9 @@ function functions.GetYearStartTime(year)
     end
     local gameTime = game.interface.getGameTime()
     local millisPerDay = game.interface.getMillisPerDay()
-
+    if millisPerDay == 0 then
+        return gameTime.time * 1000
+    end
     local currentDayStartTime = math.floor((gameTime.time * 1000) / millisPerDay) * millisPerDay
     local daysFromYearStart = gameTime.date.day - 1
 

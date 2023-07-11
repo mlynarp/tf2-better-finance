@@ -214,7 +214,8 @@ end
 function data()
     return {
         save = function()
-            return functions.GetGameState()
+            functions.gameState["gameTime"] = game.interface.getGameTime().time * 1000
+            return functions.gameState
         end,
         load = function(data)
             if not data then
@@ -224,9 +225,9 @@ function data()
                     gameState[tostring(currentYear)] = functions.GetYearStartTime(currentYear)
                     currentYear = currentYear - 1
                 end
-                functions.SetGameState(gameState)
+                functions.gameState = gameState
             else
-                functions.SetGameState(data)
+                functions.gameState = data
             end
         end,
         update = function()
@@ -235,7 +236,7 @@ function data()
                 lastYear = currentYear
                 local currentYearState = functions.GetGameStatePerYear(currentYear)
                 if currentYearState == nil then
-                    functions.GetGameState()[tostring(currentYear)] = functions.GetYearStartTime(currentYear)
+                    functions.gameState[tostring(currentYear)] = functions.GetYearStartTime(currentYear)
                 end
             end
         end,
