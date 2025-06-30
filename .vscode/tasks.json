@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Copy To Steam Workshop",
+      "type": "shell",
+      "command": "${workspaceFolder}\\_devops\\copy_to_steam_worksop.bat",
+      "args": ["${workspaceFolder}"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
+    }
+  ]
+}
