@@ -154,7 +154,17 @@ function functions.GetValueFromJournal(journal, transportType, category)
     elseif category == constants.CAT_CASHFLOW then
         return  functions.GetValueFromJournal(journal, transportType, constants.CAT_INCOME) +
                 functions.GetValueFromJournal(journal, transportType, constants.CAT_MAINTENANCE)
+function functions.GetEndOfYearBalance(year)
+    local balance = functions.GetCurrentBalance()
+    if functions.GetCurrentGameYear() == year then
+        return balance
     end
+
+    for i = year + 1, functions.GetCurrentGameYear() do
+        balance = balance - functions.GetJournal(i)._sum
+    end
+
+    return balance
 end
 
 function functions.GetCurrentBalance()

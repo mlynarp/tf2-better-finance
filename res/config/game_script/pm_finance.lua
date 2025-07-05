@@ -88,12 +88,21 @@ function AddSummaryLineToTable(category, styleLevel)
                                                 { styleLevel, constants.STYLE_SUMMARY_LABEL, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_LEFT }, 
                                                 ui_functions.GetTableControlId(constants.COLUMN_LABEL, category))
     ui_functions.SetTooltipByCategory(labelView, category)
-    local valueView = ui_functions.CreateTextView("", { styleLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
-                                                ui_functions.GetTableControlId(constants.COLUMN_TOTAL, category))
-    ui_functions.SetTooltipByCategory(valueView, category)
-    
     table.insert(row, ui_functions.LayoutComponentsHorizontally({ labelView }, { styleLevel, constants.STYLE_TABLE_CELL }, "0"))
-    table.insert(row, ui_functions.LayoutComponentsHorizontally({ valueView }, { styleLevel, constants.STYLE_TABLE_CELL }, "0"))
+    
+     for i = 1, constants.NUMBER_OF_YEARS_COLUMNS do
+        local valueView = ui_functions.CreateTextView("", { styleLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
+                                                ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, category))
+        ui_functions.SetTooltipByCategory(valueView, category)
+        table.insert(row, ui_functions.LayoutComponentsHorizontally({ valueView }, { styleLevel, constants.STYLE_TABLE_CELL }, "0"))
+    end
+    
+    local totalView = ui_functions.CreateTextView("", { styleLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
+                                                ui_functions.GetTableControlId(constants.COLUMN_TOTAL, category))
+    ui_functions.SetTooltipByCategory(totalView, category)
+    
+    
+    table.insert(row, ui_functions.LayoutComponentsHorizontally({ totalView }, { styleLevel, constants.STYLE_TABLE_CELL }, "0"))
 
     summaryTable:addRow(row)
 end
@@ -123,15 +132,15 @@ end
 function AddFinanceTableHeaders()
     local row = {}
 
-    table.insert(row, ui_functions.CreateTextView("", { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT }, 
+    table.insert(row, ui_functions.CreateTextView("", { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT },
                                                 ui_functions.GetTableControlId(constants.COLUMN_LABEL)))
     for i = 1, constants.NUMBER_OF_YEARS_COLUMNS do
         table.insert(row, ui_functions.CreateTextView(tostring(functions.GetYearFromYearIndex(i)), 
-                                                    { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT }, 
+                                                    { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT },
                                                     ui_functions.GetTableControlId(constants.COLUMN_YEAR .. i)))
     end
     table.insert(row, ui_functions.CreateTextView(_(constants.COLUMN_TOTAL), 
-                                                { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT }, 
+                                                { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT },
                                                 ui_functions.GetTableControlId(constants.COLUMN_TOTAL)))
 
     financeTable:setHeader(row)
@@ -150,7 +159,7 @@ function InitFinanceTable()
 end
 
 function InitSummaryTable()
-    summaryTable = api.gui.comp.Table.new(2, "NONE")
+    summaryTable = api.gui.comp.Table.new(constants.NUMBER_OF_YEARS_COLUMNS + 2, "NONE")
     summaryTable:setId("pm-mySummaryTable")
     summaryTable:setName("pm-mySummaryTable")
     summaryTable:setStyleClassList({ constants.STYLE_SUMMARY_TABLE })
@@ -180,6 +189,14 @@ function InitFinanceTab()
     --replace current summary table
     financeTableLayout:removeItem(financeTableLayout:getItem(3))
     financeTableLayout:insertItem(summaryTable, 3)
+
+    financeTable:setColWidth(0, 300)
+    summaryTable:setColWidth(0, 300)
+
+    for j = 1, constants.NUMBER_OF_YEARS_COLUMNS + 1 do
+        financeTable:setColWeight(j, 1)
+        summaryTable:setColWeight(j, 1)
+    end
 end
 
 function UpdateFinanceTable(currentYearOnly)
@@ -197,10 +214,24 @@ function UpdateFinanceTable(currentYearOnly)
     end
 end
 
-function UpdateSummaryTable()
+function UpdateSummaryTable(currentYearOnly)
+    for i = 1, constants.NUMBER_OF_YEARS_COLUMNS do
+        local year = functions.GetYearFromYearIndex(i)
+        local journal = functions.GetJournal(year)
+        local profit = functions.GetValueFromJournal(journal, constants.TRANSPORT_TYPE_ALL, constants.CAT_TOTAL)
+        local balance = functions.GetEndOfYearBalance(year)
+
+        ui_functions.UpdateCellValue(profit, ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, constants.CAT_PROFIT))
+        ui_functions.UpdateCellValue(journal.loan, ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, constants.CAT_LOAN))
+        ui_functions.UpdateCellValue(journal.interest, ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, constants.CAT_INTEREST))
+        ui_functions.UpdateCellValue(journal.construction.other._sum, ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, constants.CAT_OTHER))
+        ui_functions.UpdateCellValue(balance, ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, constants.CAT_BALANCE))
+    end
+
     local overallJournal = functions.GetJournal(0)
     local profit = functions.GetValueFromJournal(overallJournal, constants.TRANSPORT_TYPE_ALL, constants.CAT_TOTAL)
     local balance = functions.GetCurrentBalance()
+    
     ui_functions.UpdateCellValue(profit, ui_functions.GetTableControlId(constants.COLUMN_TOTAL, constants.CAT_PROFIT))
     ui_functions.UpdateCellValue(overallJournal.loan, ui_functions.GetTableControlId(constants.COLUMN_TOTAL, constants.CAT_LOAN))
     ui_functions.UpdateCellValue(overallJournal.interest, ui_functions.GetTableControlId(constants.COLUMN_TOTAL, constants.CAT_INTEREST))
@@ -248,7 +279,7 @@ function data()
             local currentYear = functions.GetCurrentGameYear()
             if guiUpdate and financeTabWindow:getCurrentTab() == 0 and (currentBalance ~= lastBalance or currentYear ~= lastYear) then
                 UpdateFinanceTable(currentYear == lastYear)
-                UpdateSummaryTable()
+                UpdateSummaryTable(currentYear == lastYear)
                 lastYear = currentYear
                 lastBalance = currentBalance
             end
