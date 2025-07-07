@@ -41,6 +41,10 @@ function RefreshTransportCategoryValues(transportType, journal, column)
     --cashflow
     ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_CASHFLOW), 
                                 ui_functions.GetTableControlId(column, constants.CAT_CASHFLOW, transportType))
+							
+	--margin									
+    ui_functions.UpdateCellValuePercentage(functions.GetValueFromJournal(journal, transportType, constants.CAT_MARGIN),
+                                ui_functions.GetTableControlId(column, constants.CAT_MARGIN, transportType))
     
 end
 
@@ -127,6 +131,7 @@ function AddTransportCategoriesToFinanceTable(transportType)
     end
 
     AddTransportCategoryLineToFinanceTable(false, transportType, constants.CAT_CASHFLOW, constants.STYLE_LEVEL_1, 0)
+    AddTransportCategoryLineToFinanceTable(false, transportType, constants.CAT_MARGIN, constants.STYLE_LEVEL_1, 0)
 end
 
 function AddFinanceTableHeaders()

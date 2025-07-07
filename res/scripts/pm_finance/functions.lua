@@ -112,9 +112,16 @@ function functions.GetValueOrZero(value)
     return value
 end
 
+function functions.GetSafePrc(aval, bval)
+	if functions.GetValueOrZero(bval) == 0 then
+	   return 0
+    end
+    return (functions.GetValueOrZero(aval) / bval) * 100
+end
+
 function functions.GetValueFromJournal(journal, transportType, category)
     local transportKey = functions.GetJournalKeyForTransport(transportType)
-    if transportKey == nil then
+    if transportKey == nil and category ~= constants.CAT_MARGIN then
         return functions.GetTotalValueFromJournal(journal, category)
     end
 
@@ -154,6 +161,13 @@ function functions.GetValueFromJournal(journal, transportType, category)
     elseif category == constants.CAT_CASHFLOW then
         return  functions.GetValueFromJournal(journal, transportType, constants.CAT_INCOME) +
                 functions.GetValueFromJournal(journal, transportType, constants.CAT_MAINTENANCE)
+				
+    elseif category == constants.CAT_MARGIN then
+        return  functions.GetSafePrc(functions.GetValueFromJournal(journal, transportType, constants.CAT_CASHFLOW),
+								     functions.GetValueFromJournal(journal, transportType, constants.CAT_INCOME))
+    end
+end
+
 function functions.GetEndOfYearBalance(year)
     local balance = functions.GetCurrentBalance()
     if functions.GetCurrentGameYear() == year then
