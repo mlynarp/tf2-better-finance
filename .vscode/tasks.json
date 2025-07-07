@@ -11,6 +11,17 @@
         "kind": "build",
         "isDefault": false
       }
+    },
+     {
+      "label": "Copy To Steam Staging Area",
+      "type": "shell",
+      "command": "${workspaceFolder}\\_devops\\copy_to_steam_staging_area.bat",
+      "args": ["${workspaceFolder}"],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      }
     }
   ]
 }
