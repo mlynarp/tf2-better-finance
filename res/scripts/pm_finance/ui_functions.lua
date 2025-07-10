@@ -1,4 +1,5 @@
 local constants = require "pm_finance/constants"
+local styles = require "pm_finance/constants/styles"
 
 local ui_functions = {}
 
@@ -52,11 +53,11 @@ end
 
 function ui_functions.GetStyleForTableLineLevel(level)
     if level == 0 then
-        return constants.STYLE_LEVEL_0
+        return styles.table.LEVEL_0
     elseif level == 1 then
-        return constants.STYLE_LEVEL_1
+        return styles.table.LEVEL_1
     else
-        return constants.STYLE_LEVEL_2
+        return styles.table.LEVEL_2
     end
 end
 
@@ -65,7 +66,7 @@ function ui_functions.CreateExpandButton(table, level)
     local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
     local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
     local button = api.gui.comp.Button.new(imageView, false)
-    button:setStyleClassList({ ui_functions.GetStyleForTableLineLevel(level), constants.STYLE_BUTTON })
+    button:setStyleClassList({ ui_functions.GetStyleForTableLineLevel(level), styles.button.BUTTON })
     local myRowIndex = table:getNumRows()
     button:onClick(function()
         local startRowIndex = myRowIndex + 1

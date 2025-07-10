@@ -55,18 +55,6 @@ constants.TRANSPORT_CATEGORIES_LEVEL2 =
 
 constants.NUMBER_OF_YEARS_COLUMNS = 4
 
-constants.STYLE_BUTTON = "pm-style-button"
-constants.STYLE_TABLE_CELL = "pm-style-table-cell"
-constants.STYLE_TABLE_HEADER = "pm-style-table-header"
-
-constants.STYLE_TEXT_LEFT = "pm-style-text-left"
-constants.STYLE_TEXT_RIGHT = "pm-style-text-right"
-
-constants.STYLE_LEVEL_0 = "pm-style-level-0"
-constants.STYLE_LEVEL_1 = "pm-style-level-1"
-constants.STYLE_LEVEL_2 = "pm-style-level-2"
-constants.STYLE_LEVEL_PADDING = "pm-style-level-padding"
-
 constants.STYLE_SUMMARY_LABEL = "pm-style-summary-label"
 constants.STYLE_SUMMARY_TABLE = "pm-style-summary-table"
 

@@ -2,6 +2,8 @@ local constants = require "pm_finance/constants"
 local functions = require "pm_finance/functions"
 local ui_functions = require "pm_finance/ui_functions"
 local layout = require "pm_finance/gui/layout"
+local styles = require "pm_finance/constants/styles"
+local transport_table = require "pm_finance/components/transport_table"
 
 local financeTabWindow = nil
 local financeTable = nil
@@ -49,134 +51,37 @@ function RefreshTransportCategoryValues(transportType, journal, column)
     
 end
 
-function AddTransportCategoryLineToFinanceTable(isExpandable, transportType, category, sLevel, level)
-    local row = {}
-
-    local components = {}
-    local labelTranslationKey = category
-    if category == constants.CAT_TOTAL then
-        labelTranslationKey = transportType
-    end
-    local labelView = ui_functions.CreateTextView(_(labelTranslationKey), 
-                                                { sLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_LEFT }, 
-                                                ui_functions.GetTableControlId(constants.COLUMN_LABEL, category, transportType))
-    if isExpandable then
-        table.insert(components, ui_functions.CreateExpandButton(financeTable, level))
-    elseif level > 0 then
-        labelView:addStyleClass(constants.STYLE_LEVEL_PADDING)
-    else
-        labelView:removeStyleClass(constants.STYLE_TEXT_LEFT)
-        labelView:addStyleClass(constants.STYLE_TEXT_RIGHT)
-    end
-    ui_functions.SetTooltipByCategory(labelView, category)
-    table.insert(components, labelView)
-    local comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, components, tostring(level))
-    comp:setStyleClassList({ sLevel, constants.STYLE_TABLE_CELL })
-    table.insert(row, comp)
-
-    for i = 1, constants.NUMBER_OF_YEARS_COLUMNS do
-        local yearCellView = ui_functions.CreateTextView("", { sLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
-                                                        ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, category, transportType))
-        ui_functions.SetTooltipByCategory(yearCellView, category)
-        
-        comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { yearCellView }, tostring(level))
-        comp:setStyleClassList({ sLevel, constants.STYLE_TABLE_CELL })
-        table.insert(row, comp)
-    end
-    local totalCellView = ui_functions.CreateTextView("", { sLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
-                                                    ui_functions.GetTableControlId(constants.COLUMN_TOTAL, category, transportType))
-    ui_functions.SetTooltipByCategory(totalCellView, category)
-    
-    comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { totalCellView }, tostring(level))
-    comp:setStyleClassList({ sLevel, constants.STYLE_TABLE_CELL })
-    table.insert(row, comp)
-
-    financeTable:addRow(row)
-end
-
 function AddSummaryLineToTable(category, styleLevel)
     local row = {}
 
     local labelView = ui_functions.CreateTextView(_(category), 
-                                                { styleLevel, constants.STYLE_SUMMARY_LABEL, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_LEFT }, 
+                                                { styleLevel, constants.STYLE_SUMMARY_LABEL, styles.table.CELL, styles.text.LEFT_ALIGNMENT }, 
                                                 ui_functions.GetTableControlId(constants.COLUMN_LABEL, category))
     ui_functions.SetTooltipByCategory(labelView, category)
     
     local comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { labelView }, "0")
-    comp:setStyleClassList({ styleLevel, constants.STYLE_TABLE_CELL })
+    comp:setStyleClassList({ styleLevel, styles.table.CELL })
     table.insert(row, comp)
 
     for i = 1, constants.NUMBER_OF_YEARS_COLUMNS do
-        local valueView = ui_functions.CreateTextView("", { styleLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
+        local valueView = ui_functions.CreateTextView("", { styleLevel, styles.table.CELL, styles.text.RIGHT_ALIGNMENT }, 
                                                 ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, category))
         ui_functions.SetTooltipByCategory(valueView, category)
         
         comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { valueView }, "0")
-        comp:setStyleClassList({ styleLevel, constants.STYLE_TABLE_CELL })
+        comp:setStyleClassList({ styleLevel, styles.table.CELL })
         table.insert(row, comp)
     end
     
-    local totalView = ui_functions.CreateTextView("", { styleLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
+    local totalView = ui_functions.CreateTextView("", { styleLevel, styles.table.CELL, styles.text.RIGHT_ALIGNMENT }, 
                                                 ui_functions.GetTableControlId(constants.COLUMN_TOTAL, category))
     ui_functions.SetTooltipByCategory(totalView, category)
     
     comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { totalView }, "0")
-    comp:setStyleClassList({ styleLevel, constants.STYLE_TABLE_CELL })
+    comp:setStyleClassList({ styleLevel, styles.table.CELL })
     table.insert(row, comp)
 
     summaryTable:addRow(row)
-end
-
-function AddTransportCategoriesToFinanceTable(transportType)
-    -- level 0
-    AddTransportCategoryLineToFinanceTable(true, transportType, constants.CAT_TOTAL, constants.STYLE_LEVEL_0, 0)
-
-    -- level 1
-    for i, level1Category in ipairs(constants.TRANSPORT_CATEGORIES_LEVEL1) do
-        if (#constants.TRANSPORT_CATEGORIES_LEVEL2[level1Category] == 0) then
-            AddTransportCategoryLineToFinanceTable(false, transportType, level1Category, constants.STYLE_LEVEL_1, 1)
-        else
-            AddTransportCategoryLineToFinanceTable(true, transportType, level1Category, constants.STYLE_LEVEL_1, 1)
-            -- level 2
-            for j, level2Category in ipairs(constants.TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
-                if functions.IsCategoryAllowedForTransportType(transportType, level2Category) then
-                    AddTransportCategoryLineToFinanceTable(false, transportType, level2Category, constants.STYLE_LEVEL_2, 2)
-                end
-            end
-        end
-    end
-
-    AddTransportCategoryLineToFinanceTable(false, transportType, constants.CAT_CASHFLOW, constants.STYLE_LEVEL_1, 0)
-    AddTransportCategoryLineToFinanceTable(false, transportType, constants.CAT_MARGIN, constants.STYLE_LEVEL_1, 0)
-end
-
-function AddFinanceTableHeaders()
-    local row = {}
-
-    table.insert(row, ui_functions.CreateTextView("", { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT },
-                                                ui_functions.GetTableControlId(constants.COLUMN_LABEL)))
-    for i = 1, constants.NUMBER_OF_YEARS_COLUMNS do
-        table.insert(row, ui_functions.CreateTextView(tostring(functions.GetYearFromYearIndex(i)), 
-                                                    { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT },
-                                                    ui_functions.GetTableControlId(constants.COLUMN_YEAR .. i)))
-    end
-    table.insert(row, ui_functions.CreateTextView(_(constants.COLUMN_TOTAL), 
-                                                { constants.STYLE_TABLE_HEADER, constants.STYLE_TEXT_RIGHT },
-                                                ui_functions.GetTableControlId(constants.COLUMN_TOTAL)))
-
-    financeTable:setHeader(row)
-end
-
-function InitFinanceTable()
-    financeTable = api.gui.comp.Table.new(constants.NUMBER_OF_YEARS_COLUMNS + 2, "NONE")
-    financeTable:setId("pm-myFinanceTable")
-    financeTable:setName("pm-myFinanceTable")
-
-    AddFinanceTableHeaders()
-
-    for j = 1, #constants.TRANSPORT_TYPES do
-        AddTransportCategoriesToFinanceTable(constants.TRANSPORT_TYPES[j])
-    end
 end
 
 function InitSummaryTable()
@@ -185,21 +90,20 @@ function InitSummaryTable()
     summaryTable:setName("pm-mySummaryTable")
     summaryTable:setStyleClassList({ constants.STYLE_SUMMARY_TABLE })
 
-    AddSummaryLineToTable(constants.CAT_PROFIT, constants.STYLE_LEVEL_1)
-    AddSummaryLineToTable(constants.CAT_LOAN, constants.STYLE_LEVEL_1)
-    AddSummaryLineToTable(constants.CAT_INTEREST, constants.STYLE_LEVEL_1)
-    AddSummaryLineToTable(constants.CAT_OTHER, constants.STYLE_LEVEL_1)
-    AddSummaryLineToTable(constants.CAT_BALANCE, constants.STYLE_LEVEL_0)
+    AddSummaryLineToTable(constants.CAT_PROFIT, styles.table.LEVEL_1)
+    AddSummaryLineToTable(constants.CAT_LOAN, styles.table.LEVEL_1)
+    AddSummaryLineToTable(constants.CAT_INTEREST, styles.table.LEVEL_1)
+    AddSummaryLineToTable(constants.CAT_OTHER, styles.table.LEVEL_1)
+    AddSummaryLineToTable(constants.CAT_BALANCE, styles.table.LEVEL_0)
 end
 
 function InitFinanceTab()
-    financeTabWindow = api.gui.util.getById("menu.finances.category")
     financeTabWindow:getParent():getParent():setSize(api.gui.util.Size.new(1100, 800))
     financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
         guiUpdate = visible
     end)
 
-    InitFinanceTable()
+    financeTable = transport_table.functions.InitFinanceTable()
     InitSummaryTable()
 
     local financeTableLayout = financeTabWindow:getTab(0):getLayout()
@@ -293,6 +197,7 @@ function data()
             end
         end,
         guiInit = function()
+            financeTabWindow = api.gui.util.getById("menu.finances.category")
             InitFinanceTab()
         end,
         guiUpdate = function()
