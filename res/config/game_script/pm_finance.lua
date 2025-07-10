@@ -1,6 +1,7 @@
 local constants = require "pm_finance/constants"
 local functions = require "pm_finance/functions"
 local ui_functions = require "pm_finance/ui_functions"
+local layout = require "pm_finance/gui/layout"
 
 local financeTabWindow = nil
 local financeTable = nil
@@ -69,18 +70,26 @@ function AddTransportCategoryLineToFinanceTable(isExpandable, transportType, cat
     end
     ui_functions.SetTooltipByCategory(labelView, category)
     table.insert(components, labelView)
-    table.insert(row, ui_functions.LayoutComponentsHorizontally(components, { sLevel, constants.STYLE_TABLE_CELL }, tostring(level)))
+    local comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, components, tostring(level))
+    comp:setStyleClassList({ sLevel, constants.STYLE_TABLE_CELL })
+    table.insert(row, comp)
 
     for i = 1, constants.NUMBER_OF_YEARS_COLUMNS do
         local yearCellView = ui_functions.CreateTextView("", { sLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
                                                         ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, category, transportType))
         ui_functions.SetTooltipByCategory(yearCellView, category)
-        table.insert(row, ui_functions.LayoutComponentsHorizontally({ yearCellView }, { sLevel, constants.STYLE_TABLE_CELL }, tostring(level)))
+        
+        comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { yearCellView }, tostring(level))
+        comp:setStyleClassList({ sLevel, constants.STYLE_TABLE_CELL })
+        table.insert(row, comp)
     end
     local totalCellView = ui_functions.CreateTextView("", { sLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
                                                     ui_functions.GetTableControlId(constants.COLUMN_TOTAL, category, transportType))
     ui_functions.SetTooltipByCategory(totalCellView, category)
-    table.insert(row, ui_functions.LayoutComponentsHorizontally({ totalCellView }, { sLevel, constants.STYLE_TABLE_CELL }, tostring(level)))
+    
+    comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { totalCellView }, tostring(level))
+    comp:setStyleClassList({ sLevel, constants.STYLE_TABLE_CELL })
+    table.insert(row, comp)
 
     financeTable:addRow(row)
 end
@@ -92,21 +101,28 @@ function AddSummaryLineToTable(category, styleLevel)
                                                 { styleLevel, constants.STYLE_SUMMARY_LABEL, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_LEFT }, 
                                                 ui_functions.GetTableControlId(constants.COLUMN_LABEL, category))
     ui_functions.SetTooltipByCategory(labelView, category)
-    table.insert(row, ui_functions.LayoutComponentsHorizontally({ labelView }, { styleLevel, constants.STYLE_TABLE_CELL }, "0"))
     
-     for i = 1, constants.NUMBER_OF_YEARS_COLUMNS do
+    local comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { labelView }, "0")
+    comp:setStyleClassList({ styleLevel, constants.STYLE_TABLE_CELL })
+    table.insert(row, comp)
+
+    for i = 1, constants.NUMBER_OF_YEARS_COLUMNS do
         local valueView = ui_functions.CreateTextView("", { styleLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
                                                 ui_functions.GetTableControlId(constants.COLUMN_YEAR..i, category))
         ui_functions.SetTooltipByCategory(valueView, category)
-        table.insert(row, ui_functions.LayoutComponentsHorizontally({ valueView }, { styleLevel, constants.STYLE_TABLE_CELL }, "0"))
+        
+        comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { valueView }, "0")
+        comp:setStyleClassList({ styleLevel, constants.STYLE_TABLE_CELL })
+        table.insert(row, comp)
     end
     
     local totalView = ui_functions.CreateTextView("", { styleLevel, constants.STYLE_TABLE_CELL, constants.STYLE_TEXT_RIGHT }, 
                                                 ui_functions.GetTableControlId(constants.COLUMN_TOTAL, category))
     ui_functions.SetTooltipByCategory(totalView, category)
     
-    
-    table.insert(row, ui_functions.LayoutComponentsHorizontally({ totalView }, { styleLevel, constants.STYLE_TABLE_CELL }, "0"))
+    comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { totalView }, "0")
+    comp:setStyleClassList({ styleLevel, constants.STYLE_TABLE_CELL })
+    table.insert(row, comp)
 
     summaryTable:addRow(row)
 end

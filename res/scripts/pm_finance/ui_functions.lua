@@ -50,18 +50,6 @@ function ui_functions.SetRowVisibilityInTable(table, row, visible)
     end
 end
 
-function ui_functions.LayoutComponentsHorizontally(components, styleList, componentName)
-    local component = api.gui.comp.Component.new(componentName)
-    local layout = api.gui.layout.BoxLayout.new("HORIZONTAL")
-    layout:setName(componentName..".Layout")
-    component:setStyleClassList(styleList)
-    for i, comp in ipairs(components) do
-        layout:addItem(comp)
-    end
-    component:setLayout(layout)
-    return component
-end
-
 function ui_functions.GetStyleForTableLineLevel(level)
     if level == 0 then
         return constants.STYLE_LEVEL_0
