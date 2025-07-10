@@ -17,7 +17,9 @@ function data()
 			severityAdd = "NONE",
 			severityRemove = "NONE",
 			name = "Better Finance Overview",
-			description = _("pm-DESCRIPTION"),
+			description = "This mod shows finances organized per transport type or all transport categories together.\n\n"..
+                          "It always shows accounting on yearly base.\n\n"..
+                          "Current version: "..vMajor.."."..vMinor,
 			authors =
 			{
 				{
