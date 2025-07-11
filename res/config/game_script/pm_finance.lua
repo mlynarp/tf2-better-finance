@@ -2,6 +2,7 @@ local constants = require "pm_finance/constants"
 local functions = require "pm_finance/functions"
 local ui_functions = require "pm_finance/ui_functions"
 local layout = require "pm_finance/gui/layout"
+local tableView = require "pm_finance/gui/tableview"
 local styles = require "pm_finance/constants/styles"
 local transport_table = require "pm_finance/components/transport_table"
 
@@ -11,45 +12,6 @@ local summaryTable = nil
 local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
-
-function RefreshTransportCategoryValues(transportType, journal, column)
-    --total
-    ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_TOTAL), 
-                                ui_functions.GetTableControlId(column, constants.CAT_TOTAL, transportType))
-    --income
-    ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_INCOME), 
-                                ui_functions.GetTableControlId(column, constants.CAT_INCOME, transportType))
-    --maintenance
-    ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_MAINTENANCE), 
-                                ui_functions.GetTableControlId(column, constants.CAT_MAINTENANCE, transportType))
-    ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_MAINTENANCE_VEHICLES), 
-                                ui_functions.GetTableControlId(column, constants.CAT_MAINTENANCE_VEHICLES, transportType))
-    ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_MAINTENANCE_INFRASTRUCTURE), 
-                                ui_functions.GetTableControlId(column, constants.CAT_MAINTENANCE_INFRASTRUCTURE, transportType))
-    --investment
-    ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS), 
-                                ui_functions.GetTableControlId(column, constants.CAT_INVESTMENTS, transportType))
-    ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_VEHICLES), 
-                                ui_functions.GetTableControlId(column, constants.CAT_INVESTMENTS_VEHICLES, transportType))
-    if functions.IsCategoryAllowedForTransportType(transportType, constants.CAT_INVESTMENTS_TRACKS) then
-        ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_TRACKS), 
-                                    ui_functions.GetTableControlId(column, constants.CAT_INVESTMENTS_TRACKS, transportType))
-    end
-    if functions.IsCategoryAllowedForTransportType(transportType, constants.CAT_INVESTMENTS_ROADS) then
-        ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_ROADS), 
-                                    ui_functions.GetTableControlId(column, constants.CAT_INVESTMENTS_ROADS, transportType))
-    end
-    ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_INFRASTRUCTURE), 
-                                ui_functions.GetTableControlId(column, constants.CAT_INVESTMENTS_INFRASTRUCTURE, transportType))
-    --cashflow
-    ui_functions.UpdateCellValue(functions.GetValueFromJournal(journal, transportType, constants.CAT_CASHFLOW), 
-                                ui_functions.GetTableControlId(column, constants.CAT_CASHFLOW, transportType))
-							
-	--margin									
-    ui_functions.UpdateCellValuePercentage(functions.GetValueFromJournal(journal, transportType, constants.CAT_MARGIN),
-                                ui_functions.GetTableControlId(column, constants.CAT_MARGIN, transportType))
-    
-end
 
 function AddSummaryLineToTable(category, styleLevel)
     local row = {}
@@ -85,9 +47,7 @@ function AddSummaryLineToTable(category, styleLevel)
 end
 
 function InitSummaryTable()
-    summaryTable = api.gui.comp.Table.new(constants.NUMBER_OF_YEARS_COLUMNS + 2, "NONE")
-    summaryTable:setId("pm-mySummaryTable")
-    summaryTable:setName("pm-mySummaryTable")
+    summaryTable = tableView.functions.CreateTableView(constants.NUMBER_OF_YEARS_COLUMNS + 2, "pm-mySummaryTable", "pm-mySummaryTable")
     summaryTable:setStyleClassList({ constants.STYLE_SUMMARY_TABLE })
 
     AddSummaryLineToTable(constants.CAT_PROFIT, styles.table.LEVEL_1)
@@ -204,7 +164,7 @@ function data()
             local currentBalance = functions.GetCurrentBalance()
             local currentYear = functions.GetCurrentGameYear()
             if guiUpdate and financeTabWindow:getCurrentTab() == 0 and (currentBalance ~= lastBalance or currentYear ~= lastYear) then
-                UpdateFinanceTable(currentYear == lastYear)
+                transport_table.functions.UpdateTableValues(currentYear == lastYear)
                 UpdateSummaryTable(currentYear == lastYear)
                 lastYear = currentYear
                 lastBalance = currentBalance

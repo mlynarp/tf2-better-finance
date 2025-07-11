@@ -185,18 +185,6 @@ function functions.GetCurrentBalance()
     return game.interface.getEntity(game.interface.getPlayer()).balance
 end
 
-function functions.IsCategoryAllowedForTransportType(transportType, category)
-    if transportType == constants.TRANSPORT_TYPE_ALL then
-        return true
-    end
-    if category == constants.CAT_INVESTMENTS_TRACKS and transportType ~= constants.TRANSPORT_TYPE_RAIL then
-        return false
-    elseif category == constants.CAT_INVESTMENTS_ROADS and transportType ~= constants.TRANSPORT_TYPE_ROAD then
-        return false
-    end
-    return true
-end
-
 function functions.GetYearFromYearIndex(yearIndex)
     return functions.GetCurrentGameYear() - constants.NUMBER_OF_YEARS_COLUMNS + yearIndex
 end
