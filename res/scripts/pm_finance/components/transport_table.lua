@@ -4,10 +4,11 @@ local categories = require "pm_finance/constants/categories"
 local columns = require "pm_finance/constants/columns"
 local styles = require "pm_finance/constants/styles"
 
-local textView = require "pm_finance/gui/text_view"
-local tableView = require "pm_finance/gui/table_view"
-local layout = require "pm_finance/gui/layout"
+local guiTextView = require "pm_finance/gui/text_view"
+local guiTableView = require "pm_finance/gui/table_view"
+local guiLayout = require "pm_finance/gui/layout"
 local guiButton = require "pm_finance/gui/button"
+local guiComponent = require "pm_finance/gui/component"
 
 local engine = require "pm_finance/functions"
 local ui_functions = require "pm_finance/ui_functions"
@@ -36,7 +37,7 @@ constantsT.TRANSPORT_CATEGORIES_LEVEL2 =
 local functions = {}
 
 function functions.CreateTransportTable(numberOfColumns, transportType)
-    local financeTable = tableView.functions.CreateTableView(numberOfColumns, GetTableId(transportType), constantsT.TransportTable.Name)
+    local financeTable = guiTableView.functions.CreateTableView(numberOfColumns, GetTableId(transportType), constantsT.TransportTable.Name)
     AddTransportTableHeaders(financeTable, transportType)
 
     AddTransportCategoriesToFinanceTable(financeTable, transportType)
@@ -50,21 +51,21 @@ function AddTransportTableHeaders(financeTable, transportType)
     local text = _(transportType)
     local id = GetHeaderColumnId(columns.constants.COLUMN_LABEL, transportType)
     local styleList = { styles.table.HEADER, styles.text.LEFT_ALIGNMENT }
-    table.insert(row, textView.functions.CreateTextView(text, id, styleList ))
+    table.insert(row, guiTextView.functions.CreateTextView(text, id, styleList ))
     
     for i = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
         text = tostring(engine.GetYearFromYearIndex(i))
         id = GetHeaderColumnId(columns.constants.COLUMN_YEAR .. i, transportType)
         styleList = { styles.table.HEADER, styles.text.RIGHT_ALIGNMENT }
-        table.insert(row, textView.functions.CreateTextView(text, "", styleList ))
+        table.insert(row, guiTextView.functions.CreateTextView(text, id, styleList ))
     end
     
     text = _(columns.constants.COLUMN_TOTAL)
     id = GetHeaderColumnId(columns.constants.COLUMN_TOTAL, transportType)
     styleList = { styles.table.HEADER, styles.text.RIGHT_ALIGNMENT }
-    table.insert(row, textView.functions.CreateTextView(text, id, styleList ))
+    table.insert(row, guiTextView.functions.CreateTextView(text, id, styleList ))
 
-    tableView.functions.SetHeader(financeTable, row)
+    guiTableView.functions.SetHeader(financeTable, row)
 end
 
 function AddTransportCategoriesToFinanceTable(financeTable, transportType)
@@ -76,7 +77,7 @@ function AddTransportCategoriesToFinanceTable(financeTable, transportType)
             AddTransportCategoryLineToFinanceTable(financeTable, true, transportType, level1Category, 1)
             -- level 2
             for j, level2Category in ipairs(constantsT.TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
-                if functions.IsCategoryAllowedForTransportType(transportType, level2Category) then
+                if IsCategoryAllowedForTransportType(transportType, level2Category) then
                     AddTransportCategoryLineToFinanceTable(financeTable, false, transportType, level2Category, 2)
                 end
             end
@@ -108,7 +109,7 @@ function CreateCategotryLineLabelComponent(financeTable, category, transportType
 
     local text = _(category)
     local id = GetTableControlId(columns.constants.COLUMN_LABEL, category, transportType)
-    local labelView = textView.functions.CreateTextView(text, id, { styles.table.CELL, styles.text.LEFT_ALIGNMENT } )
+    local labelView = guiTextView.functions.CreateTextView(text, id, { styles.table.CELL, styles.text.LEFT_ALIGNMENT } )
 
     local componentStyleList = { GetStyleForLineLevel(level), styles.table.CELL }
     if (category == categories.constants.CAT_TOTAL) then
@@ -123,7 +124,7 @@ function CreateCategotryLineLabelComponent(financeTable, category, transportType
 
     table.insert(components, labelView)
     
-    local comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, components, tostring(level))
+    local comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, components, tostring(level))
     comp:setStyleClassList(componentStyleList)
 
     return comp
@@ -131,10 +132,10 @@ end
 
 function CreateCategotryLineValueComponent(category, id)
     local styleList = { styles.table.CELL, styles.text.RIGHT_ALIGNMENT }
-    local cellView = textView.functions.CreateTextView("", id, styleList )
+    local cellView = guiTextView.functions.CreateTextView("", id, styleList )
 
     ui_functions.SetTooltipByCategory(cellView, category)
-    local comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { cellView }, tostring(level))
+    local comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, { cellView }, tostring(level))
     comp:setStyleClassList({ styles.table.CELL })
     
     if (category == categories.constants.CAT_TOTAL) then
@@ -155,58 +156,58 @@ end
 function functions.UpdateTableValues(currentYearOnly)
     for i, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
         if currentYearOnly then
-            functions.RefreshTransportCategoryValues(transportType, engine.GetJournal(functions.GetCurrentGameYear()), columns.constants.COLUMN_YEAR .. columns.constants.NUMBER_OF_YEARS_COLUMNS)
+            RefreshTransportCategoryValues(transportType, engine.GetJournal(functions.GetCurrentGameYear()), columns.constants.COLUMN_YEAR .. columns.constants.NUMBER_OF_YEARS_COLUMNS)
         else
             for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
                 local year = engine.GetYearFromYearIndex(j)
-                functions.RefreshTransportCategoryValues(transportType, engine.GetJournal(year), columns.constants.COLUMN_YEAR .. j)
-                api.gui.util.getById(GetTableControlId(columns.constants.COLUMN_YEAR .. j)):setText(tostring(year))
+                RefreshTransportCategoryValues(transportType, engine.GetJournal(year), columns.constants.COLUMN_YEAR .. j)
+                local id = GetHeaderColumnId(columns.constants.COLUMN_YEAR .. j, transportType)
+                local textView = guiComponent.functions.FindById(id)
+                guiTextView.functions.SetText(textView, tostring(year))
             end
         end
-        functions.RefreshTransportCategoryValues(transportType, engine.GetJournal(0), transport.constants.COLUMN_TOTAL)
+        RefreshTransportCategoryValues(transportType, engine.GetJournal(0), columns.constants.COLUMN_TOTAL)
     end
 end
 
-function functions.RefreshTransportCategoryValues(transportType, journal, column)
+function RefreshTransportCategoryValues(transportType, journal, column)
     --total
-    ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_TOTAL), 
-                                 GetTableControlId(column, constants.CAT_TOTAL, transportType))
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_TOTAL, transportType),
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_TOTAL))
     --income
-    ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_INCOME), 
-                                 GetTableControlId(column, constants.CAT_INCOME, transportType))
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_INCOME, transportType), 
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_INCOME))
     --maintenance
-    ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_MAINTENANCE), 
-                                 GetTableControlId(column, constants.CAT_MAINTENANCE, transportType))
-    ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_MAINTENANCE_VEHICLES), 
-                                 GetTableControlId(column, constants.CAT_MAINTENANCE_VEHICLES, transportType))
-    ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_MAINTENANCE_INFRASTRUCTURE), 
-                                 GetTableControlId(column, constants.CAT_MAINTENANCE_INFRASTRUCTURE, transportType))
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_MAINTENANCE, transportType), 
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE))
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_MAINTENANCE_VEHICLES, transportType), 
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE_VEHICLES))
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_MAINTENANCE_INFRASTRUCTURE, transportType),
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE_INFRASTRUCTURE))
     --investment
-    ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS), 
-                                 GetTableControlId(column, constants.CAT_INVESTMENTS, transportType))
-    ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_VEHICLES), 
-                                 GetTableControlId(column, constants.CAT_INVESTMENTS_VEHICLES, transportType))
-    if functions.IsCategoryAllowedForTransportType(transportType, constants.CAT_INVESTMENTS_TRACKS) then
-        ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_TRACKS), 
-                                     GetTableControlId(column, constants.CAT_INVESTMENTS_TRACKS, transportType))
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_INVESTMENTS, transportType),
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS))
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_INVESTMENTS_VEHICLES, transportType),
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_VEHICLES))
+    if IsCategoryAllowedForTransportType(transportType, categories.constants.CAT_INVESTMENTS_TRACKS) then
+        guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_INVESTMENTS_TRACKS, transportType),
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_TRACKS))
     end
-    if functions.IsCategoryAllowedForTransportType(transportType, constants.CAT_INVESTMENTS_ROADS) then
-        ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_ROADS), 
-                                     GetTableControlId(column, constants.CAT_INVESTMENTS_ROADS, transportType))
+    if IsCategoryAllowedForTransportType(transportType, categories.constants.CAT_INVESTMENTS_ROADS) then
+        guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_INVESTMENTS_ROADS, transportType),
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_ROADS))
     end
-    ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_INVESTMENTS_INFRASTRUCTURE), 
-                                 GetTableControlId(column, constants.CAT_INVESTMENTS_INFRASTRUCTURE, transportType))
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_INVESTMENTS_INFRASTRUCTURE, transportType),
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_INFRASTRUCTURE))
     --cashflow
-    ui_functions.UpdateCellValue(engine.GetValueFromJournal(journal, transportType, constants.CAT_CASHFLOW), 
-                                 GetTableControlId(column, constants.CAT_CASHFLOW, transportType))
-							
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_CASHFLOW, transportType),
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_CASHFLOW))
 	--margin									
-    ui_functions.UpdateCellValuePercentage(engine.GetValueFromJournal(journal, transportType, constants.CAT_MARGIN),
-                                 GetTableControlId(column, constants.CAT_MARGIN, transportType))
-    
+    guiTextView.functions.SetMoneyValue(GetTableControlId(column, categories.constants.CAT_MARGIN, transportType),
+                                        engine.GetValueFromJournal(journal, transportType, categories.constants.CAT_MARGIN))
 end
 
-function functions.IsCategoryAllowedForTransportType(transportType, category)
+function IsCategoryAllowedForTransportType(transportType, category)
     if transportType == transport.constants.TRANSPORT_TYPE_ALL then
         return true
     end

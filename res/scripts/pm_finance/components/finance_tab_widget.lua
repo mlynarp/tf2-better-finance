@@ -3,7 +3,7 @@ local columns = require "pm_finance/constants/columns"
 
 local tabWidget = require "pm_finance/gui/tab_widget"
 local imageView = require "pm_finance/gui/image_view"
-local layout = require "pm_finance/gui/layout"
+local guiLayout = require "pm_finance/gui/layout"
 
 local transportTable = require "pm_finance/components/transport_table"
 
@@ -22,7 +22,7 @@ function functions.CreateFinanceTabWidget()
         iconView:setTooltip(_(transportType))
         
         local table = transportTable.functions.CreateTransportTable(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2, transportType)
-        tabWidget.functions.AddTab(financeTabWidget, layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, {iconView}, ""), table)
+        tabWidget.functions.AddTab(financeTabWidget, guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, {iconView}, ""), table)
     end
 
     tabWidget.functions.SelectTab(financeTabWidget, 0)

@@ -4,14 +4,12 @@ local columns = require "pm_finance/constants/columns"
 local categories = require "pm_finance/constants/categories"
 local functions = require "pm_finance/functions"
 local ui_functions = require "pm_finance/ui_functions"
-local layout = require "pm_finance/gui/layout"
+local chart = require "pm_finance//gui/chart"
+local guiLayout = require "pm_finance/gui/layout"
 local tableView = require "pm_finance/gui/table_view"
 local styles = require "pm_finance/constants/styles"
 local transport_table = require "pm_finance/components/transport_table"
-local financeTab = require "pm_finance/components/finance_tab_widget"
-local tabWidget = require "pm_finance/gui/tab_widget"
-local textView = require "pm_finance/gui/text_view"
-local imageView = require "pm_finance/gui/image_view"
+local guiFinanceTab = require "pm_finance/components/finance_tab_widget"
 
 local financeTabWindow = nil
 local financeTable = nil
@@ -28,7 +26,7 @@ function AddSummaryLineToTable(category, styleLevel)
                                                 ui_functions.GetTableControlId(columns.constants.COLUMN_LABEL, category))
     ui_functions.SetTooltipByCategory(labelView, category)
     
-    local comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { labelView }, "0")
+    local comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, { labelView }, "0")
     comp:setStyleClassList({ styleLevel, styles.table.CELL })
     table.insert(row, comp)
 
@@ -37,7 +35,7 @@ function AddSummaryLineToTable(category, styleLevel)
                                                 ui_functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, category))
         ui_functions.SetTooltipByCategory(valueView, category)
         
-        comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { valueView }, "0")
+        comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, { valueView }, "0")
         comp:setStyleClassList({ styleLevel, styles.table.CELL })
         table.insert(row, comp)
     end
@@ -46,7 +44,7 @@ function AddSummaryLineToTable(category, styleLevel)
                                                 ui_functions.GetTableControlId(transport.constants.COLUMN_TOTAL, category))
     ui_functions.SetTooltipByCategory(totalView, category)
     
-    comp = layout.functions.LayoutComponents(layout.constants.ORIENTATION.HORIZONTAL, { totalView }, "0")
+    comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, { totalView }, "0")
     comp:setStyleClassList({ styleLevel, styles.table.CELL })
     table.insert(row, comp)
 
@@ -64,19 +62,18 @@ function InitSummaryTable()
     AddSummaryLineToTable(constants.CAT_BALANCE, styles.table.TOTAL)
 end
 
-function InitFinanceTab()
+function InitFinanceTableTab()
     financeTabWindow:getParent():getParent():setSize(api.gui.util.Size.new(1100, 800))
     financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
         guiUpdate = visible
     end)
 
-    financeTable = transport_table.functions.InitFinanceTable()
     InitSummaryTable()
+    local financeTabWidget = guiFinanceTab.functions.CreateFinanceTabWidget()
 
     local financeTableLayout = financeTabWindow:getTab(0):getLayout()
-    --replace current finance table
     financeTableLayout:removeItem(financeTableLayout:getItem(0))
-    financeTableLayout:insertItem(financeTable, 0)
+    financeTableLayout:insertItem(financeTabWidget, 0)
 
     --replace current summary table
     financeTableLayout:removeItem(financeTableLayout:getItem(3))
@@ -92,19 +89,6 @@ function InitFinanceTab()
 end
 
 
-function UpdateFinanceTable(currentYearOnly)
-    for i, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
-        if currentYearOnly then
-            RefreshTransportCategoryValues(transportType, functions.GetJournal(functions.GetCurrentGameYear()), columns.constants.COLUMN_YEAR .. constants.NUMBER_OF_YEARS_COLUMNS)
-        else
-            for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
-                local year = functions.GetYearFromYearIndex(j)
-                RefreshTransportCategoryValues(transportType, functions.GetJournal(year), columns.constants.COLUMN_YEAR .. j)
-                api.gui.util.getById(ui_functions.GetTableControlId(columns.constants.COLUMN_YEAR .. j)):setText(tostring(year))
-            end
-        end
-        RefreshTransportCategoryValues(transportType, functions.GetJournal(0), transport.constants.COLUMN_TOTAL)
-    end
 end
 
 function UpdateSummaryTable(currentYearOnly)
@@ -166,7 +150,7 @@ function data()
         end,
         guiInit = function()
             financeTabWindow = api.gui.util.getById("menu.finances.category")
-            InitFinanceTab()
+            InitFinanceTableTab()
         end,
         guiUpdate = function()
             local currentBalance = functions.GetCurrentBalance()
