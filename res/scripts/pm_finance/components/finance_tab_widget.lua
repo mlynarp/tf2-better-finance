@@ -1,11 +1,11 @@
 local transport = require "pm_finance/constants/transport"
 local columns = require "pm_finance/constants/columns"
 
-local tabWidget = require "pm_finance/gui/tab_widget"
-local imageView = require "pm_finance/gui/image_view"
+local guiTabWidget = require "pm_finance/gui/tab_widget"
+local guiImageView = require "pm_finance/gui/image_view"
 local guiLayout = require "pm_finance/gui/layout"
 
-local transportTable = require "pm_finance/components/transport_table"
+local compTransportTable = require "pm_finance/components/transport_table"
 
 local constants = {}
 local functions = {}
@@ -15,17 +15,17 @@ constants.TransportTable = { Id = "pm-transportTable", Name =  "TransportTable"}
 
 
 function functions.CreateFinanceTabWidget()
-	local financeTabWidget = tabWidget.functions.CreateTabWidget(tabWidget.constants.ORIENTATION.TOP, constants.FinanceTabWidget.Id, constants.FinanceTabWidget.Name)
+	local financeTabWidget = guiTabWidget.functions.CreateTabWidget(guiTabWidget.constants.ORIENTATION.TOP, constants.FinanceTabWidget.Id, constants.FinanceTabWidget.Name)
 
     for i, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
-        local iconView = imageView.functions.CreateImageView(transport.functions.IconPathForTransportType(transportType))
+        local iconView = guiImageView.functions.CreateImageView(transport.functions.IconPathForTransportType(transportType))
         iconView:setTooltip(_(transportType))
         
-        local table = transportTable.functions.CreateTransportTable(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2, transportType)
-        tabWidget.functions.AddTab(financeTabWidget, guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, {iconView}, ""), table)
+        local table = compTransportTable.functions.CreateTransportTable(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2, transportType)
+        guiTabWidget.functions.AddTab(financeTabWidget, guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, {iconView}, ""), table)
     end
 
-    tabWidget.functions.SelectTab(financeTabWidget, 0)
+    guiTabWidget.functions.SelectTab(financeTabWidget, 0)
 	return financeTabWidget
 end
 

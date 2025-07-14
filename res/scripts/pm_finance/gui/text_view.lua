@@ -1,8 +1,10 @@
 local guiComponent = require "pm_finance/gui/component"
 
 local constants = {}
-constants.TEXT_TYPE = { MONEY = "MONEY", PERCENTAGE = "PERCENTAGE" }
 local functions = {}
+
+constants.TEXT_TYPE = { MONEY = "MONEY", PERCENTAGE = "PERCENTAGE" }
+
 
 function functions.CreateTextView(text, id, style)
     local textView = api.gui.comp.TextView.new(text or "")

@@ -2,17 +2,21 @@ local constants = require "pm_finance/constants"
 local transport = require "pm_finance/constants/transport"
 local columns = require "pm_finance/constants/columns"
 local categories = require "pm_finance/constants/categories"
-local functions = require "pm_finance/functions"
-local ui_functions = require "pm_finance/ui_functions"
-local chart = require "pm_finance//gui/chart"
-local guiLayout = require "pm_finance/gui/layout"
-local tableView = require "pm_finance/gui/table_view"
+
 local styles = require "pm_finance/constants/styles"
-local transport_table = require "pm_finance/components/transport_table"
+
+local calendar = require "pm_finance/engine/calendar"
+local engineJournal = require "pm_finance/engine/journal"
+local ui_functions = require "pm_finance/ui_functions"
+
+local guiChart = require "pm_finance//gui/chart"
+local guiLayout = require "pm_finance/gui/layout"
+local guiTableView = require "pm_finance/gui/table_view"
+
+local compTransportTable = require "pm_finance/components/transport_table"
 local guiFinanceTab = require "pm_finance/components/finance_tab_widget"
 
 local financeTabWindow = nil
-local financeTable = nil
 local summaryTable = nil
 local guiUpdate = false
 local lastBalance = 0
@@ -52,7 +56,7 @@ function AddSummaryLineToTable(category, styleLevel)
 end
 
 function InitSummaryTable()
-    summaryTable = tableView.functions.CreateTableView(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2, "pm-mySummaryTable", "pm-mySummaryTable")
+    summaryTable = guiTableView.functions.CreateTableView(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2, "pm-mySummaryTable", "pm-mySummaryTable")
     summaryTable:setStyleClassList({ constants.STYLE_SUMMARY_TABLE })
 
     AddSummaryLineToTable(constants.CAT_PROFIT, styles.table.LEVEL_1)
@@ -93,10 +97,10 @@ end
 
 function UpdateSummaryTable(currentYearOnly)
     for i = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
-        local year = functions.GetYearFromYearIndex(i)
-        local journal = functions.GetJournal(year)
-        local profit = functions.GetValueFromJournal(journal, transport.constants.TRANSPORT_TYPE_ALL, categories.constants.CAT_TOTAL)
-        local balance = functions.GetEndOfYearBalance(year)
+        local year = calendar.functions.GetYearFromYearIndex(i)
+        local journal = engineJournal.functions.GetJournal(year)
+        local profit = engineJournal.functions.GetValueFromJournal(journal, transport.constants.TRANSPORT_TYPE_ALL, categories.constants.CAT_TOTAL)
+        local balance = engineJournal.functions.GetEndOfYearBalance(year)
 
         ui_functions.UpdateCellValue(profit, ui_functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.CAT_PROFIT))
         ui_functions.UpdateCellValue(journal.loan, ui_functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.CAT_LOAN))
@@ -105,9 +109,9 @@ function UpdateSummaryTable(currentYearOnly)
         ui_functions.UpdateCellValue(balance, ui_functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.CAT_BALANCE))
     end
 
-    local overallJournal = functions.GetJournal(0)
-    local profit = functions.GetValueFromJournal(overallJournal, transport.constants.TRANSPORT_TYPE_ALL, categories.constants.CAT_TOTAL)
-    local balance = functions.GetCurrentBalance()
+    local overallJournal = engineJournal.functions.GetJournal(0)
+    local profit = engineJournal.functions.GetValueFromJournal(overallJournal, transport.constants.TRANSPORT_TYPE_ALL, categories.constants.CAT_TOTAL)
+    local balance = engineJournal.functions.GetCurrentBalance()
     
     ui_functions.UpdateCellValue(profit, ui_functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_PROFIT))
     ui_functions.UpdateCellValue(overallJournal.loan, ui_functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_LOAN))
@@ -122,29 +126,29 @@ end
 function data()
     return {
         save = function()
-            functions.gameState["gameTime"] = game.interface.getGameTime().time * 1000
-            return functions.gameState
+            calendar.gameState["gameTime"] = game.interface.getGameTime().time * 1000
+            return calendar.gameState
         end,
         load = function(data)
             if not data then
                 local gameState = {}
-                local currentYear = functions.GetCurrentGameYear()
+                local currentYear = calendar.functions.GetCurrentGameYear()
                 for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
-                    gameState[tostring(currentYear)] = functions.GetYearStartTime(currentYear)
+                    gameState[tostring(currentYear)] = calendar.functions.GetYearStartTime(currentYear)
                     currentYear = currentYear - 1
                 end
-                functions.gameState = gameState
+                calendar.gameState = gameState
             else
-                functions.gameState = data
+                calendar.gameState = data
             end
         end,
         update = function()
-            local currentYear = functions.GetCurrentGameYear()
+            local currentYear = calendar.functions.GetCurrentGameYear()
             if currentYear ~= lastYear then
                 lastYear = currentYear
-                local currentYearState = functions.GetGameStatePerYear(currentYear)
+                local currentYearState = calendar.functions.GetGameStatePerYear(currentYear)
                 if currentYearState == nil then
-                    functions.gameState[tostring(currentYear)] = functions.GetYearStartTime(currentYear)
+                    calendar.gameState[tostring(currentYear)] = calendar.functions.GetYearStartTime(currentYear)
                 end
             end
         end,
@@ -153,11 +157,11 @@ function data()
             InitFinanceTableTab()
         end,
         guiUpdate = function()
-            local currentBalance = functions.GetCurrentBalance()
-            local currentYear = functions.GetCurrentGameYear()
+            local currentBalance = engineJournal.functions.GetCurrentBalance()
+            local currentYear = calendar.functions.GetCurrentGameYear()
             if guiUpdate and financeTabWindow:getCurrentTab() == 0 and (currentBalance ~= lastBalance or currentYear ~= lastYear) then
-                transport_table.functions.UpdateTableValues(currentYear == lastYear)
                 UpdateSummaryTable(currentYear == lastYear)
+                compTransportTable.functions.UpdateTableValues(currentYear == lastYear)
                 lastYear = currentYear
                 lastBalance = currentBalance
             end

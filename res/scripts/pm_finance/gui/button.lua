@@ -1,5 +1,6 @@
 local guiImage = require "pm_finance/gui/image_view"
 local guiTable = require "pm_finance/gui/table_view"
+
 local styles = require "pm_finance/constants/styles"
 
 local constants = {}
