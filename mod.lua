@@ -1,4 +1,4 @@
-﻿local constants = require "pm_finance/constants"
+﻿local columns = require "pm_finance/constants/columns"
 
 local vMajor = 1
 local vMinor = 4
@@ -41,7 +41,7 @@ function data()
 			tags = { "Misc", "Script Mod" },
 		},
         runFn = function(settings, modParams)
-            constants.NUMBER_OF_YEARS_COLUMNS = modParams[getCurrentModId()].NumberOfColumns
+            columns.constants.NUMBER_OF_YEARS_COLUMNS = modParams[getCurrentModId()].NumberOfColumns
         end,
 	}
 end

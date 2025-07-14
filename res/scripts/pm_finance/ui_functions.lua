@@ -1,5 +1,4 @@
-local constants = require "pm_finance/constants"
-local styles = require "pm_finance/constants/styles"
+local tooltips = require "pm_finance/constants/tooltips"
 
 local ui_functions = {}
 
@@ -41,55 +40,6 @@ function ui_functions.UpdateCellValue(amount, textViewId)
     textView:setText(api.util.formatMoney(amount))
 end
 
-function ui_functions.SetRowVisibilityInTable(table, row, visible)
-    if row >= table:getNumRows() then
-        return
-    end
-    for column = 0, table:getNumCols() - 1 do
-        local element = table:getItem(row, column)
-        element:setVisible(visible, false)
-    end
-end
-
-function ui_functions.GetStyleForTableLineLevel(level)
-    if level == 0 then
-        return styles.table.LEVEL_0
-    elseif level == 1 then
-        return styles.table.LEVEL_1
-    else
-        return styles.table.LEVEL_2
-    end
-end
-
-function ui_functions.CreateExpandButton(table, level)
-    local iconExpandPath = "ui/design/components/slim_arrow_right@2x.tga"
-    local iconCollapsePath = "ui/design/components/slim_arrow_down@2x.tga"
-    local imageView = api.gui.comp.ImageView.new(iconCollapsePath)
-    local button = api.gui.comp.Button.new(imageView, false)
-    button:setStyleClassList({ ui_functions.GetStyleForTableLineLevel(level), styles.button.BUTTON })
-    local myRowIndex = table:getNumRows()
-    button:onClick(function()
-        local startRowIndex = myRowIndex + 1
-        local lastRowIndex = myRowIndex + 1
-        local setToVisible = not table:getItem(startRowIndex, 0):isVisible()
-        for row = startRowIndex, table:getNumRows() - 1 do
-            if tonumber(table:getItem(row, 0):getName()) <= level then
-                lastRowIndex = row - 1
-                break
-            end
-        end
-        for row = startRowIndex, lastRowIndex do
-            ui_functions.SetRowVisibilityInTable(table, row, setToVisible)
-            if setToVisible then
-                imageView:setImage(iconCollapsePath, false)
-            else
-                imageView:setImage(iconExpandPath, false)
-            end
-        end
-    end)
-    return button
-end
-
 function ui_functions.CreateTextView(text, styleList, id)
     local textView = api.gui.comp.TextView.new(text)
     textView:setStyleClassList(styleList)
@@ -108,7 +58,7 @@ function ui_functions.GetTableControlId(column, category, transportType)
 end
 
 function ui_functions.SetTooltipByCategory(component, category)
-    component:setTooltip(_(constants.TOOLTIP .. category))
+    component:setTooltip(_(tooltips.constants.TOOLTIP .. category))
 end
 
 return ui_functions

@@ -1,7 +1,7 @@
 local constants = {}
 local functions = {}
 
-function functions.Create(imagePath)
+function functions.CreateImageView(imagePath)
     local imageView = api.gui.comp.ImageView.new(imagePath)
     return imageView
 end

@@ -25,6 +25,7 @@ function data()
 
     a(FormatClassNames({ styles.table.HEADER }),
 	{
+        backgroundColor = ssu.makeColor(255, 255, 255, 50),
         fontSize = 15,
 	})
 
@@ -32,45 +33,33 @@ function data()
 	{
 		gravity = {-1.0 ,-1.0},
         size = { -1, ROW_HEIGHT },
-        textAlignment = { 0.5, 0.5 }
+        textAlignment = { 0.5, 0.5 },
 	})
 
-    a(FormatClassNames({ styles.table.LEVEL_0 }),
+    a(FormatClassNames({ styles.table.TOTAL }),
 	{
-		backgroundColor = ssu.makeColor(255, 255, 255, 25),
+		backgroundColor = ssu.makeColor(255, 255, 255, 75),
 		size={-1, ROW_HEIGHT + 5},
 	})
 
     a(FormatClassNames({styles.table.LEVEL_1}),
 	{
-		backgroundColor = ssu.makeColor(255, 255, 255, 0),
+        padding={0,0,0,TEXT_PADDING + ICON_SIZE},
 	})
 
-    a(FormatClassNames({ styles.table.LEVEL_1, styles.button.BUTTON }),
+    a(FormatClassNames({styles.table.LEVEL_1, styles.table.EXPANDABLE}),
 	{
-		padding={0,0,0,LEVEL_PADDING},
+        padding={0,0,0,TEXT_PADDING},
 	})
 
-	a(FormatClassNames({ styles.table.LEVEL_1, styles.table.LEVEL_PADDING }),
+    a(FormatClassNames({styles.table.LEVEL_2}),
 	{
-		padding={0,0,0,LEVEL_PADDING + ICON_SIZE + TEXT_PADDING},
+        padding={0,0,0,LEVEL_PADDING + TEXT_PADDING + ICON_SIZE},
 	})
 
-	a(FormatClassNames({styles.table.LEVEL_2}),
+    a(FormatClassNames({styles.table.LEVEL_2, styles.table.EXPANDABLE}),
 	{
-		backgroundColor = ssu.makeColor(255, 255, 255, 0),
-		size={-1, ROW_HEIGHT},
-		gravity = {-1.0 ,-1.0},
-	})
-
-    a(FormatClassNames({ styles.table.LEVEL_2, styles.button.BUTTON }),
-	{
-		padding={0,0,0,LEVEL_PADDING * 2},
-	})
-
-	a(FormatClassNames({ styles.table.LEVEL_2, styles.table.LEVEL_PADDING }),
-	{
-		padding={0,0,0,LEVEL_PADDING * 2 + ICON_SIZE + TEXT_PADDING},
+        padding={0,0,0,LEVEL_PADDING + TEXT_PADDING},
 	})
 
 	a(FormatClassNames({styles.text.LEFT_ALIGNMENT}),
