@@ -1,11 +1,14 @@
 local columns = require "pm_finance/constants/columns"
 
+local calendar = {
+    gameState = {}
+}
+
 local constants = {}
 local functions = {}
-local gameState = {}
 
 function functions.GetGameStatePerYear(year)
-    return gameState[tostring(year)]
+    return calendar.gameState[tostring(year)]
 end
 
 function functions.IsLeapYear(year)
@@ -74,9 +77,7 @@ function functions.GetYearFromYearIndex(yearIndex)
     return functions.GetCurrentGameYear() - columns.constants.NUMBER_OF_YEARS_COLUMNS + yearIndex
 end
 
-local calendar = {}
 calendar.constants = constants
 calendar.functions = functions
-calendar.gameState = gameState
 
 return calendar
