@@ -1,5 +1,7 @@
 local guiComponent = require "pm_finance/gui/component"
+
 local constants = {}
+constants.TEXT_TYPE = { MONEY = "MONEY", PERCENTAGE = "PERCENTAGE" }
 local functions = {}
 
 function functions.CreateTextView(text, id, style)
@@ -20,7 +22,7 @@ function functions.SetText(textView, text)
      textView:setText(text)
 end
 
-function functions.SetMoneyValue(textViewId, amount)
+function functions.SetFormattedText(textViewId, amount, type)
     local textView = guiComponent.functions.FindById(textViewId)
     
     if not textView then
@@ -37,7 +39,13 @@ function functions.SetMoneyValue(textViewId, amount)
     elseif amount < 0 then
         textView:addStyleClass("negative")
     end
-    functions.SetText(textView, api.util.formatMoney(amount))
+
+    if (type == constants.TEXT_TYPE.MONEY) then
+        functions.SetText(textView, api.util.formatMoney(amount))
+    end
+    if (type == constants.TEXT_TYPE.PERCENTAGE) then
+        functions.SetText(textView, string.format("%.2f %%", amount))
+    end
 end
 
 local textView = {}

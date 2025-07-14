@@ -2,26 +2,6 @@ local tooltips = require "pm_finance/constants/tooltips"
 
 local ui_functions = {}
 
-function ui_functions.UpdateCellValuePercentage(amount, textViewId)
-    local textView = api.gui.util.getById(textViewId)
-    if not textView then
-        return
-    end
-    textView:removeStyleClass("negative")
-    textView:removeStyleClass("positive")
-    if not amount then
-        amount = 0
-    end
-    if amount > 0 then
-        textView:addStyleClass("positive")
-    elseif amount < 0 then
-        textView:addStyleClass("negative")
-    end
-    textView:setText(string.format("%.2f", amount))
-end
-
-
-
 function ui_functions.UpdateCellValue(amount, textViewId)
     local textView = api.gui.util.getById(textViewId)
     if not textView then
