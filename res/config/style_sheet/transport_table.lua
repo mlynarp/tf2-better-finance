@@ -16,7 +16,7 @@ local styles = dofile(ScriptPath() .. "../../scripts/pm_finance/constants/styles
 local ROW_HEIGHT = 25
 local LEVEL_PADDING = 30
 local ICON_SIZE = 15
-local TEXT_PADDING = 10
+local TEXT_PADDING = 5
 
 local ssu = require "stylesheetutil"
 function data()
