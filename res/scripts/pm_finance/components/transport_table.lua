@@ -12,13 +12,12 @@ local guiLayout = require "pm_finance/gui/layout"
 local guiButton = require "pm_finance/gui/button"
 local guiComponent = require "pm_finance/gui/component"
 
-local ui_functions = require "pm_finance/ui_functions"
+local constants = {}
+local functions = {}
 
-local ids = { tableId = "pm-myFinanceTable" }
-local constantsT = {}
-constantsT.TransportTable = { Id = "pm-transportTable", Name =  "TransportTable"}
+constants.TransportTable = { Id = "pm-transportTable", Name =  "TransportTable"}
 
-constantsT.TRANSPORT_CATEGORIES_LEVEL1 =
+constants.TRANSPORT_CATEGORIES_LEVEL1 =
 {
     categories.constants.CAT_INCOME,
     categories.constants.CAT_MAINTENANCE,
@@ -26,7 +25,7 @@ constantsT.TRANSPORT_CATEGORIES_LEVEL1 =
     categories.constants.CAT_TOTAL
 }
 
-constantsT.TRANSPORT_CATEGORIES_LEVEL2 =
+constants.TRANSPORT_CATEGORIES_LEVEL2 =
 {
     [categories.constants.CAT_INCOME] = {},
     [categories.constants.CAT_MAINTENANCE] = { categories.constants.CAT_MAINTENANCE_VEHICLES, categories.constants.CAT_MAINTENANCE_INFRASTRUCTURE },
@@ -35,10 +34,10 @@ constantsT.TRANSPORT_CATEGORIES_LEVEL2 =
     [categories.constants.CAT_TOTAL] = { categories.constants.CAT_CASHFLOW, categories.constants.CAT_MARGIN }
 }
 
-local functions = {}
+
 
 function functions.CreateTransportTable(numberOfColumns, transportType)
-    local financeTable = guiTableView.functions.CreateTableView(numberOfColumns, GetTableId(transportType), constantsT.TransportTable.Name)
+    local financeTable = guiTableView.functions.CreateTableView(numberOfColumns, GetTableId(transportType), constants.TransportTable.Name)
     AddTransportTableHeaders(financeTable, transportType)
 
     AddTransportCategoriesToFinanceTable(financeTable, transportType)
@@ -71,13 +70,13 @@ end
 
 function AddTransportCategoriesToFinanceTable(financeTable, transportType)
     -- level 1
-    for i, level1Category in ipairs(constantsT.TRANSPORT_CATEGORIES_LEVEL1) do
-        if (#constantsT.TRANSPORT_CATEGORIES_LEVEL2[level1Category] == 0) then
+    for i, level1Category in ipairs(constants.TRANSPORT_CATEGORIES_LEVEL1) do
+        if (#constants.TRANSPORT_CATEGORIES_LEVEL2[level1Category] == 0) then
             AddTransportCategoryLineToFinanceTable(financeTable, false, transportType, level1Category, 1)
         else
             AddTransportCategoryLineToFinanceTable(financeTable, true, transportType, level1Category, 1)
             -- level 2
-            for j, level2Category in ipairs(constantsT.TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
+            for j, level2Category in ipairs(constants.TRANSPORT_CATEGORIES_LEVEL2[level1Category]) do
                 if IsCategoryAllowedForTransportType(transportType, level2Category) then
                     AddTransportCategoryLineToFinanceTable(financeTable, false, transportType, level2Category, 2)
                 end
@@ -233,7 +232,7 @@ function IsCategoryAllowedForTransportType(transportType, category)
 end
 
 function GetTableId(transportType)
-    return constantsT.TransportTable.Id .. "." .. transportType
+    return constants.TransportTable.Id .. "." .. transportType
 end
 
 function GetHeaderColumnId(column, transportType)
