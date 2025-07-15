@@ -22,14 +22,16 @@ function data()
 	local result = { }
 	local a = ssu.makeAdder(result)
 
-    a(FormatClassNames({ styles.constants.STYLE_SUMMARY_TABLE }),
+    a(FormatClassNames({ styles.table.STYLE_SUMMARY_TABLE }),
 	{
 		padding = {0,0,3,0},
         size={-1, 5*ROW_HEIGHT + 5},
 		gravity = {-1.0 ,-1.0},
+        borderWidth = {2,2,2,2},
+        borderColor = {1,0,0,1}
 	})
 
-    a(FormatClassNames({ styles.constants.STYLE_SUMMARY_LABEL }),
+    a(FormatClassNames({ styles.table.STYLE_SUMMARY_LABEL }),
     {
         padding = { 0, 0, 0, ICON_SIZE + TEXT_PADDING},
     })
