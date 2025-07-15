@@ -1,4 +1,3 @@
-local constants = require "pm_finance/constants"
 local transport = require "pm_finance/constants/transport"
 local categories = require "pm_finance/constants/categories"
 local columns = require "pm_finance/constants/columns"
@@ -122,7 +121,7 @@ function CreateCategotryLineLabelComponent(financeTable, category, transportType
         table.insert(componentStyleList, styles.table.EXPANDABLE)
         table.insert(components, guiButton.functions.CreateExpandButton(financeTable, financeTable:getNumRows(), level))
     end
-    ui_functions.SetTooltipByCategory(labelView, category)
+    guiComponent.functions.SetTooltipByCategory(labelView, category)
 
     table.insert(components, labelView)
     
@@ -136,7 +135,7 @@ function CreateCategotryLineValueComponent(category, id)
     local styleList = { styles.table.CELL, styles.text.RIGHT_ALIGNMENT }
     local cellView = guiTextView.functions.CreateTextView("", id, styleList )
 
-    ui_functions.SetTooltipByCategory(cellView, category)
+    guiComponent.functions.SetTooltipByCategory(cellView, category)
     local comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, { cellView }, tostring(level))
     comp:setStyleClassList({ styles.table.CELL })
     
@@ -225,9 +224,9 @@ function IsCategoryAllowedForTransportType(transportType, category)
     if transportType == transport.constants.TRANSPORT_TYPE_ALL then
         return true
     end
-    if category == constants.CAT_INVESTMENTS_TRACKS and transportType ~= transport.constants.TRANSPORT_TYPE_RAIL then
+    if category == categories.constants.CAT_INVESTMENTS_TRACKS and transportType ~= transport.constants.TRANSPORT_TYPE_RAIL then
         return false
-    elseif category == constants.CAT_INVESTMENTS_ROADS and transportType ~= transport.constants.TRANSPORT_TYPE_ROAD then
+    elseif category == categories.constants.CAT_INVESTMENTS_ROADS and transportType ~= transport.constants.TRANSPORT_TYPE_ROAD then
         return false
     end
     return true

@@ -12,6 +12,7 @@ local ui_functions = require "pm_finance/ui_functions"
 local guiChart = require "pm_finance//gui/chart"
 local guiLayout = require "pm_finance/gui/layout"
 local guiTableView = require "pm_finance/gui/table_view"
+local guiComponent = require "pm_finance/gui/component"
 
 local compTransportTable = require "pm_finance/components/transport_table"
 local guiFinanceTab = require "pm_finance/components/finance_tab_widget"
@@ -28,7 +29,7 @@ function AddSummaryLineToTable(category, styleLevel)
     local labelView = ui_functions.CreateTextView(_(category), 
                                                 { styleLevel, constants.STYLE_SUMMARY_LABEL, styles.table.CELL, styles.text.LEFT_ALIGNMENT }, 
                                                 ui_functions.GetTableControlId(columns.constants.COLUMN_LABEL, category))
-    ui_functions.SetTooltipByCategory(labelView, category)
+    guiComponent.functions.SetTooltipByCategory(labelView, category)
     
     local comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, { labelView }, "0")
     comp:setStyleClassList({ styleLevel, styles.table.CELL })
@@ -37,7 +38,7 @@ function AddSummaryLineToTable(category, styleLevel)
     for i = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
         local valueView = ui_functions.CreateTextView("", { styleLevel, styles.table.CELL, styles.text.RIGHT_ALIGNMENT }, 
                                                 ui_functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, category))
-        ui_functions.SetTooltipByCategory(valueView, category)
+        guiComponent.functions.SetTooltipByCategory(valueView, category)
         
         comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, { valueView }, "0")
         comp:setStyleClassList({ styleLevel, styles.table.CELL })
@@ -46,7 +47,7 @@ function AddSummaryLineToTable(category, styleLevel)
     
     local totalView = ui_functions.CreateTextView("", { styleLevel, styles.table.CELL, styles.text.RIGHT_ALIGNMENT }, 
                                                 ui_functions.GetTableControlId(transport.constants.COLUMN_TOTAL, category))
-    ui_functions.SetTooltipByCategory(totalView, category)
+    guiComponent.functions.SetTooltipByCategory(totalView, category)
     
     comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, { totalView }, "0")
     comp:setStyleClassList({ styleLevel, styles.table.CELL })

@@ -37,8 +37,4 @@ function ui_functions.GetTableControlId(column, category, transportType)
     return "pm-" .. transportType .. "." .. category .. "." .. column
 end
 
-function ui_functions.SetTooltipByCategory(component, category)
-    component:setTooltip(_(tooltips.constants.TOOLTIP .. category))
-end
-
 return ui_functions
