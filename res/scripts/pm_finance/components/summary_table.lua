@@ -73,7 +73,12 @@ function functions.AddSummaryLineToTable(summaryTable, category, styleLevel)
 end
 
 function functions.UpdateSummaryTable(currentYearOnly)
-    for i = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
+    local index = 1
+    if (currentYearOnly) then
+        index = columns.constants.NUMBER_OF_YEARS_COLUMNS
+    end
+    
+    for i = index, columns.constants.NUMBER_OF_YEARS_COLUMNS do
         local year = calendar.functions.GetYearFromYearIndex(i)
         local journal = engineJournal.functions.GetJournal(year)
         local profit = engineJournal.functions.GetValueFromJournal(journal, transport.constants.TRANSPORT_TYPE_ALL, categories.constants.CAT_TOTAL)
@@ -83,27 +88,36 @@ function functions.UpdateSummaryTable(currentYearOnly)
         guiTextView.functions.SetFormattedText(id, profit, guiTextView.constants.TEXT_TYPE.MONEY)
         
         id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.CAT_LOAN)
-        guiTextView.functions.SetFormattedText(id, profit, guiTextView.constants.TEXT_TYPE.MONEY)
+        guiTextView.functions.SetFormattedText(id, journal.loan, guiTextView.constants.TEXT_TYPE.MONEY)
         
         id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.CAT_INTEREST)
-        guiTextView.functions.SetFormattedText(id, profit, guiTextView.constants.TEXT_TYPE.MONEY)
+        guiTextView.functions.SetFormattedText(id, journal.interest, guiTextView.constants.TEXT_TYPE.MONEY)
         
         id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.CAT_OTHER)
-        guiTextView.functions.SetFormattedText(id, profit, guiTextView.constants.TEXT_TYPE.MONEY)
+        guiTextView.functions.SetFormattedText(id, journal.construction.other._sum, guiTextView.constants.TEXT_TYPE.MONEY)
         
         id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.CAT_BALANCE)
-        guiTextView.functions.SetFormattedText(id, profit, guiTextView.constants.TEXT_TYPE.MONEY)
+        guiTextView.functions.SetFormattedText(id, balance, guiTextView.constants.TEXT_TYPE.MONEY)
     end
 
     local overallJournal = engineJournal.functions.GetJournal(0)
     local profit = engineJournal.functions.GetValueFromJournal(overallJournal, transport.constants.TRANSPORT_TYPE_ALL, categories.constants.CAT_TOTAL)
     local balance = engineJournal.functions.GetCurrentBalance()
-    
-   -- ui_functions.UpdateCellValue(profit, ui_functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_PROFIT))
-   -- ui_functions.UpdateCellValue(overallJournal.loan, ui_functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_LOAN))
-   -- ui_functions.UpdateCellValue(overallJournal.interest, ui_functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_INTEREST))
-   -- ui_functions.UpdateCellValue(balance - (profit + overallJournal.loan + overallJournal.interest), ui_functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_OTHER))
-   -- ui_functions.UpdateCellValue(balance, ui_functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_BALANCE))
+
+    local id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_PROFIT)
+    guiTextView.functions.SetFormattedText(id, profit, guiTextView.constants.TEXT_TYPE.MONEY)
+
+    id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_LOAN)
+    guiTextView.functions.SetFormattedText(id, overallJournal.loan, guiTextView.constants.TEXT_TYPE.MONEY)
+
+    id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_INTEREST)
+    guiTextView.functions.SetFormattedText(id, overallJournal.interest, guiTextView.constants.TEXT_TYPE.MONEY)
+
+    id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_OTHER)
+    guiTextView.functions.SetFormattedText(id, balance - (profit + overallJournal.loan + overallJournal.interest), guiTextView.constants.TEXT_TYPE.MONEY)
+        
+    id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.CAT_BALANCE)
+    guiTextView.functions.SetFormattedText(id, balance, guiTextView.constants.TEXT_TYPE.MONEY)
 end
 
 function functions.GetTableControlId(column, category)

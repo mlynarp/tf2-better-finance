@@ -73,11 +73,20 @@ function data()
             InitFinanceTableTab()
         end,
         guiUpdate = function()
+            if (not guiUpdate) then
+                return
+            end
+
             local currentBalance = engineJournal.functions.GetCurrentBalance()
             local currentYear = calendar.functions.GetCurrentGameYear()
-            if guiUpdate and financeTabWindow:getCurrentTab() == 0 and (currentBalance ~= lastBalance or currentYear ~= lastYear) then
-                UpdateSummaryTable(currentYear == lastYear)
+
+            if (currentBalance == lastBalance and currentYear == lastYear) then
+                return
+            end
+
+            if  (financeTabWindow:getCurrentTab() == 0)  then
                 compTransportTable.functions.UpdateTableValues(currentYear == lastYear)
+                compSummaryTable.functions.UpdateSummaryTable(currentYear == lastYear)
                 lastYear = currentYear
                 lastBalance = currentBalance
             end
