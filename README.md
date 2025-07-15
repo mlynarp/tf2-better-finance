@@ -3,6 +3,11 @@ This repository holds a mod called Better Finance Overview into the game Transpo
 
 ## Release Notes
 
+### 1.5
+* each category has its own table
+* possibility to switch between categories
+* one general summary table
+
 ### 1.4
 * show interest paid by year
 * add margin value to show company effeciency
