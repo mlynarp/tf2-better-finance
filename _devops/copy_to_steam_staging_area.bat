@@ -4,6 +4,8 @@ setlocal
 SET SRC=%~1
 SET DST="c:\Program Files (x86)\Steam\userdata\68910293\1066780\local\staging_area\pm_better-finance-overview_1"
 
+rmdir /S /Q %DST%
+
 mkdir %DST%
 mkdir %DST%\res
 

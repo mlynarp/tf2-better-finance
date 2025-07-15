@@ -4,6 +4,8 @@ setlocal
 SET SRC=%~1
 SET DST="c:\Program Files (x86)\Steam\steamapps\workshop\content\1066780\2983699219"
 
+rmdir /S /Q %DST%
+
 mkdir %DST%
 mkdir %DST%\res
 
