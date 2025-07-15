@@ -1,7 +1,7 @@
 ﻿local columns = require "pm_finance/constants/columns"
 
 local vMajor = 1
-local vMinor = 4
+local vMinor = 5
 
 -- old API
 -- http://transportfever.com/wiki/script-doc/index.html
