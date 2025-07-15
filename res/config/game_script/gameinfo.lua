@@ -6,7 +6,6 @@ local tooltips = require "pm_finance/constants/tooltips"
 local calendar = require "pm_finance/engine/calendar"
 local engineJournal = require "pm_finance/engine/journal"
 
-local ui_functions = require "pm_finance/ui_functions"
 local guiTextView = require "pm_finance/gui/text_view"
 
 local arrivaltracker = require "mission.arrivaltracker"

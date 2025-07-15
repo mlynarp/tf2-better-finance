@@ -11,7 +11,7 @@ function FormatClassNames(classes)
     return result
 end
 
-local constants = dofile(ScriptPath() .. "../../scripts/pm_finance/constants.lua")
+local styles = dofile(ScriptPath() .. "../../scripts/pm_finance/constants/styles.lua")
 
 local ROW_HEIGHT = 25
 local ICON_SIZE = 15
@@ -22,14 +22,14 @@ function data()
 	local result = { }
 	local a = ssu.makeAdder(result)
 
-    a(FormatClassNames({ constants.STYLE_SUMMARY_TABLE }),
+    a(FormatClassNames({ styles.constants.STYLE_SUMMARY_TABLE }),
 	{
 		padding = {0,0,3,0},
         size={-1, 5*ROW_HEIGHT + 5},
 		gravity = {-1.0 ,-1.0},
 	})
 
-    a(FormatClassNames({ constants.STYLE_SUMMARY_LABEL }),
+    a(FormatClassNames({ styles.constants.STYLE_SUMMARY_LABEL }),
     {
         padding = { 0, 0, 0, ICON_SIZE + TEXT_PADDING},
     })
