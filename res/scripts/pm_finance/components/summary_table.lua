@@ -22,10 +22,10 @@ function functions.CreateSummaryTable(numberOfColumns)
     local summaryTable = guiTableView.functions.CreateTableView(numberOfColumns, constants.SummaryTable.Id, constants.SummaryTable.Name)
     summaryTable:setStyleClassList({ styles.table.STYLE_SUMMARY_TABLE })
 
-    functions.AddSummaryLineToTable(summaryTable, categories.constants.CAT_PROFIT, styles.table.LEVEL_1)
-    functions.AddSummaryLineToTable(summaryTable, categories.constants.CAT_LOAN, styles.table.LEVEL_1)
-    functions.AddSummaryLineToTable(summaryTable, categories.constants.CAT_INTEREST, styles.table.LEVEL_1)
-    functions.AddSummaryLineToTable(summaryTable, categories.constants.CAT_OTHER, styles.table.LEVEL_1)
+    functions.AddSummaryLineToTable(summaryTable, categories.constants.CAT_PROFIT)
+    functions.AddSummaryLineToTable(summaryTable, categories.constants.CAT_LOAN)
+    functions.AddSummaryLineToTable(summaryTable, categories.constants.CAT_INTEREST)
+    functions.AddSummaryLineToTable(summaryTable, categories.constants.CAT_OTHER)
     functions.AddSummaryLineToTable(summaryTable, categories.constants.CAT_BALANCE, styles.table.TOTAL)
 
     summaryTable:setColWidth(0, 300)
@@ -37,11 +37,11 @@ function functions.CreateSummaryTable(numberOfColumns)
     return summaryTable
 end
 
-function functions.AddSummaryLineToTable(summaryTable, category, styleLevel)
+function functions.AddSummaryLineToTable(summaryTable, category, extraStyle)
     local row = {}
 
     local id = functions.GetTableControlId(columns.constants.COLUMN_LABEL, category)
-    local styleList = { constants.STYLE_SUMMARY_LABEL, styles.table.CELL, styles.text.LEFT_ALIGNMENT }
+    local styleList = { styles.table.CELL, styles.text.LEFT_ALIGNMENT, extraStyle }
     local labelView = guiTextView.functions.CreateTextView(_(category), id, styleList)
     guiComponent.functions.SetTooltipByCategory(labelView, category)
     
@@ -51,7 +51,7 @@ function functions.AddSummaryLineToTable(summaryTable, category, styleLevel)
 
     for i = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
         id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, category)
-        styleList = { styles.table.CELL, styles.text.RIGHT_ALIGNMENT }
+        styleList = { styles.table.CELL, styles.text.RIGHT_ALIGNMENT, extraStyle }
         labelView = guiTextView.functions.CreateTextView("", id, styleList)
         guiComponent.functions.SetTooltipByCategory(labelView, category)
         
@@ -61,7 +61,7 @@ function functions.AddSummaryLineToTable(summaryTable, category, styleLevel)
     end
     
     id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, category)
-    styleList = { styles.table.CELL, styles.text.RIGHT_ALIGNMENT }
+    styleList = { styles.table.CELL, styles.text.RIGHT_ALIGNMENT, extraStyle }
     labelView = guiTextView.functions.CreateTextView("", id, styleList)
     guiComponent.functions.SetTooltipByCategory(labelView, category)
     

@@ -15,7 +15,6 @@ table.LEVEL_1 = "pm-style-table-level-1"
 table.LEVEL_2 = "pm-style-table-level-2"
 table.EXPANDABLE = "pm-style-table-expandable"
 
-table.STYLE_SUMMARY_LABEL = "pm-style-summary-label"
 table.STYLE_SUMMARY_TABLE = "pm-style-summary-table"
 
 table.TOOLTIP = "pm-Tooltip"

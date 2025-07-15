@@ -20,20 +20,24 @@ local lastBalance = 0
 local lastYear = 0
 
 function InitFinanceTableTab()
-    financeTabWindow:getParent():getParent():setSize(api.gui.util.Size.new(1100, 800))
+    financeTabWindow:getParent():getParent():setSize(api.gui.util.Size.new(1100, 650))
     financeTabWindow:getParent():getParent():onVisibilityChange(function(visible)
         guiUpdate = visible
     end)
 
+    local financeTableLayout = financeTabWindow:getTab(0):getLayout()
+    --remove all previous widgets
+    for i = 0,  3 do
+        financeTableLayout:removeItem(financeTableLayout:getItem(0))
+    end
+
     local financeTabWidget = guiFinanceTab.functions.CreateFinanceTabWidget()
     local summaryTable = compSummaryTable.functions.CreateSummaryTable(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2)
 
-    local financeTableLayout = financeTabWindow:getTab(0):getLayout()
-    financeTableLayout:removeItem(financeTableLayout:getItem(0))
     financeTableLayout:insertItem(financeTabWidget, 0)
+    financeTableLayout:insertItem(summaryTable, 1)
+end
 
-    financeTableLayout:removeItem(financeTableLayout:getItem(3))
-    financeTableLayout:insertItem(summaryTable, 3)
 end
 
 -- ***************************

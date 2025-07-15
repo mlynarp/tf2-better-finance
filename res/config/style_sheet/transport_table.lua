@@ -38,7 +38,7 @@ function data()
 
     a(FormatClassNames({ styles.table.TOTAL }),
 	{
-		backgroundColor = ssu.makeColor(255, 255, 255, 75),
+		backgroundColor = ssu.makeColor(255, 255, 255, 50),
 		size={-1, ROW_HEIGHT + 5},
 	})
 
