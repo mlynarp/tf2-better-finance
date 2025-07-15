@@ -7,7 +7,6 @@ local styles = require "pm_finance/constants/styles"
 local calendar = require "pm_finance/engine/calendar"
 local engineJournal = require "pm_finance/engine/journal"
 
-local guiChart = require "pm_finance//gui/chart"
 local guiComponent = require "pm_finance/gui/component"
 
 local compTransportTable = require "pm_finance/components/transport_table"
@@ -36,8 +35,6 @@ function InitFinanceTableTab()
 
     financeTableLayout:insertItem(financeTabWidget, 0)
     financeTableLayout:insertItem(summaryTable, 1)
-end
-
 end
 
 -- ***************************
