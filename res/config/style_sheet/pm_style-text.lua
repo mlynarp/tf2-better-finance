@@ -1,9 +1,9 @@
-function ScriptPath()
+local function ScriptPath()
     local str = debug.getinfo(2, "S").source:sub(2)
     return str:match("(.*/)")
 end
 
-function FormatClassNames(classes)
+local function FormatClassNames(classes)
     local result = ""
     for i, className in ipairs(classes) do
         result = result .. "!" .. className
@@ -20,14 +20,14 @@ function data()
 	local result = { }
 	local a = ssu.makeAdder(result)
 
-    a(FormatClassNames({ styles.table.STYLE_SUMMARY_TABLE }),
+    a(FormatClassNames({styles.text.LEFT_ALIGNMENT}),
 	{
-		padding = {0,0,3,0},
-        size={-1, 5*ROW_HEIGHT + 5},
-		gravity = {-1.0 ,-1.0},
-        borderWidth = {2,0,0,0},
-        borderColor = {1,1,1,0.5},
-        backgroundColor = ssu.makeColor(255, 255, 255, 15),
+		textAlignment = {0, 0.5}
+	})
+
+	a(FormatClassNames({styles.text.RIGHT_ALIGNMENT}),
+	{
+		textAlignment = {1.0, 0.5}
 	})
 
     return result
