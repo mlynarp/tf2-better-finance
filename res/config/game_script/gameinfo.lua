@@ -28,7 +28,7 @@ return {
 		trackerinit()
 	end,
 	guiInit = function()
-		local earningsText = gui.textView_create("gameInfo.earningsComp.earningsText", _(categories.constants.CAT_CASHFLOW))
+		local earningsText = gui.textView_create("gameInfo.earningsComp.earningsText", _(categories.constants.CASHFLOW))
 		state.earnings = gui.textView_create("gameInfo.earningsComp.earnings", "")
 		
 		local earningsLayout = gui.boxLayout_create("gameInfo.earningsComp.layout", "HORIZONTAL")
@@ -86,14 +86,14 @@ return {
 		state.numCargo:setText(ug.formatNumber(data["cargoTransported"]))
 		
 		local journal = engineJournal.functions.GetJournal(calendar.functions.GetCurrentGameYear())
-        local cashflow = engineJournal.functions.GetValueFromJournal(journal, transport.constants.TRANSPORT_TYPE_ALL, categories.constants.CAT_CASHFLOW)
-        local income = api.util.formatMoney(engineJournal.functions.GetValueFromJournal(journal, transport.constants.TRANSPORT_TYPE_ALL, categories.constants.CAT_INCOME))
-        local maintenance = api.util.formatMoney(engineJournal.functions.GetValueFromJournal(journal, transport.constants.TRANSPORT_TYPE_ALL, categories.constants.CAT_MAINTENANCE))
+        local cashflow = engineJournal.functions.GetValueFromJournal(journal, transport.constants.ALL, categories.constants.CASHFLOW)
+        local income = api.util.formatMoney(engineJournal.functions.GetValueFromJournal(journal, transport.constants.ALL, categories.constants.INCOME))
+        local maintenance = api.util.formatMoney(engineJournal.functions.GetValueFromJournal(journal, transport.constants.ALL, categories.constants.MAINTENANCE))
 		
 		guiTextView.functions.SetFormattedText("gameInfo.earningsComp.earnings", cashflow, guiTextView.constants.TEXT_TYPE.MONEY)
         local breakdownTooltip = _(tooltips.constants.TOOLTIP_GAMEINFO) .. "\n"
-        .. "      " .. _(categories.constants.CAT_INCOME) .. ": " .. income .. "\n"
-        .. "      " .. _(categories.constants.CAT_MAINTENANCE) .. ": " .. maintenance
+        .. "      " .. _(categories.constants.INCOME) .. ": " .. income .. "\n"
+        .. "      " .. _(categories.constants.MAINTENANCE) .. ": " .. maintenance
 
         state.earningsPanel:setToolTip(breakdownTooltip)
 	end,

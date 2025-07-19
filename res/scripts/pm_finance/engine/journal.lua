@@ -16,15 +16,15 @@ function functions.GetJournal(year)
 end
 
 function functions.GetJournalKeyForTransport(transportType)
-    if transportType == transport.constants.TRANSPORT_TYPE_ROAD then
+    if transportType == transport.constants.ROAD then
         return "road"
-    elseif transportType == transport.constants.TRANSPORT_TYPE_TRAM then
+    elseif transportType == transport.constants.TRAM then
         return "tram"
-    elseif transportType == transport.constants.TRANSPORT_TYPE_RAIL then
+    elseif transportType == transport.constants.RAIL then
         return "rail"
-    elseif transportType == transport.constants.TRANSPORT_TYPE_WATER then
+    elseif transportType == transport.constants.WATER then
         return "water"
-    elseif transportType == transport.constants.TRANSPORT_TYPE_AIR then
+    elseif transportType == transport.constants.AIR then
         return "air"
     end
     return nil
@@ -33,7 +33,7 @@ end
 function functions.GetTotalValueFromJournal(journal, category)
     local result = 0
     for i = 1, #transport.constants.TRANSPORT_TYPES do
-        if (transport.constants.TRANSPORT_TYPES[i] ~= transport.constants.TRANSPORT_TYPE_ALL) then
+        if (transport.constants.TRANSPORT_TYPES[i] ~= transport.constants.ALL) then
             result = result + functions.GetValueFromJournal(journal, transport.constants.TRANSPORT_TYPES[i], category)
         end
     end
@@ -56,50 +56,50 @@ end
 
 function functions.GetValueFromJournal(journal, transportType, category)
     local transportKey = functions.GetJournalKeyForTransport(transportType)
-    if transportKey == nil and category ~= categories.constants.CAT_MARGIN then
+    if transportKey == nil and category ~= categories.constants.MARGIN then
         return functions.GetTotalValueFromJournal(journal, category)
     end
 
      --total
-    if category == categories.constants.CAT_TOTAL then
-        return  functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INCOME) +
-                functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE) +
-                functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS)
+    if category == categories.constants.TOTAL then
+        return  functions.GetValueFromJournal(journal, transportType, categories.constants.INCOME) +
+                functions.GetValueFromJournal(journal, transportType, categories.constants.MAINTENANCE) +
+                functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS)
     --income
-    elseif category == categories.constants.CAT_INCOME then
+    elseif category == categories.constants.INCOME then
         return functions.GetValueOrZero(journal.income[transportKey])
     --maintenance
-    elseif category == categories.constants.CAT_MAINTENANCE then
-        return  functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE_VEHICLES) +
-                functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE_INFRASTRUCTURE)
-    elseif category == categories.constants.CAT_MAINTENANCE_VEHICLES then
+    elseif category == categories.constants.MAINTENANCE then
+        return  functions.GetValueFromJournal(journal, transportType, categories.constants.MAINTENANCE_VEHICLES) +
+                functions.GetValueFromJournal(journal, transportType, categories.constants.MAINTENANCE_INFRASTRUCTURE)
+    elseif category == categories.constants.MAINTENANCE_VEHICLES then
         return functions.GetValueOrZero(journal.maintenance[transportKey].vehicle)
-    elseif category == categories.constants.CAT_MAINTENANCE_INFRASTRUCTURE then
+    elseif category == categories.constants.MAINTENANCE_INFRASTRUCTURE then
         return functions.GetValueOrZero(journal.maintenance[transportKey].infrastructure)
     --investment		
-    elseif category == categories.constants.CAT_INVESTMENTS then
-        return  functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_VEHICLES) +
-                functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_TRACKS) +
-                functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_ROADS) +
-                functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_INFRASTRUCTURE)
-    elseif category == categories.constants.CAT_INVESTMENTS_VEHICLES then
+    elseif category == categories.constants.INVESTMENTS then
+        return  functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS_VEHICLES) +
+                functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS_TRACKS) +
+                functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS_ROADS) +
+                functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS_INFRASTRUCTURE)
+    elseif category == categories.constants.INVESTMENTS_VEHICLES then
         return functions.GetValueOrZero(journal.acquisition[transportKey])
-    elseif category == categories.constants.CAT_INVESTMENTS_TRACKS then
+    elseif category == categories.constants.INVESTMENTS_TRACKS then
         return functions.GetValueOrZero(journal.construction[transportKey].track)
-    elseif category == categories.constants.CAT_INVESTMENTS_ROADS then
+    elseif category == categories.constants.INVESTMENTS_ROADS then
         return functions.GetValueOrZero(journal.construction[transportKey].street)
-    elseif category == categories.constants.CAT_INVESTMENTS_INFRASTRUCTURE then
+    elseif category == categories.constants.INVESTMENTS_INFRASTRUCTURE then
         return  functions.GetValueOrZero(journal.construction[transportKey].station) +
                 functions.GetValueOrZero(journal.construction[transportKey].depot) +
                 functions.GetValueOrZero(journal.construction[transportKey].signal)
     --cashflow
-    elseif category == categories.constants.CAT_CASHFLOW then
-        return  functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INCOME) +
-                functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE)
+    elseif category == categories.constants.CASHFLOW then
+        return  functions.GetValueFromJournal(journal, transportType, categories.constants.INCOME) +
+                functions.GetValueFromJournal(journal, transportType, categories.constants.MAINTENANCE)
 				
-    elseif category == categories.constants.CAT_MARGIN then
-        return  functions.GetSafePrc(functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_CASHFLOW),
-								     functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INCOME))
+    elseif category == categories.constants.MARGIN then
+        return  functions.GetSafePrc(functions.GetValueFromJournal(journal, transportType, categories.constants.CASHFLOW),
+								     functions.GetValueFromJournal(journal, transportType, categories.constants.INCOME))
     end
 end
 

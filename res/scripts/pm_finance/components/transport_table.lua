@@ -19,19 +19,19 @@ constants.TransportTable = { Id = "pm-transportTable", Name =  "TransportTable"}
 
 constants.TRANSPORT_CATEGORIES_LEVEL1 =
 {
-    categories.constants.CAT_INCOME,
-    categories.constants.CAT_MAINTENANCE,
-    categories.constants.CAT_INVESTMENTS,
-    categories.constants.CAT_TOTAL
+    categories.constants.INCOME,
+    categories.constants.MAINTENANCE,
+    categories.constants.INVESTMENTS,
+    categories.constants.TOTAL
 }
 
 constants.TRANSPORT_CATEGORIES_LEVEL2 =
 {
-    [categories.constants.CAT_INCOME] = {},
-    [categories.constants.CAT_MAINTENANCE] = { categories.constants.CAT_MAINTENANCE_VEHICLES, categories.constants.CAT_MAINTENANCE_INFRASTRUCTURE },
-    [categories.constants.CAT_INVESTMENTS] = { categories.constants.CAT_INVESTMENTS_VEHICLES, categories.constants.CAT_INVESTMENTS_INFRASTRUCTURE,
-                                               categories.constants.CAT_INVESTMENTS_TRACKS, categories.constants.CAT_INVESTMENTS_ROADS },
-    [categories.constants.CAT_TOTAL] = { categories.constants.CAT_CASHFLOW, categories.constants.CAT_MARGIN }
+    [categories.constants.INCOME] = {},
+    [categories.constants.MAINTENANCE] = { categories.constants.MAINTENANCE_VEHICLES, categories.constants.MAINTENANCE_INFRASTRUCTURE },
+    [categories.constants.INVESTMENTS] = { categories.constants.INVESTMENTS_VEHICLES, categories.constants.INVESTMENTS_INFRASTRUCTURE,
+                                               categories.constants.INVESTMENTS_TRACKS, categories.constants.INVESTMENTS_ROADS },
+    [categories.constants.TOTAL] = { categories.constants.CASHFLOW, categories.constants.MARGIN }
 }
 
 
@@ -118,7 +118,7 @@ function functions.CreateCategotryLineLabelComponent(financeTable, category, tra
     local labelView = guiTextView.functions.CreateTextView(text, id, { styles.table.CELL, styles.text.LEFT_ALIGNMENT } )
 
     local componentStyleList = { functions.GetStyleForLineLevel(level), styles.table.CELL }
-    if (category == categories.constants.CAT_TOTAL) then
+    if (category == categories.constants.TOTAL) then
         table.insert(componentStyleList, styles.table.TOTAL)
     end
 
@@ -144,7 +144,7 @@ function functions.CreateCategotryLineValueComponent(category, id)
     local comp = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, { cellView }, tostring(level))
     comp:setStyleClassList({ styles.table.CELL })
     
-    if (category == categories.constants.CAT_TOTAL) then
+    if (category == categories.constants.TOTAL) then
         comp:addStyleClass(styles.table.TOTAL)
     end
 
@@ -178,60 +178,60 @@ end
 
 function functions.RefreshTransportCategoryValues(transportType, journal, column)
     --total
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_TOTAL, transportType),
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_TOTAL),
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.TOTAL, transportType),
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.TOTAL),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
     --income
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_INCOME, transportType), 
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INCOME),
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.INCOME, transportType), 
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.INCOME),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
     --maintenance
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_MAINTENANCE, transportType), 
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE),
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.MAINTENANCE, transportType), 
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.MAINTENANCE),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_MAINTENANCE_VEHICLES, transportType), 
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE_VEHICLES),
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.MAINTENANCE_VEHICLES, transportType), 
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.MAINTENANCE_VEHICLES),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_MAINTENANCE_INFRASTRUCTURE, transportType),
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_MAINTENANCE_INFRASTRUCTURE),
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.MAINTENANCE_INFRASTRUCTURE, transportType),
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.MAINTENANCE_INFRASTRUCTURE),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
     --investment
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_INVESTMENTS, transportType),
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS),
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.INVESTMENTS, transportType),
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_INVESTMENTS_VEHICLES, transportType),
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_VEHICLES),
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.INVESTMENTS_VEHICLES, transportType),
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS_VEHICLES),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
-    if functions.IsCategoryAllowedForTransportType(transportType, categories.constants.CAT_INVESTMENTS_TRACKS) then
-        guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_INVESTMENTS_TRACKS, transportType),
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_TRACKS),
-                                        guiTextView.constants.TEXT_TYPE.MONEY)
-    end
-    if functions.IsCategoryAllowedForTransportType(transportType, categories.constants.CAT_INVESTMENTS_ROADS) then
-        guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_INVESTMENTS_ROADS, transportType),
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_ROADS),
+    if functions.IsCategoryAllowedForTransportType(transportType, categories.constants.INVESTMENTS_TRACKS) then
+        guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.INVESTMENTS_TRACKS, transportType),
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS_TRACKS),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
     end
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_INVESTMENTS_INFRASTRUCTURE, transportType),
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_INVESTMENTS_INFRASTRUCTURE),
+    if functions.IsCategoryAllowedForTransportType(transportType, categories.constants.INVESTMENTS_ROADS) then
+        guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.INVESTMENTS_ROADS, transportType),
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS_ROADS),
+                                        guiTextView.constants.TEXT_TYPE.MONEY)
+    end
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.INVESTMENTS_INFRASTRUCTURE, transportType),
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.INVESTMENTS_INFRASTRUCTURE),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
     --cashflow
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_CASHFLOW, transportType),
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_CASHFLOW),
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CASHFLOW, transportType),
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CASHFLOW),
                                         guiTextView.constants.TEXT_TYPE.MONEY)
 	--margin									
-    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.CAT_MARGIN, transportType),
-                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.CAT_MARGIN),
+    guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.MARGIN, transportType),
+                                        engineJournal.functions.GetValueFromJournal(journal, transportType, categories.constants.MARGIN),
                                         guiTextView.constants.TEXT_TYPE.PERCENTAGE)
 end
 
 function functions.IsCategoryAllowedForTransportType(transportType, category)
-    if transportType == transport.constants.TRANSPORT_TYPE_ALL then
+    if transportType == transport.constants.ALL then
         return true
     end
-    if category == categories.constants.CAT_INVESTMENTS_TRACKS and transportType ~= transport.constants.TRANSPORT_TYPE_RAIL then
+    if category == categories.constants.INVESTMENTS_TRACKS and transportType ~= transport.constants.RAIL then
         return false
-    elseif category == categories.constants.CAT_INVESTMENTS_ROADS and transportType ~= transport.constants.TRANSPORT_TYPE_ROAD then
+    elseif category == categories.constants.INVESTMENTS_ROADS and transportType ~= transport.constants.ROAD then
         return false
     end
     return true

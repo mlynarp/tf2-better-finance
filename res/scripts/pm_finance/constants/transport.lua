@@ -1,45 +1,45 @@
 local constants = {}
 local functions = {}
 
-constants.TRANSPORT_TYPE_ROAD = "Transport.Road"
-constants.TRANSPORT_TYPE_TRAM = "Transport.Tram"
-constants.TRANSPORT_TYPE_RAIL = "Transport.Rail"
-constants.TRANSPORT_TYPE_WATER = "Transport.Water"
-constants.TRANSPORT_TYPE_AIR = "Transport.Air"
-constants.TRANSPORT_TYPE_ALL = "Transport.All"
+constants.ROAD = "Transport.Road"
+constants.TRAM = "Transport.Tram"
+constants.RAIL = "Transport.Rail"
+constants.WATER = "Transport.Water"
+constants.AIR = "Transport.Air"
+constants.ALL = "Transport.All"
 
 constants.TRANSPORT_TYPES =
 { 
-    constants.TRANSPORT_TYPE_ALL,
-    constants.TRANSPORT_TYPE_ROAD,
-    constants.TRANSPORT_TYPE_TRAM,
-    constants.TRANSPORT_TYPE_RAIL,
-    constants.TRANSPORT_TYPE_WATER,
-    constants.TRANSPORT_TYPE_AIR
+    constants.ALL,
+    constants.ROAD,
+    constants.TRAM,
+    constants.RAIL,
+    constants.WATER,
+    constants.AIR
 }
 
 function functions.IconPathForTransportType(transportType)
-    if (transportType == constants.TRANSPORT_TYPE_ALL) then
+    if (transportType == constants.ALL) then
         return "ui/icons/construction-menu/filter_all.tga"
     end
 
-    if (transportType == constants.TRANSPORT_TYPE_ROAD) then
+    if (transportType == constants.ROAD) then
         return "ui/icons/construction-menu/filter_bus.tga"
     end
 
-    if (transportType == constants.TRANSPORT_TYPE_TRAM) then
+    if (transportType == constants.TRAM) then
         return "ui/icons/construction-menu/filter_tram.tga"
     end
 
-    if (transportType == constants.TRANSPORT_TYPE_RAIL) then
+    if (transportType == constants.RAIL) then
         return "ui/icons/construction-menu/filter_train.tga"
     end
 
-    if (transportType == constants.TRANSPORT_TYPE_WATER) then
+    if (transportType == constants.WATER) then
         return "ui/icons/construction-menu/filter_ship.tga"
     end
 
-    if (transportType == constants.TRANSPORT_TYPE_AIR) then
+    if (transportType == constants.AIR) then
         return "ui/icons/construction-menu/filter_plane.tga"
     end
 
