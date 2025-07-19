@@ -40,7 +40,7 @@ end
 function functions.AddSummaryLineToTable(summaryTable, category, extraStyle)
     local row = {}
 
-    local id = functions.GetTableControlId(columns.constants.COLUMN_LABEL, category)
+    local id = functions.GetTableControlId(columns.constants.LABEL, category)
     local styleList = { styles.table.CELL, styles.text.LEFT_ALIGNMENT, extraStyle }
     local labelView = guiTextView.functions.CreateTextView(_(category), id, styleList)
     guiComponent.functions.SetTooltipByCategory(labelView, category)
@@ -50,7 +50,7 @@ function functions.AddSummaryLineToTable(summaryTable, category, extraStyle)
     table.insert(row, comp)
 
     for i = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
-        id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, category)
+        id = functions.GetTableControlId(columns.constants.YEAR..i, category)
         styleList = { styles.table.CELL, styles.text.RIGHT_ALIGNMENT, extraStyle }
         labelView = guiTextView.functions.CreateTextView("", id, styleList)
         guiComponent.functions.SetTooltipByCategory(labelView, category)
@@ -60,7 +60,7 @@ function functions.AddSummaryLineToTable(summaryTable, category, extraStyle)
         table.insert(row, comp)
     end
     
-    id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, category)
+    id = functions.GetTableControlId(columns.constants.TOTAL, category)
     styleList = { styles.table.CELL, styles.text.RIGHT_ALIGNMENT, extraStyle }
     labelView = guiTextView.functions.CreateTextView("", id, styleList)
     guiComponent.functions.SetTooltipByCategory(labelView, category)
@@ -84,19 +84,19 @@ function functions.UpdateSummaryTable(currentYearOnly)
         local profit = engineJournal.functions.GetValueFromJournal(journal, transport.constants.ALL, categories.constants.TOTAL)
         local balance = engineJournal.functions.GetEndOfYearBalance(year)
 
-        local id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.PROFIT)
+        local id = functions.GetTableControlId(columns.constants.YEAR..i, categories.constants.PROFIT)
         guiTextView.functions.SetFormattedText(id, profit, guiTextView.constants.TEXT_TYPE.MONEY)
         
-        id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.LOAN)
+        id = functions.GetTableControlId(columns.constants.YEAR..i, categories.constants.LOAN)
         guiTextView.functions.SetFormattedText(id, journal.loan, guiTextView.constants.TEXT_TYPE.MONEY)
         
-        id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.INTEREST)
+        id = functions.GetTableControlId(columns.constants.YEAR..i, categories.constants.INTEREST)
         guiTextView.functions.SetFormattedText(id, journal.interest, guiTextView.constants.TEXT_TYPE.MONEY)
         
-        id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.OTHER)
+        id = functions.GetTableControlId(columns.constants.YEAR..i, categories.constants.OTHER)
         guiTextView.functions.SetFormattedText(id, journal.construction.other._sum, guiTextView.constants.TEXT_TYPE.MONEY)
         
-        id = functions.GetTableControlId(columns.constants.COLUMN_YEAR..i, categories.constants.BALANCE)
+        id = functions.GetTableControlId(columns.constants.YEAR..i, categories.constants.BALANCE)
         guiTextView.functions.SetFormattedText(id, balance, guiTextView.constants.TEXT_TYPE.MONEY)
     end
 
@@ -104,19 +104,19 @@ function functions.UpdateSummaryTable(currentYearOnly)
     local profit = engineJournal.functions.GetValueFromJournal(overallJournal, transport.constants.ALL, categories.constants.TOTAL)
     local balance = engineJournal.functions.GetCurrentBalance()
 
-    local id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.PROFIT)
+    local id = functions.GetTableControlId(columns.constants.TOTAL, categories.constants.PROFIT)
     guiTextView.functions.SetFormattedText(id, profit, guiTextView.constants.TEXT_TYPE.MONEY)
 
-    id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.LOAN)
+    id = functions.GetTableControlId(columns.constants.TOTAL, categories.constants.LOAN)
     guiTextView.functions.SetFormattedText(id, overallJournal.loan, guiTextView.constants.TEXT_TYPE.MONEY)
 
-    id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.INTEREST)
+    id = functions.GetTableControlId(columns.constants.TOTAL, categories.constants.INTEREST)
     guiTextView.functions.SetFormattedText(id, overallJournal.interest, guiTextView.constants.TEXT_TYPE.MONEY)
 
-    id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.OTHER)
+    id = functions.GetTableControlId(columns.constants.TOTAL, categories.constants.OTHER)
     guiTextView.functions.SetFormattedText(id, balance - (profit + overallJournal.loan + overallJournal.interest), guiTextView.constants.TEXT_TYPE.MONEY)
         
-    id = functions.GetTableControlId(columns.constants.COLUMN_TOTAL, categories.constants.BALANCE)
+    id = functions.GetTableControlId(columns.constants.TOTAL, categories.constants.BALANCE)
     guiTextView.functions.SetFormattedText(id, balance, guiTextView.constants.TEXT_TYPE.MONEY)
 end
 

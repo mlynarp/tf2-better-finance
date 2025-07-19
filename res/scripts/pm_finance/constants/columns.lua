@@ -1,9 +1,9 @@
 local constants = {}
 local functions = {}
 
-constants.COLUMN_LABEL = "Column.Label"
-constants.COLUMN_YEAR = "Column.Year"
-constants.COLUMN_TOTAL = "Column.Total"
+constants.LABEL = "Column.Label"
+constants.YEAR = "Column.Year"
+constants.TOTAL = "Column.Total"
 
 constants.NUMBER_OF_YEARS_COLUMNS = 4
 
