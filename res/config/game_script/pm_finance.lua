@@ -6,13 +6,18 @@ local engineJournal = require "pm_finance/engine/journal"
 local guiComponent = require "pm_finance/gui/component"
 
 local compSummaryTable = require "pm_finance/components/summary_table"
-local compTableTabWidget = require "pm_finance/components/transport_table_tab_widget"
+local compTransportTabWidget = require "pm_finance/components/transport_tab_widget"
+local compTransportTable = require "pm_finance/components/transport_table"
 
 local financeTabWindow = nil
 local tableTabWidget = nil
 local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
+
+function CreateTransportTable(transportType)
+    return compTransportTable.functions.CreateTransportTable(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2, transportType)
+end
 
 function InitFinanceTableTab()
     local financeTableLayout = financeTabWindow:getTab(0):getLayout()
@@ -21,7 +26,7 @@ function InitFinanceTableTab()
         financeTableLayout:removeItem(financeTableLayout:getItem(0))
     end
 
-    tableTabWidget = compTableTabWidget.functions.CreateTransportTableTabWidget()
+    tableTabWidget = compTransportTabWidget.functions.CreateTabWidget("Table", CreateTransportTable)
     local summaryTable = compSummaryTable.functions.CreateSummaryTable(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2)
 
     financeTableLayout:insertItem(tableTabWidget, 0)
