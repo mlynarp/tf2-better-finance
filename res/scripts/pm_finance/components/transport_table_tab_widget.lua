@@ -1,9 +1,14 @@
 local transport = require "pm_finance/constants/transport"
 local columns = require "pm_finance/constants/columns"
 
+local engineJournal = require "pm_finance/engine/journal"
+local engineCalendar = require "pm_finance/engine/calendar"
+
 local guiTabWidget = require "pm_finance/gui/tab_widget"
 local guiImageView = require "pm_finance/gui/image_view"
 local guiLayout = require "pm_finance/gui/layout"
+local guiComponent = require "pm_finance/gui/component"
+local guiTextView = require "pm_finance/gui/text_view"
 
 local compTransportTable = require "pm_finance/components/transport_table"
 
@@ -25,6 +30,23 @@ function functions.CreateTransportTableTabWidget()
 
     guiTabWidget.functions.SelectTab(tabWidget, 0)
 	return tabWidget
+end
+
+function functions.UpdateTableValues(currentYearOnly)
+    for i, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
+        if currentYearOnly then
+            compTransportTable.functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(engineCalendar.functions.GetCurrentGameYear()), columns.constants.YEAR .. columns.constants.NUMBER_OF_YEARS_COLUMNS)
+        else
+            for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
+                local year = engineCalendar.functions.GetYearFromYearIndex(j)
+                compTransportTable.functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(year), columns.constants.YEAR .. j)
+                local id = compTransportTable.functions.GetHeaderColumnId(columns.constants.YEAR .. j, transportType)
+                local textView = guiComponent.functions.FindById(id)
+                guiTextView.functions.SetText(textView, tostring(year))
+            end
+        end
+        compTransportTable.functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(0), columns.constants.TOTAL)
+    end
 end
 
 local transportTableTabWidget = {}

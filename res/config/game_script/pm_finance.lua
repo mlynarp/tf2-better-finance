@@ -5,7 +5,6 @@ local engineJournal = require "pm_finance/engine/journal"
 
 local guiComponent = require "pm_finance/gui/component"
 
-local compTransportTable = require "pm_finance/components/transport_table"
 local compSummaryTable = require "pm_finance/components/summary_table"
 local compTableTabWidget = require "pm_finance/components/transport_table_tab_widget"
 

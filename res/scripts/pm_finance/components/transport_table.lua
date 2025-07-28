@@ -159,23 +159,6 @@ function functions.GetStyleForLineLevel(level)
     end
 end
 
-function functions.UpdateTableValues(currentYearOnly)
-    for i, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
-        if currentYearOnly then
-            functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(calendar.functions.GetCurrentGameYear()), columns.constants.YEAR .. columns.constants.NUMBER_OF_YEARS_COLUMNS)
-        else
-            for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
-                local year = calendar.functions.GetYearFromYearIndex(j)
-                functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(year), columns.constants.YEAR .. j)
-                local id = functions.GetHeaderColumnId(columns.constants.YEAR .. j, transportType)
-                local textView = guiComponent.functions.FindById(id)
-                guiTextView.functions.SetText(textView, tostring(year))
-            end
-        end
-        functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(0), columns.constants.TOTAL)
-    end
-end
-
 function functions.RefreshTransportCategoryValues(transportType, journal, column)
     --total
     guiTextView.functions.SetFormattedText(functions.GetTableControlId(column, categories.constants.TOTAL, transportType),
