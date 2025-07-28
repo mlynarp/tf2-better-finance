@@ -121,9 +121,7 @@ function functions.UpdateSummaryTable(currentYearOnly)
 end
 
 function functions.GetTableControlId(column, category)
-    local id = constants.SummaryTable.Id .. "." .. category .. "." .. column
-    print(id)
-    return id
+    return constants.SummaryTable.Id .. "." .. category .. "." .. column
 end
 
 local result = {}

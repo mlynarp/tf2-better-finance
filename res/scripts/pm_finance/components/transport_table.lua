@@ -246,9 +246,7 @@ function functions.GetHeaderColumnId(column, transportType)
 end
 
 function functions.GetTableControlId(column, category, transportType)
-    local id =  constants.TransportTable.Id .. "." .. transportType .. "." .. category .. "." .. column
-    print(id)
-    return id
+    return constants.TransportTable.Id .. "." .. transportType .. "." .. category .. "." .. column
 end
 
 local result = {}
