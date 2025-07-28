@@ -10,27 +10,25 @@ local compTransportTable = require "pm_finance/components/transport_table"
 local constants = {}
 local functions = {}
 
-constants.FinanceTabWidget = { Id = "pm-financeTabWidget", Name =  "FinanceTabWidget"}
-constants.TransportTable = { Id = "pm-transportTable", Name =  "TransportTable"}
+constants.TransportTableTabWidget = { Id = "pm-transportTableTabWidget", Name =  "TransportTableTabWidget"}
 
-
-function functions.CreateFinanceTabWidget()
-	local financeTabWidget = guiTabWidget.functions.CreateTabWidget(guiTabWidget.constants.ORIENTATION.TOP, constants.FinanceTabWidget.Id, constants.FinanceTabWidget.Name)
+function functions.CreateTransportTableTabWidget()
+	local tabWidget = guiTabWidget.functions.CreateTabWidget(guiTabWidget.constants.ORIENTATION.TOP, constants.TransportTableTabWidget.Id, constants.TransportTableTabWidget.Name)
 
     for i, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
         local iconView = guiImageView.functions.CreateImageView(transport.functions.IconPathForTransportType(transportType))
         iconView:setTooltip(_(transportType))
         
         local table = compTransportTable.functions.CreateTransportTable(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2, transportType)
-        guiTabWidget.functions.AddTab(financeTabWidget, guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, {iconView}, ""), table)
+        guiTabWidget.functions.AddTab(tabWidget, guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, {iconView}, ""), table)
     end
 
-    guiTabWidget.functions.SelectTab(financeTabWidget, 0)
-	return financeTabWidget
+    guiTabWidget.functions.SelectTab(tabWidget, 0)
+	return tabWidget
 end
 
-local financeTabWidget = {}
-financeTabWidget.constants = constants
-financeTabWidget.functions = functions
+local transportTableTabWidget = {}
+transportTableTabWidget.constants = constants
+transportTableTabWidget.functions = functions
 
-return financeTabWidget
+return transportTableTabWidget
