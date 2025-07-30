@@ -28,8 +28,7 @@ function functions.CreateTransportChart(transportType)
 
     local seriesLabels = {}
     for i, category in pairs(constants.Categories) do
-        financeChart:setType(i-1 , functions.GetSerieType(category))
-        financeChart:setColor(i-1, functions.GetColorForCategory(category))
+        guiChart.functions.SetupSerie(financeChart, i-1, functions.GetSerieType(category), functions.GetColorForCategory(category))
         table.insert(seriesLabels, _(category))
     end
 

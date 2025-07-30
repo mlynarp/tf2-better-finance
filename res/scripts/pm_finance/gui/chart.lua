@@ -21,6 +21,11 @@ function functions.SetYAxis(chart, minValue, maxValue, values, formatFn)
     chart:setLabelFormatter(constants.AXIS.Y, formatFn)
 end
 
+function functions.SetupSerie(chart, index, type, color)
+    chart:setType(index, type)
+    chart:setColor(index, color)
+end
+
 function functions.AddSerie(type, xValues, yValues)
     
 end
