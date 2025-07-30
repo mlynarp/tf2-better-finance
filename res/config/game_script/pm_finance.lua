@@ -9,8 +9,10 @@ local guiComponent = require "pm_finance/gui/component"
 local compSummaryTable = require "pm_finance/components/summary_table"
 local compTransportTabWidget = require "pm_finance/components/transport_tab_widget"
 local compTransportTable = require "pm_finance/components/transport_table"
+local compTransportChart = require "pm_finance/components/transport_chart"
 
 local financeTabWindow = nil
+
 local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
@@ -27,6 +29,15 @@ function InitFinanceTableTab()
 
     financeTableLayout:insertItem(tableTabWidget, 0)
     financeTableLayout:insertItem(summaryTable, 1)
+end
+
+function InitFinanceChartTab()
+    local financeChartLayout = financeTabWindow:getTab(1):getLayout()
+    financeChartLayout:removeItem(financeChartLayout:getItem(1))
+
+    local chartTabWidget = compTransportTabWidget.functions.CreateTabWidget("Chart", compTransportChart.functions.CreateTransportChart)
+
+    financeChartLayout:insertItem(chartTabWidget, 0)
 end
 
 -- ***************************
@@ -68,6 +79,9 @@ function data()
                 guiUpdate = visible
             end)
             InitFinanceTableTab()
+            InitFinanceChartTab()
+
+
         end,
         guiUpdate = function()
             if (not guiUpdate) then
@@ -85,10 +99,16 @@ function data()
                 for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
                     compTransportTable.functions.UpdateTableValues(currentYear == lastYear, transportType)
                 end
-                
+
                 compSummaryTable.functions.UpdateSummaryTable(currentYear == lastYear)
                 lastYear = currentYear
                 lastBalance = currentBalance
+            end
+
+            if  (financeTabWindow:getCurrentTab() == 1)  then
+                for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
+                    compTransportChart.functions.UpdateChart(5, transportType)
+                end
             end
         end,
     }
