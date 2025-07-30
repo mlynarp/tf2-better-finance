@@ -23,8 +23,8 @@ constants.Categories = { categories.constants.TOTAL, categories.constants.CASHFL
 
 function functions.CreateTransportChart(transportType)
     local financeChart = guiChart.functions.CreateChart(functions.GetChartId(transportType))
-    guiChart.functions.SetXAxis(financeChart, 1850, 1855, {1851, 1852, 1853, 1854, 1855}, tostring)
-    guiChart.functions.SetYAxis(financeChart, -5000000, 15000000, {-2000000, 0, 2000000, 4000000, 6000000, 8000000, 10000000, 12000000, 14000000}, api.util.formatMoney)
+    guiChart.functions.SetXAxis(financeChart, 1850, 1882, {1851}, tostring)
+    guiChart.functions.SetYAxis(financeChart, 0, 100000, {50000}, api.util.formatMoney)
 
     local seriesLabels = {}
     for i, category in pairs(constants.Categories) do
