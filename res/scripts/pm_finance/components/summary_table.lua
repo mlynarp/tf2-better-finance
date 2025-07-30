@@ -11,14 +11,13 @@ local guiTableView = require "pm_finance/gui/table_view"
 local guiLayout = require "pm_finance/gui/layout"
 local guiComponent = require "pm_finance/gui/component"
 
-
 local constants = {}
 local functions = {}
 
 constants.SummaryTable = { Id = "pm-summaryTable", Name =  "SummaryTable"}
 
-function functions.CreateSummaryTable(numberOfColumns)
-    
+function functions.CreateSummaryTable()
+    local numberOfColumns = columns.constants.NUMBER_OF_YEARS_COLUMNS + 2
     local summaryTable = guiTableView.functions.CreateTableView(numberOfColumns, constants.SummaryTable.Id, constants.SummaryTable.Name)
     summaryTable:setStyleClassList({ styles.table.STYLE_SUMMARY_TABLE })
 

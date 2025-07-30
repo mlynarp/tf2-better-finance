@@ -9,8 +9,8 @@ local functions = {}
 
 constants.TransportTabWidget = { Id = "pm-transportTabWidget", Name =  "TransportTabWidget"}
 
-function functions.CreateTabWidget(id, contentFunction)
-	local tabWidget = guiTabWidget.functions.CreateTabWidget(guiTabWidget.constants.ORIENTATION.TOP, constants.TransportTabWidget.Id .. id, constants.TransportTabWidget.Name)
+function functions.CreateTabWidget(subId, contentFunction)
+	local tabWidget = guiTabWidget.functions.CreateTabWidget(guiTabWidget.constants.ORIENTATION.TOP, constants.TransportTabWidget.Id .. subId, constants.TransportTabWidget.Name)
 
     for i, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
         local iconView = guiImageView.functions.CreateImageView(transport.functions.IconPathForTransportType(transportType))

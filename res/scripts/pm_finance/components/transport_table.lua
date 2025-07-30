@@ -36,7 +36,8 @@ constants.TRANSPORT_CATEGORIES_LEVEL2 =
 
 
 
-function functions.CreateTransportTable(numberOfColumns, transportType)
+function functions.CreateTransportTable(transportType)
+    local numberOfColumns = columns.constants.NUMBER_OF_YEARS_COLUMNS + 2
     local financeTable = guiTableView.functions.CreateTableView(numberOfColumns, functions.GetTableId(transportType), constants.TransportTable.Name)
     functions.AddTransportTableHeaders(financeTable, transportType)
 
@@ -159,21 +160,19 @@ function functions.GetStyleForLineLevel(level)
     end
 end
 
-function functions.UpdateTableValues(currentYearOnly)
-    for i, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
-        if currentYearOnly then
-            functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(engineCalendar.functions.GetCurrentGameYear()), columns.constants.YEAR .. columns.constants.NUMBER_OF_YEARS_COLUMNS)
-        else
-            for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
-                local year = engineCalendar.functions.GetYearFromYearIndex(j)
-                functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(year), columns.constants.YEAR .. j)
-                local id = functions.GetHeaderColumnId(columns.constants.YEAR .. j, transportType)
-                local textView = guiComponent.functions.FindById(id)
-                guiTextView.functions.SetText(textView, tostring(year))
-            end
+function functions.UpdateTableValues(currentYearOnly, transportType)
+    if currentYearOnly then
+        functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(engineCalendar.functions.GetCurrentGameYear()), columns.constants.YEAR .. columns.constants.NUMBER_OF_YEARS_COLUMNS)
+    else
+        for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
+            local year = engineCalendar.functions.GetYearFromYearIndex(j)
+            functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(year), columns.constants.YEAR .. j)
+            local id = functions.GetHeaderColumnId(columns.constants.YEAR .. j, transportType)
+            local textView = guiComponent.functions.FindById(id)
+            guiTextView.functions.SetText(textView, tostring(year))
         end
-        functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(0), columns.constants.TOTAL)
     end
+    functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(0), columns.constants.TOTAL)
 end
 
 function functions.RefreshTransportCategoryValues(transportType, journal, column)

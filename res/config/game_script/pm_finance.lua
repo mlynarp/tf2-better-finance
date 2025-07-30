@@ -1,4 +1,5 @@
 local columns = require "pm_finance/constants/columns"
+local transport = require "pm_finance/constants/transport"
 
 local engineCalendar = require "pm_finance/engine/calendar"
 local engineJournal = require "pm_finance/engine/journal"
@@ -10,24 +11,19 @@ local compTransportTabWidget = require "pm_finance/components/transport_tab_widg
 local compTransportTable = require "pm_finance/components/transport_table"
 
 local financeTabWindow = nil
-local tableTabWidget = nil
 local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
 
-function CreateTransportTable(transportType)
-    return compTransportTable.functions.CreateTransportTable(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2, transportType)
-end
-
 function InitFinanceTableTab()
     local financeTableLayout = financeTabWindow:getTab(0):getLayout()
-    --remove all previous widgets
+
     for i = 0, 3 do
         financeTableLayout:removeItem(financeTableLayout:getItem(0))
     end
 
-    tableTabWidget = compTransportTabWidget.functions.CreateTabWidget("Table", CreateTransportTable)
-    local summaryTable = compSummaryTable.functions.CreateSummaryTable(columns.constants.NUMBER_OF_YEARS_COLUMNS + 2)
+    local tableTabWidget = compTransportTabWidget.functions.CreateTabWidget("Table", compTransportTable.functions.CreateTransportTable)
+    local summaryTable = compSummaryTable.functions.CreateSummaryTable()
 
     financeTableLayout:insertItem(tableTabWidget, 0)
     financeTableLayout:insertItem(summaryTable, 1)
@@ -86,7 +82,10 @@ function data()
             end
 
             if  (financeTabWindow:getCurrentTab() == 0)  then
-                compTransportTable.functions.UpdateTableValues(currentYear == lastYear)
+                for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
+                    compTransportTable.functions.UpdateTableValues(currentYear == lastYear, transportType)
+                end
+                
                 compSummaryTable.functions.UpdateSummaryTable(currentYear == lastYear)
                 lastYear = currentYear
                 lastBalance = currentBalance
