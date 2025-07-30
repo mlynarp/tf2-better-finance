@@ -42,12 +42,25 @@ function functions.UpdateChart(years, transportType)
     local financeChart = guiComponent.functions.FindById(functions.GetChartId(transportType))
     financeChart:clear()
 
+    local yMinValue = 0
+    local yMaxValue = 0
+
     for i, category in pairs(constants.Categories) do
         local serie = engineChart.functions.GenerateTransportCategorySerie(years, transportType, category)
         financeChart:addSeries(serie.xValues, serie.yValues)
+        yMinValue = math.min(yMinValue, serie.yMinValue)
+        yMaxValue = math.max(yMaxValue, serie.yMaxValue)
     end
-end
 
+    guiChart.functions.SetXAxis(financeChart, years[1] - 1, years[#years] + 1, years, tostring)
+    
+    if yMaxValue == 0 then
+        yMaxValue = 100000
+    end
+
+    local yValues = engineChart.functions.GenerateAxisTicks(yMinValue, yMaxValue, 6)
+    guiChart.functions.SetYAxis(financeChart, yValues[1], yValues[#yValues], yValues, api.util.formatMoney)
+end
 
 function functions.GetChartId(transportType)
     return constants.TransportChart.Id .. "." .. transportType

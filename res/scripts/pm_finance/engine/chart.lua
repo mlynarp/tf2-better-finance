@@ -31,6 +31,36 @@ function functions.GetChartValue(value, category)
     return math.abs(value)
 end
 
+function functions.GenerateAxisTicks(minVal, maxVal, desiredCount)
+    local range = maxVal - minVal
+
+    -- Step 1: Calculate raw step size
+    local roughStep = range / (desiredCount - 1)
+
+    -- Step 2: Find a "nice" rounded step size
+    local magnitude = 10 ^ math.floor(math.log(roughStep, 10))
+    local fractions = {1, 2, 2.5, 5, 10}
+    local niceStep = fractions[1] * magnitude
+    for _, f in ipairs(fractions) do
+        niceStep = f * magnitude
+        if niceStep > roughStep then
+            break
+        end
+    end
+
+    -- Step 3: Expand range outward to align with niceStep
+    local startVal = math.floor(minVal / niceStep) * niceStep
+    local endVal = math.ceil(maxVal / niceStep) * niceStep
+
+    -- Step 4: Generate ticks
+    local ticks = {}
+    for val = startVal, endVal, niceStep do
+        table.insert(ticks, math.floor(val + 0.5)) -- round to nearest int
+    end
+
+    return ticks
+end
+
 
 local chart = {}
 chart.constants = constants
