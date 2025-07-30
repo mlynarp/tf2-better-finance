@@ -107,7 +107,7 @@ function data()
 
             if  (financeTabWindow:getCurrentTab() == 1)  then
                 for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
-                    compTransportChart.functions.UpdateChart(5, transportType)
+                    compTransportChart.functions.UpdateChart({1850, 1851, 1852, 1853, 1854, 1855}, transportType)
                 end
             end
         end,
