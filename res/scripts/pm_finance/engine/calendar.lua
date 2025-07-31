@@ -77,6 +77,16 @@ function functions.GetYearFromYearIndex(yearIndex)
     return functions.GetCurrentGameYear() - columns.constants.NUMBER_OF_YEARS_COLUMNS + yearIndex
 end
 
+function functions.GetYearsFromCount(yearsCount)
+    local years = {}
+    local currentYear = functions.GetCurrentGameYear()
+    for i = yearsCount - 1, 0, -1 do
+        table.insert(years, currentYear - i)
+    end
+
+    return years
+end
+
 calendar.constants = constants
 calendar.functions = functions
 

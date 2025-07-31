@@ -12,10 +12,12 @@ local compTransportTable = require "pm_finance/components/transport_table"
 local compTransportChart = require "pm_finance/components/transport_chart"
 
 local financeTabWindow = nil
+local yearsSlider = nil
 
 local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
+local sliderChanged = true
 
 function InitFinanceTableTab()
     local financeTableLayout = financeTabWindow:getTab(0):getLayout()
@@ -33,11 +35,17 @@ end
 
 function InitFinanceChartTab()
     local financeChartLayout = financeTabWindow:getTab(1):getLayout()
+    yearsSlider = financeChartLayout:getItem(0):getLayout():getItem(1)
+    yearsSlider:onValueChanged(function(value) 
+        sliderChanged = true
+	end)
     financeChartLayout:removeItem(financeChartLayout:getItem(1))
 
     local chartTabWidget = compTransportTabWidget.functions.CreateTabWidget("Chart", compTransportChart.functions.CreateTransportChart)
 
     financeChartLayout:insertItem(chartTabWidget, 0)
+
+    
 end
 
 -- ***************************
@@ -90,12 +98,9 @@ function data()
 
             local currentBalance = engineJournal.functions.GetCurrentBalance()
             local currentYear = engineCalendar.functions.GetCurrentGameYear()
-
-            if (currentBalance == lastBalance and currentYear == lastYear) then
-                return
-            end
-
-            if  (financeTabWindow:getCurrentTab() == 0)  then
+            local dataChanged = currentBalance ~= lastBalance or currentYear ~= lastYear
+            
+            if  (financeTabWindow:getCurrentTab() == 0 and dataChanged)  then
                 for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
                     compTransportTable.functions.UpdateTableValues(currentYear == lastYear, transportType)
                 end
@@ -105,10 +110,11 @@ function data()
                 lastBalance = currentBalance
             end
 
-            if  (financeTabWindow:getCurrentTab() == 1)  then
+            if  (financeTabWindow:getCurrentTab() == 1 and (dataChanged or sliderChanged))  then
                 for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
-                    compTransportChart.functions.UpdateChart({1850, 1851, 1852, 1853, 1854, 1855}, transportType)
+                    compTransportChart.functions.UpdateChart(engineCalendar.functions.GetYearsFromCount(yearsSlider:getValue()), transportType)
                 end
+                sliderChanged = false
             end
         end,
     }
