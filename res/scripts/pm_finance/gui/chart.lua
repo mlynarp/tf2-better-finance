@@ -26,8 +26,8 @@ function functions.SetupSerie(chart, index, type, color)
     chart:setColor(index, color)
 end
 
-function functions.AddSerie(type, xValues, yValues)
-    
+function functions.MakeColor(intRGBA)
+	return api.type.Vec4f.new(intRGBA[1] / 255.0, intRGBA[2] / 255.0, intRGBA[3] / 255.0, intRGBA[4] / 255.0)
 end
 
 local chart = {}

@@ -67,23 +67,23 @@ end
 
 function functions.GetColorForCategory(category)
     if category == categories.constants.INCOME then
-        return api.type.Vec4f.new(0,0,255,25)
+        return guiChart.functions.MakeColor({153,204,255,255})
     end
 
     if category == categories.constants.MAINTENANCE then
-        return api.type.Vec4f.new(255,0,0,25)
+        return guiChart.functions.MakeColor({255,153,153,255})
     end
 
     if category == categories.constants.INVESTMENTS then
-        return api.type.Vec4f.new(0,255,0,25)
+        return guiChart.functions.MakeColor({98,237,52,255})
     end
 
     if category == categories.constants.TOTAL then
-        return api.type.Vec4f.new(0,0,0,5)
+        return guiChart.functions.MakeColor({255,255,255,255})
     end
 
     if category == categories.constants.CASHFLOW then
-        return api.type.Vec4f.new(255,0,255,128)
+        return guiChart.functions.MakeColor({8,0,255,255})
     end
 end
 
@@ -95,28 +95,7 @@ function functions.GetSerieType(category)
     return guiChart.constants.TYPE.BAR
 end
 
-
-            --financeChart:onStep( function(totaltime, steptime)  -- Highlight deac 
-            --    financeChart:clear()
-            --    financeChart:addSeries({ 0}, { 0})
-            --    financeChart:addSeries({ 0}, { 0})
-            --    financeChart:addSeries({ 0, 1, 2, 3 }, { 150000, 1800000, -500000, 250000})
-            --    financeChart:setAxis(0, -1, 6, { 0.2, 1.2, 2.2, 2.8, 3.6, 4.3, 5.0 })
-            --    financeChart:setAxis(1, -1000000, 3000000, { -1000000, 0, 1000000, 2000000, 3000000 })
-            --end)
-
-            --financeChart:invokeLater( function(totaltime, steptime)  -- Highlight deac 
-            --    financeChart:clear()
-            --    financeChart:addSeries({ 0}, { 0})
-            --    financeChart:addSeries({ 0}, { 0})
-            --    financeChart:addSeries({ 0, 1, 2, 3 }, { 150000, 1800000, -500000, 250000})
-            --    financeChart:setAxis(0, -1, 6, { 0.2, 1.2, 2.2, 2.8, 3.6, 4.3, 5.0 })
-            --    financeChart:setAxis(1, -1000000, 3000000, { -1000000, 0, 1000000, 2000000, 3000000 })
-            --end)
-
---api.gui.util.getById("menu.finances.category"):getTab(1):getLayout():getItem(2):setVisible(false, false)
 --game.interface.getLog(16579, "", { year = 1850, day = 1, month = 1})
-
 
 local result = {}
 result.constants = constants
