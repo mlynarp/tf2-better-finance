@@ -19,7 +19,7 @@ local lastBalance = 0
 local lastYear = 0
 local sliderChanged = true
 
-function InitFinanceTableTab()
+local function InitFinanceTableTab()
     local financeTableLayout = financeTabWindow:getTab(0):getLayout()
 
     for i = 0, 3 do
@@ -33,7 +33,19 @@ function InitFinanceTableTab()
     financeTableLayout:insertItem(summaryTable, 1)
 end
 
-function InitFinanceChartTab()
+local function UpdateFinanceTable(dataChanged, currentYear, currentBalance)
+    if  (financeTabWindow:getCurrentTab() == 0 and dataChanged)  then
+        for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
+            compTransportTable.functions.UpdateTableValues(currentYear == lastYear, transportType)
+        end
+
+        compSummaryTable.functions.UpdateSummaryTable(currentYear == lastYear)
+        lastYear = currentYear
+        lastBalance = currentBalance
+    end
+end
+
+local function InitFinanceChartTab()
     local financeChartLayout = financeTabWindow:getTab(1):getLayout()
     yearsSlider = financeChartLayout:getItem(0):getLayout():getItem(1)
     yearsSlider:onValueChanged(function(value) 
@@ -44,8 +56,15 @@ function InitFinanceChartTab()
     local chartTabWidget = compTransportTabWidget.functions.CreateTabWidget("Chart", compTransportChart.functions.CreateTransportChart)
 
     financeChartLayout:insertItem(chartTabWidget, 0)
+end
 
-    
+local function UpdateFinanceChart(dataChanged)
+    if  (financeTabWindow:getCurrentTab() == 1 and (dataChanged or sliderChanged))  then
+        for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
+            compTransportChart.functions.UpdateChart(engineCalendar.functions.GetYearsFromCount(yearsSlider:getValue()), transportType)
+        end
+        sliderChanged = false
+    end
 end
 
 -- ***************************
@@ -99,23 +118,9 @@ function data()
             local currentBalance = engineJournal.functions.GetCurrentBalance()
             local currentYear = engineCalendar.functions.GetCurrentGameYear()
             local dataChanged = currentBalance ~= lastBalance or currentYear ~= lastYear
-            
-            if  (financeTabWindow:getCurrentTab() == 0 and dataChanged)  then
-                for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
-                    compTransportTable.functions.UpdateTableValues(currentYear == lastYear, transportType)
-                end
 
-                compSummaryTable.functions.UpdateSummaryTable(currentYear == lastYear)
-                lastYear = currentYear
-                lastBalance = currentBalance
-            end
-
-            if  (financeTabWindow:getCurrentTab() == 1 and (dataChanged or sliderChanged))  then
-                for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
-                    compTransportChart.functions.UpdateChart(engineCalendar.functions.GetYearsFromCount(yearsSlider:getValue()), transportType)
-                end
-                sliderChanged = false
-            end
+            UpdateFinanceTable(dataChanged, currentYear, currentBalance)
+            UpdateFinanceChart(dataChanged)
         end,
     }
 end
