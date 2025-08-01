@@ -10,6 +10,7 @@ local compSummaryTable = require "pm_finance/components/summary_table"
 local compTransportTabWidget = require "pm_finance/components/transport_tab_widget"
 local compTransportTable = require "pm_finance/components/transport_table"
 local compTransportChart = require "pm_finance/components/transport_chart"
+local compLegendWidget = require "pm_finance/components/legend_widget"
 
 local financeTabWindow = nil
 local yearsSlider = nil
@@ -52,9 +53,12 @@ local function InitFinanceChartTab()
         sliderChanged = true
 	end)
     financeChartLayout:removeItem(financeChartLayout:getItem(1))
+    financeChartLayout:removeItem(financeChartLayout:getItem(1))
+
+    local chartLegendWidget = compLegendWidget.functions.CreateLegendWidget(compTransportChart.functions.GetSeriesLabels(), compTransportChart.functions.GetSeriesColor())
+    financeChartLayout:getItem(0):getLayout():insertItem(chartLegendWidget, 0)
 
     local chartTabWidget = compTransportTabWidget.functions.CreateTabWidget("Chart", compTransportChart.functions.CreateTransportChart)
-
     financeChartLayout:insertItem(chartTabWidget, 0)
 end
 
@@ -107,8 +111,6 @@ function data()
             end)
             InitFinanceTableTab()
             InitFinanceChartTab()
-
-
         end,
         guiUpdate = function()
             if (not guiUpdate) then
