@@ -26,15 +26,32 @@ function functions.CreateTransportChart(transportType)
     guiChart.functions.SetXAxis(financeChart, 1850, 1882, {1851}, tostring)
     guiChart.functions.SetYAxis(financeChart, 0, 100000, {50000}, api.util.formatMoney)
 
-    local seriesLabels = {}
     for i, category in pairs(constants.Categories) do
         guiChart.functions.SetupSerie(financeChart, i-1, functions.GetSerieType(category), functions.GetColorForCategory(category))
+    end
+
+    financeChart:setSeriesLabels(functions.GetSeriesLabels())
+
+    return financeChart
+end
+
+function functions.GetSeriesLabels()
+    local seriesLabels = {}
+    for i, category in pairs(constants.Categories) do
         table.insert(seriesLabels, _(category))
     end
 
-    financeChart:setSeriesLabels(seriesLabels)
+    return seriesLabels
+end
 
-    return financeChart
+function functions.GetSeriesColor()
+    local colors = {}
+    for i, category in pairs(constants.Categories) do
+        local color = functions.GetColorForCategory(category)
+        table.insert(colors, api.type.Vec3f.new(color[1], color[2], color[3]))
+    end
+
+    return colors
 end
 
 function functions.UpdateChart(years, transportType)
