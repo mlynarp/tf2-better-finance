@@ -7,6 +7,10 @@ function functions.FindById(id)
     return api.gui.util.getById(id)
 end
 
+function functions.CreateSpacer()
+    return api.gui.comp.Component.new("Spacer")
+end
+
 function functions.SetTooltipByCategory(comp, category)
     comp:setTooltip(_(tooltips.constants.TOOLTIP .. category))
 end

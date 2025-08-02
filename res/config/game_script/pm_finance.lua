@@ -5,6 +5,7 @@ local engineCalendar = require "pm_finance/engine/calendar"
 local engineJournal = require "pm_finance/engine/journal"
 
 local guiComponent = require "pm_finance/gui/component"
+local guiLayout = require "pm_finance/gui/layout"
 
 local compSummaryTable = require "pm_finance/components/summary_table"
 local compTransportTabWidget = require "pm_finance/components/transport_tab_widget"
@@ -48,18 +49,25 @@ end
 
 local function InitFinanceChartTab()
     local financeChartLayout = financeTabWindow:getTab(1):getLayout()
-    yearsSlider = financeChartLayout:getItem(0):getLayout():getItem(1)
+    local sliderComponent = financeChartLayout:getItem(0)
+
+    for i = 0, financeChartLayout:getNumItems() - 1 do
+        financeChartLayout:removeItem(financeChartLayout:getItem(0))
+    end
+
+    local chartTabWidget = compTransportTabWidget.functions.CreateTabWidget("Chart", compTransportChart.functions.CreateTransportChart)
+    financeChartLayout:addItem(chartTabWidget)
+    
+    local chartLegendWidget = compLegendWidget.functions.CreateLegendWidget(compTransportChart.functions.GetSeriesLabels(), compTransportChart.functions.GetSeriesColor())
+    local spacer = guiComponent.functions.CreateSpacer()
+    local legendBar = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, {chartLegendWidget, spacer, sliderComponent}, "LegendSliderBar")
+    financeChartLayout:addItem(legendBar)
+
+    yearsSlider = sliderComponent:getLayout():getItem(1)
     yearsSlider:onValueChanged(function(value) 
         sliderChanged = true
 	end)
-    financeChartLayout:removeItem(financeChartLayout:getItem(1))
-    financeChartLayout:removeItem(financeChartLayout:getItem(1))
-
-    local chartLegendWidget = compLegendWidget.functions.CreateLegendWidget(compTransportChart.functions.GetSeriesLabels(), compTransportChart.functions.GetSeriesColor())
-    financeChartLayout:getItem(0):getLayout():insertItem(chartLegendWidget, 0)
-
-    local chartTabWidget = compTransportTabWidget.functions.CreateTabWidget("Chart", compTransportChart.functions.CreateTransportChart)
-    financeChartLayout:insertItem(chartTabWidget, 0)
+    
 end
 
 local function UpdateFinanceChart(dataChanged)
