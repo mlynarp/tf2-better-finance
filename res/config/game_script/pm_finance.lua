@@ -3,6 +3,7 @@ local transport = require "pm_finance/constants/transport"
 
 local engineCalendar = require "pm_finance/engine/calendar"
 local engineJournal = require "pm_finance/engine/journal"
+local engineGameState = require "pm_finance/engine/game-state"
 
 local guiComponent = require "pm_finance/gui/component"
 local guiLayout = require "pm_finance/gui/layout"
@@ -85,29 +86,27 @@ end
 function data()
     return {
         save = function()
-            engineCalendar.gameState["gameTime"] = game.interface.getGameTime().time * 1000
-            return engineCalendar.gameState
+            engineGameState.gameData["gameTime"] = game.interface.getGameTime().time * 1000
+            return engineGameState.gameData
         end,
         load = function(data)
             if not data then
-                local gameState = {}
                 local currentYear = engineCalendar.functions.GetCurrentGameYear()
                 for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
-                    gameState[tostring(currentYear)] = engineCalendar.functions.GetYearStartTime(currentYear)
+                    engineGameState.gameData[tostring(currentYear)] = engineCalendar.functions.GetYearStartTime(currentYear)
                     currentYear = currentYear - 1
                 end
-                engineCalendar.gameState = gameState
             else
-                engineCalendar.gameState = data
+                engineGameState.gameData = data
             end
         end,
         update = function()
             local currentYear = engineCalendar.functions.GetCurrentGameYear()
             if currentYear ~= lastYear then
                 lastYear = currentYear
-                local currentYearState = engineCalendar.functions.GetGameStatePerYear(currentYear)
+                local currentYearState = engineGameState.functions.GetYearState(currentYear)
                 if currentYearState == nil then
-                    engineCalendar.gameState[tostring(currentYear)] = engineCalendar.functions.GetYearStartTime(currentYear)
+                    engineGameState.gameData[tostring(currentYear)] = engineCalendar.functions.GetYearStartTime(currentYear)
                 end
             end
         end,

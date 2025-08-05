@@ -1,15 +1,8 @@
 local columns = require "pm_finance/constants/columns"
-
-local calendar = {
-    gameState = {}
-}
+local engineGameState = require "pm_finance/engine/game-state"
 
 local constants = {}
 local functions = {}
-
-function functions.GetGameStatePerYear(year)
-    return calendar.gameState[tostring(year)]
-end
 
 function functions.IsLeapYear(year)
     return year % 4 == 0 and (year % 100 ~= 0 or year % 400 == 0)
@@ -38,9 +31,9 @@ function functions.GetYearTimeLength(year)
 end
 
 function functions.GetYearStartTime(year)
-    local storedTime = functions.GetGameStatePerYear(year)
-    if storedTime then
-        return storedTime
+    local startTime = engineGameState.functions.GetYearState(year)
+    if startTime then
+        return startTime
     end
     local gameTime = game.interface.getGameTime()
     local millisPerDay = game.interface.getMillisPerDay()
@@ -87,6 +80,7 @@ function functions.GetYearsFromCount(yearsCount)
     return years
 end
 
+local calendar = {}
 calendar.constants = constants
 calendar.functions = functions
 
