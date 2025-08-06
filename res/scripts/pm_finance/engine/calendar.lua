@@ -1,5 +1,5 @@
 local columns = require "pm_finance/constants/columns"
-local engineGameState = require "pm_finance/engine/game-state"
+local engineGameState = require "pm_finance/engine/game_state"
 
 local constants = {}
 local functions = {}

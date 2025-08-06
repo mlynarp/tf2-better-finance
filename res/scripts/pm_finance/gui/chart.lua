@@ -1,3 +1,5 @@
+local guiColor = require "pm_finance/gui/color"
+
 local constants = {}
 local functions = {}
 
@@ -21,13 +23,16 @@ function functions.SetYAxis(chart, minValue, maxValue, values, formatFn)
     chart:setLabelFormatter(constants.AXIS.Y, formatFn)
 end
 
-function functions.SetupSerie(chart, index, type, color)
+function functions.SetupSerie(chart, index, type)
     chart:setType(index, type)
-    chart:setColor(index, color)
 end
 
-function functions.MakeColor(intRGBA)
-	return api.type.Vec4f.new(intRGBA[1] / 255.0, intRGBA[2] / 255.0, intRGBA[3] / 255.0, intRGBA[4] / 255.0)
+function functions.SetSerieLabels(chart, serieLabels)
+    chart:setSeriesLabels(serieLabels)
+end
+
+function functions.SetSerieColor(chart, index, color)
+    chart:setColor(index, guiColor.functions.ConvertColorToAlphaColor(color))
 end
 
 local chart = {}

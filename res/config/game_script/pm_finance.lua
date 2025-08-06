@@ -3,7 +3,7 @@ local transport = require "pm_finance/constants/transport"
 
 local engineCalendar = require "pm_finance/engine/calendar"
 local engineJournal = require "pm_finance/engine/journal"
-local engineGameState = require "pm_finance/engine/game-state"
+local engineGameState = require "pm_finance/engine/game_state"
 
 local guiComponent = require "pm_finance/gui/component"
 local guiLayout = require "pm_finance/gui/layout"
@@ -59,7 +59,8 @@ local function InitFinanceChartTab()
     local chartTabWidget = compTransportTabWidget.functions.CreateTabWidget("Chart", compTransportChart.functions.CreateTransportChart)
     financeChartLayout:addItem(chartTabWidget)
     
-    local chartLegendWidget = compLegendWidget.functions.CreateLegendWidget(compTransportChart.functions.GetSeriesLabels(), compTransportChart.functions.GetSeriesColor())
+    local metadata = compTransportChart.functions.GetSeriesMetadata()
+    local chartLegendWidget = compLegendWidget.functions.CreateLegendWidget(metadata.keys, metadata.labels, metadata.defaultColors)
     local spacer = guiComponent.functions.CreateSpacer()
     local legendBar = guiLayout.functions.LayoutComponents(guiLayout.constants.ORIENTATION.HORIZONTAL, {chartLegendWidget, spacer, sliderComponent}, "LegendSliderBar")
     financeChartLayout:addItem(legendBar)

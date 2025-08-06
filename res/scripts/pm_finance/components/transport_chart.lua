@@ -1,16 +1,9 @@
-local transport = require "pm_finance/constants/transport"
 local categories = require "pm_finance/constants/categories"
-local columns = require "pm_finance/constants/columns"
-local styles = require "pm_finance/constants/styles"
 
-local engineCalendar = require "pm_finance/engine/calendar"
-local engineJournal = require "pm_finance/engine/journal"
 local engineChart = require "pm_finance/engine/chart"
+local engineGameState = require "pm_finance/engine/game_state"
 
-local guiTextView = require "pm_finance/gui/text_view"
 local guiChart = require "pm_finance/gui/chart"
-local guiLayout = require "pm_finance/gui/layout"
-local guiButton = require "pm_finance/gui/button"
 local guiComponent = require "pm_finance/gui/component"
 
 local constants = {}
@@ -26,32 +19,13 @@ function functions.CreateTransportChart(transportType)
     guiChart.functions.SetXAxis(financeChart, 1850, 1882, {1851}, tostring)
     guiChart.functions.SetYAxis(financeChart, 0, 100000, {50000}, api.util.formatMoney)
 
-    for i, category in pairs(constants.Categories) do
-        guiChart.functions.SetupSerie(financeChart, i-1, functions.GetSerieType(category), functions.GetColorForCategory(category))
+    local metadata = functions.GetSeriesMetadata()
+    for i, key in pairs(metadata.keys) do
+        guiChart.functions.SetupSerie(financeChart, i-1, metadata.serieTypes[i])
     end
 
-    financeChart:setSeriesLabels(functions.GetSeriesLabels())
-
+    guiChart.functions.SetSerieLabels(financeChart, metadata.labels)
     return financeChart
-end
-
-function functions.GetSeriesLabels()
-    local seriesLabels = {}
-    for i, category in pairs(constants.Categories) do
-        table.insert(seriesLabels, _(category))
-    end
-
-    return seriesLabels
-end
-
-function functions.GetSeriesColor()
-    local colors = {}
-    for i, category in pairs(constants.Categories) do
-        local color = functions.GetColorForCategory(category)
-        table.insert(colors, api.type.Vec3f.new(color[1], color[2], color[3]))
-    end
-
-    return colors
 end
 
 function functions.UpdateChart(years, transportType)
@@ -61,8 +35,14 @@ function functions.UpdateChart(years, transportType)
     local yMinValue = 0
     local yMaxValue = 0
 
-    for i, category in pairs(constants.Categories) do
+    local metadata = functions.GetSeriesMetadata()
+    for i, category in pairs(metadata.keys) do
+        local color = engineGameState.functions.GetColor(category)
+        if color == nil then
+            color = metadata.defaultColors[i]
+        end
         local serie = engineChart.functions.GenerateTransportCategorySerie(years, transportType, category)
+        guiChart.functions.SetSerieColor(financeChart, i - 1, color)
         financeChart:addSeries(serie.xValues, serie.yValues)
         yMinValue = math.min(yMinValue, serie.yMinValue)
         yMaxValue = math.max(yMaxValue, serie.yMaxValue)
@@ -82,26 +62,24 @@ function functions.GetChartId(transportType)
     return constants.TransportChart.Id .. "." .. transportType
 end
 
-function functions.GetColorForCategory(category)
-    if category == categories.constants.INCOME then
-        return guiChart.functions.MakeColor({153,204,255,255})
+function functions.GetSeriesMetadata()
+    local keys = {}
+    local labels = {}
+    local defaultColors = {}
+    local serieTypes = {}
+    for i, category in pairs(constants.Categories) do
+        table.insert(keys, category)
+        table.insert(labels, _(category))
+        table.insert(defaultColors, categories.functions.GetDefaultColor(category))
+        table.insert(serieTypes, functions.GetSerieType(category))
     end
 
-    if category == categories.constants.MAINTENANCE then
-        return guiChart.functions.MakeColor({255,153,153,255})
-    end
-
-    if category == categories.constants.INVESTMENTS then
-        return guiChart.functions.MakeColor({98,237,52,255})
-    end
-
-    if category == categories.constants.TOTAL then
-        return guiChart.functions.MakeColor({255,255,255,255})
-    end
-
-    if category == categories.constants.CASHFLOW then
-        return guiChart.functions.MakeColor({8,0,255,255})
-    end
+    local result = {}
+    result.keys = keys
+    result.labels = labels
+    result.defaultColors = defaultColors
+    result.serieTypes = serieTypes
+    return result
 end
 
 function functions.GetSerieType(category)
@@ -111,8 +89,6 @@ function functions.GetSerieType(category)
 
     return guiChart.constants.TYPE.BAR
 end
-
---game.interface.getLog(16579, "", { year = 1850, day = 1, month = 1})
 
 local result = {}
 result.constants = constants
