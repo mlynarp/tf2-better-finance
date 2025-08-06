@@ -1,5 +1,3 @@
-local categories = require "pm_finance/constants/categories"
-
 local gameState = {
     gameData = {},
     constants = {},
