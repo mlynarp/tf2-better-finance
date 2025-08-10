@@ -16,15 +16,13 @@ constants.Categories = { categories.constants.TOTAL, categories.constants.CASHFL
 
 function functions.CreateTransportChart(transportType)
     local financeChart = guiChart.functions.CreateChart(functions.GetChartId(transportType))
-    guiChart.functions.SetXAxis(financeChart, 1850, 1882, {1851}, tostring)
-    guiChart.functions.SetYAxis(financeChart, 0, 100000, {50000}, api.util.formatMoney)
 
-    local metadata = functions.GetSeriesMetadata()
-    for i, key in pairs(metadata.keys) do
-        guiChart.functions.SetupSerie(financeChart, i-1, metadata.serieTypes[i])
-    end
+--    local metadata = functions.GetSeriesMetadata()
+    --for i, key in pairs(metadata.keys) do
+     --   guiChart.functions.SetupSerie(financeChart, i-1, metadata.serieTypes[i])
+    --end
 
-    guiChart.functions.SetSerieLabels(financeChart, metadata.labels)
+    --guiChart.functions.SetSerieLabels(financeChart, metadata.labels)
     return financeChart
 end
 
@@ -36,17 +34,26 @@ function functions.UpdateChart(years, transportType)
     local yMaxValue = 0
 
     local metadata = functions.GetSeriesMetadata()
+    local labels = {}
+    local serieVisibleIndex = 0
     for i, category in pairs(metadata.keys) do
         local color = engineGameState.functions.GetColor(category)
         if color == nil then
             color = metadata.defaultColors[i]
         end
-        local serie = engineChart.functions.GenerateTransportCategorySerie(years, transportType, category)
-        guiChart.functions.SetSerieColor(financeChart, i - 1, color)
-        financeChart:addSeries(serie.xValues, serie.yValues)
-        yMinValue = math.min(yMinValue, serie.yMinValue)
-        yMaxValue = math.max(yMaxValue, serie.yMaxValue)
+        if color[1] ~= -1 then
+            local serie = engineChart.functions.GenerateTransportCategorySerie(years, transportType, category)
+            guiChart.functions.SetupSerie(financeChart, serieVisibleIndex, metadata.serieTypes[i])
+            guiChart.functions.SetSerieColor(financeChart, serieVisibleIndex, color)
+            financeChart:addSeries(serie.xValues, serie.yValues)
+            yMinValue = math.min(yMinValue, serie.yMinValue)
+            yMaxValue = math.max(yMaxValue, serie.yMaxValue)
+            table.insert(labels, metadata.labels[i])
+            serieVisibleIndex = serieVisibleIndex + 1
+        end
     end
+
+    guiChart.functions.SetSerieLabels(financeChart, labels)
 
     guiChart.functions.SetXAxis(financeChart, years[1] - 1, years[#years] + 1, years, tostring)
     
