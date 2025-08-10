@@ -111,6 +111,11 @@ function data()
                 end
             end
         end,
+        handleEvent = function(src, id, name, param)
+			if id=="pm-colorChanged" then
+                engineGameState.functions.StoreColor(name, api.type.Vec3f.new(param.R, param.G, param.B))
+			end
+		end,
         guiInit = function()
             financeTabWindow = guiComponent.functions.FindById("menu.finances.category")
             financeTabWindow:getParent():getParent():setSize(api.gui.util.Size.new(1100, 650))

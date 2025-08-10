@@ -15,6 +15,9 @@ function functions.CreateLegendWidget(items, legends, defaultColors)
             color = defaultColors[i]
         end
         local button = api.gui.comp.ColorChooserButton.new(defaultColors, color, 20, false, true)
+        button:onSelect(function(color)
+            api.cmd.sendCommand(api.cmd.make.sendScriptEvent("legend_widget.lua", "pm-colorChanged", item, {R = color.x, G = color.y, B = color.z}))
+        end)
         table.insert(components, button)
         table.insert(components, label)
     end
