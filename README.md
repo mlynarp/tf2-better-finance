@@ -3,6 +3,11 @@ This repository holds a mod called Better Finance Overview into the game Transpo
 
 ## Release Notes
 
+### 2.0
+* enhanced charts visualization
+* possibility to select own colors or turn off category
+* possibility to turn off chart enhancement if not desired
+
 ### 1.5
 * each category has its own table
 * possibility to switch between categories

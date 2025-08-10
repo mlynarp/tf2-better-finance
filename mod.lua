@@ -1,7 +1,7 @@
 ﻿local params = require "pm_finance/constants/params"
 
-local vMajor = 1
-local vMinor = 5
+local vMajor = 2
+local vMinor = 0
 
 -- old API
 -- http://transportfever.com/wiki/script-doc/index.html
