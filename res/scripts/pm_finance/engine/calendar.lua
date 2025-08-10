@@ -74,7 +74,9 @@ function functions.GetYearsFromCount(yearsCount)
     local years = {}
     local currentYear = functions.GetCurrentGameYear()
     for i = yearsCount - 1, 0, -1 do
-        table.insert(years, currentYear - i)
+        if currentYear - i >= 1850 then
+            table.insert(years, currentYear - i)
+        end
     end
 
     return years
