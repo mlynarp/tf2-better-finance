@@ -1,4 +1,4 @@
-local columns = require "pm_finance/constants/columns"
+local params = require "pm_finance/constants/params"
 local engineGameState = require "pm_finance/engine/game_state"
 
 local constants = {}
@@ -67,7 +67,7 @@ function functions.GetYearStartEndTime(year)
 end
 
 function functions.GetYearFromYearIndex(yearIndex)
-    return functions.GetCurrentGameYear() - columns.constants.NUMBER_OF_YEARS_COLUMNS + yearIndex
+    return functions.GetCurrentGameYear() - params.constants.NUMBER_OF_YEARS_COLUMNS + yearIndex
 end
 
 function functions.GetYearsFromCount(yearsCount)

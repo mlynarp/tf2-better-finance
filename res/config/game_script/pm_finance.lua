@@ -1,4 +1,4 @@
-local columns = require "pm_finance/constants/columns"
+local params = require "pm_finance/constants/params"
 local transport = require "pm_finance/constants/transport"
 
 local engineCalendar = require "pm_finance/engine/calendar"
@@ -49,6 +49,10 @@ local function UpdateFinanceTable(dataChanged, currentYear, currentBalance)
 end
 
 local function InitFinanceChartTab()
+    if params.constants.CHARTS_ENABLED == false then
+        return
+    end
+
     local financeChartLayout = financeTabWindow:getTab(1):getLayout()
     local sliderComponent = financeChartLayout:getItem(0)
 
@@ -73,6 +77,10 @@ local function InitFinanceChartTab()
 end
 
 local function UpdateFinanceChart(dataChanged)
+    if params.constants.CHARTS_ENABLED == false then
+        return
+    end
+
     if  (financeTabWindow:getCurrentTab() == 1 and (dataChanged or sliderChanged))  then
         for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
             compTransportChart.functions.UpdateChart(engineCalendar.functions.GetYearsFromCount(yearsSlider:getValue()), transportType)
@@ -93,7 +101,7 @@ function data()
         load = function(data)
             if not data then
                 local currentYear = engineCalendar.functions.GetCurrentGameYear()
-                for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
+                for j = 1, params.constants.NUMBER_OF_YEARS_COLUMNS do
                     engineGameState.gameData[tostring(currentYear)] = engineCalendar.functions.GetYearStartTime(currentYear)
                     currentYear = currentYear - 1
                 end

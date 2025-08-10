@@ -1,6 +1,7 @@
 local transport = require "pm_finance/constants/transport"
 local categories = require "pm_finance/constants/categories"
 local columns = require "pm_finance/constants/columns"
+local params = require "pm_finance/constants/params"
 local styles = require "pm_finance/constants/styles"
 
 local calendar = require "pm_finance/engine/calendar"
@@ -17,7 +18,7 @@ local functions = {}
 constants.SummaryTable = { Id = "pm-summaryTable", Name =  "SummaryTable"}
 
 function functions.CreateSummaryTable()
-    local numberOfColumns = columns.constants.NUMBER_OF_YEARS_COLUMNS + 2
+    local numberOfColumns = params.constants.NUMBER_OF_YEARS_COLUMNS + 2
     local summaryTable = guiTableView.functions.CreateTableView(numberOfColumns, constants.SummaryTable.Id, constants.SummaryTable.Name)
     summaryTable:setStyleClassList({ styles.table.STYLE_SUMMARY_TABLE })
 
@@ -48,7 +49,7 @@ function functions.AddSummaryLineToTable(summaryTable, category, extraStyle)
     comp:setStyleClassList({ styles.table.CELL })
     table.insert(row, comp)
 
-    for i = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
+    for i = 1, params.constants.NUMBER_OF_YEARS_COLUMNS do
         id = functions.GetTableControlId(columns.constants.YEAR..i, category)
         styleList = { styles.table.CELL, styles.text.RIGHT_ALIGNMENT, extraStyle }
         labelView = guiTextView.functions.CreateTextView("", id, styleList)
@@ -74,10 +75,10 @@ end
 function functions.UpdateSummaryTable(currentYearOnly)
     local index = 1
     if (currentYearOnly) then
-        index = columns.constants.NUMBER_OF_YEARS_COLUMNS
+        index = params.constants.NUMBER_OF_YEARS_COLUMNS
     end
     
-    for i = index, columns.constants.NUMBER_OF_YEARS_COLUMNS do
+    for i = index, params.constants.NUMBER_OF_YEARS_COLUMNS do
         local year = calendar.functions.GetYearFromYearIndex(i)
         local journal = engineJournal.functions.GetJournal(year)
         local profit = engineJournal.functions.GetValueFromJournal(journal, transport.constants.ALL, categories.constants.TOTAL)

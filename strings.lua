@@ -6,8 +6,11 @@ local columns = require "pm_finance/constants/columns"
 function data()
 	return {
 		en = {
-            ["pm-Parameter.Label"] = "Number of years in overview",
-            ["pm-Parameter.Tooltip"] = "Choose the number of years to be displayed in the financial overview table.",
+            ["pm-Parameter.NumberOfColumn.Label"] = "Number of years in overview",
+            ["pm-Parameter.NumberOfColumn.Tooltip"] = "Choose the number of years to be displayed in the financial overview table.",
+            
+            ["pm-Parameter.ChartsEnabled.Label"] = "Enhanced charts visualization",
+            ["pm-Parameter.ChartsEnabled.Tooltip"] = "If you want to have better tables only deactivate charts.",
 
             [transport.constants.ROAD] = "Road transport",
             [transport.constants.TRAM] = "Tram transport",
@@ -53,8 +56,11 @@ function data()
             [tooltips.constants.TOOLTIP_GAMEINFO] = "Operating profit as sum of income deducted by maintenance since the beginning of the year.",
 		},
         de = {
-            ["pm-Parameter.Label"] = "Anzahl der Jahre in der Übersicht",
-            ["pm-Parameter.Tooltip"] = "Wählen Sie die Anzahl der Jahre, die in der finanziellen Übersichtstabelle angezeigt werden sollen.",
+            ["pm-Parameter.NumberOfColumn.Label"] = "Anzahl der Jahre in der Übersicht",
+            ["pm-Parameter.NumberOfColumn.Tooltip"] = "Wählen Sie die Anzahl der Jahre, die in der finanziellen Übersichtstabelle angezeigt werden sollen.",
+
+            ["pm-Parameter.ChartsEnabled.Label"] = "Verbesserte Visualisierung von Diagrammen",
+            ["pm-Parameter.ChartsEnabled.Tooltip"] = "Wenn Sie die Diagrammvisualisierung nicht verbessern möchten, deaktivieren Sie sie.",
 
             [transport.constants.ROAD] = "Straße",
             [transport.constants.TRAM] = "Tram",
@@ -100,8 +106,11 @@ function data()
             [tooltips.constants.TOOLTIP_GAMEINFO] = "Betriebsgewinn als Summe der Einnahmen abzüglich Wartung seit Jahresbeginn."
         },
 		cs_CZ = {
-            ["pm-Parameter.Label"] = "Počet roků v přehledu",
-			["pm-Parameter.Tooltip"] = "Vyberte počet roků, které se mají zobrazit v tabulce finančního přehledu.",
+            ["pm-Parameter.NumberOfColumn.Label"] = "Počet roků v přehledu",
+			["pm-Parameter.NumberOfColumn.Tooltip"] = "Vyberte počet roků, které se mají zobrazit v tabulce finančního přehledu.",
+
+            ["pm-Parameter.ChartsEnabled.Label"] = "Vylepšená vizualizace grafů",
+            ["pm-Parameter.ChartsEnabled.Tooltip"] = "Pokud nechcete vylepšit vizualizaci grafu, deaktivujte ji.",
             
             [transport.constants.ROAD] = "Silniční doprava",
             [transport.constants.TRAM] = "Tramvajová doprava",

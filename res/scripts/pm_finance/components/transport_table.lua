@@ -1,6 +1,7 @@
 local transport = require "pm_finance/constants/transport"
 local categories = require "pm_finance/constants/categories"
 local columns = require "pm_finance/constants/columns"
+local params = require "pm_finance/constants/params"
 local styles = require "pm_finance/constants/styles"
 
 local engineCalendar = require "pm_finance/engine/calendar"
@@ -37,7 +38,7 @@ constants.TRANSPORT_CATEGORIES_LEVEL2 =
 
 
 function functions.CreateTransportTable(transportType)
-    local numberOfColumns = columns.constants.NUMBER_OF_YEARS_COLUMNS + 2
+    local numberOfColumns = params.constants.NUMBER_OF_YEARS_COLUMNS + 2
     local financeTable = guiTableView.functions.CreateTableView(numberOfColumns, functions.GetTableId(transportType), constants.TransportTable.Name)
     functions.AddTransportTableHeaders(financeTable, transportType)
 
@@ -60,7 +61,7 @@ function functions.AddTransportTableHeaders(financeTable, transportType)
     local styleList = { styles.table.HEADER, styles.text.LEFT_ALIGNMENT }
     table.insert(row, guiTextView.functions.CreateTextView(text, id, styleList ))
     
-    for i = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
+    for i = 1, params.constants.NUMBER_OF_YEARS_COLUMNS do
         text = tostring(engineCalendar.functions.GetYearFromYearIndex(i))
         id = functions.GetHeaderColumnId(columns.constants.YEAR .. i, transportType)
         styleList = { styles.table.HEADER, styles.text.RIGHT_ALIGNMENT }
@@ -98,7 +99,7 @@ function functions.AddTransportCategoryLineToFinanceTable(financeTable, isExpand
     local comp = functions.CreateCategotryLineLabelComponent(financeTable, category, transportType, isExpandable, level)
     table.insert(row, comp)
 
-    for i = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
+    for i = 1, params.constants.NUMBER_OF_YEARS_COLUMNS do
         local id = functions.GetTableControlId(columns.constants.YEAR..i, category, transportType)
         comp = functions.CreateCategotryLineValueComponent(category, id)
         table.insert(row, comp)
@@ -162,9 +163,9 @@ end
 
 function functions.UpdateTableValues(currentYearOnly, transportType)
     if currentYearOnly then
-        functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(engineCalendar.functions.GetCurrentGameYear()), columns.constants.YEAR .. columns.constants.NUMBER_OF_YEARS_COLUMNS)
+        functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(engineCalendar.functions.GetCurrentGameYear()), columns.constants.YEAR .. params.constants.NUMBER_OF_YEARS_COLUMNS)
     else
-        for j = 1, columns.constants.NUMBER_OF_YEARS_COLUMNS do
+        for j = 1, params.constants.NUMBER_OF_YEARS_COLUMNS do
             local year = engineCalendar.functions.GetYearFromYearIndex(j)
             functions.RefreshTransportCategoryValues(transportType, engineJournal.functions.GetJournal(year), columns.constants.YEAR .. j)
             local id = functions.GetHeaderColumnId(columns.constants.YEAR .. j, transportType)

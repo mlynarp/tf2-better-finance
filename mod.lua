@@ -1,4 +1,4 @@
-﻿local columns = require "pm_finance/constants/columns"
+﻿local params = require "pm_finance/constants/params"
 
 local vMajor = 1
 local vMinor = 5
@@ -31,17 +31,27 @@ function data()
 			{
 				{
 				  key = "NumberOfColumns",
-				  name = _("pm-Parameter.Label"),
+				  name = _("pm-Parameter.NumberOfColumn.Label"),
 				  uiType = "SLIDER",
 				  values = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" },
-				  tooltip = _("pm-Parameter.Tooltip"),
+				  tooltip = _("pm-Parameter.NumberOfColumn.Tooltip"),
 				  defaultIndex = 4,
+				},
+                {
+				  key = "ChartsEnabled",
+				  name = _("pm-Parameter.ChartsEnabled.Label"),
+				  uiType = "CHECKBOX",
+				  values = { "0", "1" },
+				  tooltip = _("pm-Parameter.ChartsEnabled.Tooltip"),
+				  defaultIndex = 1,
 				}
 			},
 			tags = { "Misc", "Script Mod" },
 		},
         runFn = function(settings, modParams)
-            columns.constants.NUMBER_OF_YEARS_COLUMNS = modParams[getCurrentModId()].NumberOfColumns
+            local parameters = modParams[getCurrentModId()]
+            params.constants.NUMBER_OF_YEARS_COLUMNS = parameters.NumberOfColumns
+            params.constants.CHARTS_ENABLED = parameters.ChartsEnabled == 1
         end,
 	}
 end
