@@ -21,6 +21,7 @@ local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
 local sliderChanged = true
+local chartChanged = true
 
 local function InitFinanceTableTab()
     local financeTableLayout = financeTabWindow:getTab(0):getLayout()
@@ -81,11 +82,12 @@ local function UpdateFinanceChart(dataChanged)
         return
     end
 
-    if  (financeTabWindow:getCurrentTab() == 1 and (dataChanged or sliderChanged))  then
+    if  (financeTabWindow:getCurrentTab() == 1 and (dataChanged or sliderChanged or chartChanged))  then
         for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
             compTransportChart.functions.UpdateChart(engineCalendar.functions.GetYearsFromCount(yearsSlider:getValue()), transportType)
         end
         sliderChanged = false
+        chartChanged = false
     end
 end
 
@@ -122,6 +124,7 @@ function data()
         handleEvent = function(src, id, name, param)
 			if id=="pm-colorChanged" then
                 engineGameState.functions.StoreColor(name, api.type.Vec3f.new(param.R, param.G, param.B))
+                chartChanged = true
 			end
 		end,
         guiInit = function()
