@@ -5,6 +5,7 @@ local gameState = {
 }
 
 gameState.constants.COLORS = "Colors"
+gameState.constants.GUI_UPDATE = "GuiUpdate"
 
 function gameState.functions.GetYearState(year)
     return gameState.gameData[tostring(year)]
@@ -27,6 +28,14 @@ function gameState.functions.GetColor(key)
     end
     local color = storedColors[key]
     return api.type.Vec3f.new(color.R, color.G, color.B)
+end
+
+function gameState.functions.ForceGuiUpdate()
+    gameState.gameData[gameState.constants.GUI_UPDATE] = true
+ end
+
+function gameState.functions.ClearGuiUpdate()
+    gameState.gameData[gameState.constants.GUI_UPDATE] = nil 
 end
 
 return gameState

@@ -1,5 +1,6 @@
 local params = require "pm_finance/constants/params"
 local transport = require "pm_finance/constants/transport"
+local callbacks = require "pm_finance/constants/callbacks"
 
 local engineCalendar = require "pm_finance/engine/calendar"
 local engineJournal = require "pm_finance/engine/journal"
@@ -21,7 +22,6 @@ local guiUpdate = false
 local lastBalance = 0
 local lastYear = 0
 local sliderChanged = true
-local chartChanged = true
 
 local function InitFinanceTableTab()
     local financeTableLayout = financeTabWindow:getTab(0):getLayout()
@@ -82,12 +82,14 @@ local function UpdateFinanceChart(dataChanged)
         return
     end
 
-    if  (financeTabWindow:getCurrentTab() == 1 and (dataChanged or sliderChanged or chartChanged))  then
+    if  (financeTabWindow:getCurrentTab() == 1 and (dataChanged or sliderChanged or engineGameState.gameData[engineGameState.constants.GUI_UPDATE] == true))  then
         for _, transportType in ipairs(transport.constants.TRANSPORT_TYPES) do
             compTransportChart.functions.UpdateChart(engineCalendar.functions.GetYearsFromCount(yearsSlider:getValue()), transportType)
         end
         sliderChanged = false
-        chartChanged = false
+        if engineGameState.gameData[engineGameState.constants.GUI_UPDATE] == true then
+            callbacks.functions.SendCallbackEvent(callbacks.constants.CLEAR_GUI_UPDATE, "", nil)
+        end
     end
 end
 
@@ -122,9 +124,12 @@ function data()
             end
         end,
         handleEvent = function(src, id, name, param)
-			if id=="pm-colorChanged" then
+            if id == callbacks.constants.COLOR_CHANGED then
                 engineGameState.functions.StoreColor(name, api.type.Vec3f.new(param.R, param.G, param.B))
-                chartChanged = true
+                engineGameState.functions.ForceGuiUpdate()
+			end
+            if id == callbacks.constants.CLEAR_GUI_UPDATE then
+                engineGameState.functions.ClearGuiUpdate()
 			end
 		end,
         guiInit = function()
